@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar.jsx";
 import { FaBoxOpen, FaUsers, FaDollarSign, FaShoppingCart } from "react-icons/fa";
 
 
-export default function Users() {
+export default function Reportes() {
   return (
     <>
 
@@ -13,14 +13,14 @@ export default function Users() {
 
         <div className="col" style={{ minHeight: "100vh" }}>
         <div className="container-fluid py-4">
-        <h2 className="text-dark mb-4">Users</h2>
+        <h2 className="text-dark mb-4">Reportes</h2>
 
         {/* Tabla o historial */}
         <div className="row">
           <div className="col-12">
             <div className="card bg-dark text-white border-0 shadow-sm">
               <div className="card-header border-bottom">
-                <h5 className="mb-0 text-dack">Tabla de Users</h5>
+                <h5 className="mb-0 text-dack">Tabla de Reportes</h5>
               </div>
               <div className="table-responsive p-0">
                 <table className="table table-dark table-striped mb-0">
