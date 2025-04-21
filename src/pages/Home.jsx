@@ -76,7 +76,7 @@ export default function About() {
               <div className="card-header border-bottom">
                 <h5 className="mb-0 text-white">Últimas ventas</h5>
               </div>
-              <div className="card-body p-0">
+              <div className="table-responsive p-0">
                 <table className="table table-dark table-striped mb-0">
                   <thead>
                     <tr>

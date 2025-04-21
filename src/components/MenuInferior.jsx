@@ -11,7 +11,7 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
 
   return (
 
-    <div className="col w-100 position-fixed bottom-0 end-0" style={{backgroundColor: "#1b1b1b", zIndex: "997"}}>
+    <div className="col w-100 position-fixed bottom-0 mb-1 end-0" style={{backgroundColor: "#1b1b1b", zIndex: "997"}}>
         <div className="" style={{ paddingLeft: "4.5rem",}}>
             <div className="d-flex table-responsive m-0 p-0">
 

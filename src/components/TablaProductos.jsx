@@ -97,7 +97,7 @@ const VentaTable = () => {
           </select>
         </div>
       </div>
-
+      <div className="table-responsive">
       <table className="table table-bordered table-striped">
         <thead className="table bg-gradient-dark text-white">
           <tr>
@@ -128,6 +128,9 @@ const VentaTable = () => {
           )}
         </tbody>
       </table>
+      </div>
+
+      
     </div>
   );
 };
