@@ -52,7 +52,7 @@ const Sidebar = () => {
         </>
       </NavLink>
 
-      <NavLink to="/categorias" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+      <NavLink to="/deudas" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
         {({ isActive }) => (
             <>
             <FaMoneyBillWave color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
@@ -62,7 +62,7 @@ const Sidebar = () => {
         )}
       </NavLink>
 
-      <NavLink to="/pedidos_admin" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 position-relative ${isActive ? 'active-link' : ''}`}>
+      <NavLink to="/clientes" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 position-relative ${isActive ? 'active-link' : ''}`}>
         {({ isActive }) => (
             <>
             <FaUsers color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
@@ -72,7 +72,7 @@ const Sidebar = () => {
         )}
       </NavLink>
 
-      <NavLink to="/usuarios" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+      <NavLink to="/devoluciones" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
         {({ isActive }) => (
             <>
             <FaUndoAlt color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
@@ -82,7 +82,7 @@ const Sidebar = () => {
         )}
       </NavLink>
 
-      <NavLink to="/vista_salidas" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+      <NavLink to="/users" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
         {({ isActive }) => (
             <>
             <FaUserCog color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
@@ -92,7 +92,7 @@ const Sidebar = () => {
         )}
       </NavLink>
 
-      <NavLink to="/vista_entradas" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+      <NavLink to="/reportes" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
         {({ isActive }) => (
             <>
             <FaChartBar color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
@@ -120,7 +120,7 @@ const Sidebar = () => {
 
       <hr className="text-white bg-white mx-2 my-0" />
 
-      <NavLink to="/cuenta" className={({ isActive }) => `my-1 p-1 text-center py-1 card-menu mx-2 ${isActive ? 'active-link' : 'bg-info'}`}>
+      <NavLink to="/cierre" className={({ isActive }) => `my-1 p-1 text-center py-1 card-menu mx-2 ${isActive ? 'active-link' : 'bg-info'}`}>
         <RiShutDownLine className="simbolo-icon "/>
         <p className="pt-2 text-white text-menu">Cierre</p>
       </NavLink>
