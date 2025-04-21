@@ -6,6 +6,7 @@ const CategoriaTable = () => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [nuevaCategoria, setNuevaCategoria] = useState({ name: '', description: '' });
   const [categoriaEditando, setCategoriaEditando] = useState(null);
+  const [categoriaAEliminar, setCategoriaAEliminar] = useState(null); // Estado para la categoría a eliminar
 
   const fetchCategorias = async () => {
     try {
@@ -37,9 +38,10 @@ const CategoriaTable = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
-      await deleteCategory(id);
+      await deleteCategory(categoriaAEliminar.id);
+      setCategoriaAEliminar(null); // Cerrar modal después de eliminar
       fetchCategorias(); // Refrescar lista
     } catch (error) {
       console.error('Error al eliminar categoría:', error);
@@ -119,7 +121,7 @@ const CategoriaTable = () => {
                       </button>
                       <button
                         className="btn btn-danger btn-sm ml-2"
-                        onClick={() => handleDelete(categoria.id)}
+                        onClick={() => setCategoriaAEliminar(categoria)} // Abre el modal
                       >
                         Eliminar
                       </button>
@@ -182,6 +184,45 @@ const CategoriaTable = () => {
             </div>
         </div>
         )}
+
+      {/* Modal de confirmación de eliminación */}
+      {categoriaAEliminar && (
+        <div className="modal" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirmar eliminación</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setCategoriaAEliminar(null)} // Cerrar modal
+                >
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>¿Estás seguro de que deseas eliminar la categoría "{categoriaAEliminar.name}"?</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setCategoriaAEliminar(null)} // Cerrar modal
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={handleDelete} // Eliminar categoría
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
