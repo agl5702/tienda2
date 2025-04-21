@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import NotFound from './pages/NotFound';
 import Home from './pages/Home';
 import Ventas from './pages/Ventas';
 import Productos from './pages/Productos';
@@ -7,7 +8,9 @@ import FormProducto from './pages/FormProducto';
 import FormVentas from './pages/FormVentas';
 import Deudas from './pages/Deudas';
 import Clientes from './pages/Clientes';
-import NotFound from './pages/NotFound';
+import Devoluciones from './pages/Devoluciones';
+import Users from './pages/Users';
+import Reportes from './pages/Reportes';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
         <Route path="/form_ventas/:id" element={<FormVentas />} />
         <Route path="/deudas" element={<Deudas />} />
         <Route path="/clientes" element={<Clientes />} />
+        <Route path="/devoluciones" element={<Devoluciones />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/reportes" element={<Reportes />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
