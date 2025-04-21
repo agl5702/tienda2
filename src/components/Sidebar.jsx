@@ -14,6 +14,9 @@ const Sidebar = () => {
   const isProductosActive = location.pathname.startsWith('/productos') || 
                             location.pathname.startsWith('/form_producto')
   ;
+  const isVentasActive = location.pathname.startsWith('/ventas') || 
+                            location.pathname.startsWith('/form_ventas')
+  ;
 
   return (
     <div id="sidebar" className="d-flex flex-column" style={{ backgroundColor: "#1b1b1b" }}>
@@ -40,15 +43,13 @@ const Sidebar = () => {
       </>
     </NavLink>
 
-      <NavLink to="/ventas" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
-        {({ isActive }) => (
-            <>
-            <FaShoppingCart color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
-            <p className="pt-2 text-white text-menu">Ventas</p>
-          <span className="globo-pedidos">2</span>
-            <span className={isActive ? 'selector' : 'no-selector'}></span>
-            </>
-        )}
+      <NavLink to="/ventas" className={`my-1 p-1 text-center card-menu mx-2 ${isVentasActive ? 'active-link' : ''}`}>
+        <>
+        <FaShoppingCart color={isVentasActive ? '#00bfff' : ''} className="simbolo-icon "/>
+        <p className="pt-2 text-white text-menu">Ventas</p>
+        <span className="globo-pedidos">2</span>
+        <span className={isVentasActive ? 'selector' : 'no-selector'}></span>
+        </>
       </NavLink>
 
       <NavLink to="/categorias" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>

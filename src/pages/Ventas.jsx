@@ -1,99 +1,71 @@
-import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar.jsx";
-import List from "../components/List.jsx";
 import MenuInferior from "../components/MenuInferior.jsx";
-import VentaForm from "../components/VentaForm.jsx";
-import { getAllProducts } from "../services/requests/products.js";
-import { getAllCustomers } from "../services/requests/customers.js";
+import { FaBoxOpen, FaUsers, FaDollarSign, FaShoppingCart } from "react-icons/fa";
 
-export default function Ventas() {
-  const [productosSeleccionados, setProductosSeleccionados] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [clienteBuscado, setClienteBuscado] = useState("");
-  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 
-  useEffect(() => {
-    const loadClientes = async () => {
-      try {
-        const data = await getAllCustomers();
-        setClientes(data); // Asignar los datos de clientes cargados
-      } catch (error) {
-        console.error("Error al cargar clientes", error);
-      }
-    };
-
-    const loadProducts = async () => {
-      try {
-        const data = await getAllProducts();
-        const productosTransformados = data.map(p => ({
-          ...p,
-          nombre: p.name,
-          precio: p.sale_price,
-          cantidad: p.quantity || 1,
-        }));
-        setProducts(productosTransformados);
-      } catch (error) {
-        console.error("Error al cargar productos", error);
-      }
-    };
-
-    loadClientes();
-    loadProducts();
-  }, []);
-
-  // Función para agregar productos seleccionados
-  const agregarProducto = (producto) => {
-    setProductosSeleccionados((prev) => {
-      const existente = prev.find((p) => p.id === producto.id);
-      if (existente) {
-        return prev.map((p) =>
-          p.id === producto.id
-            ? { ...p, cantidad: p.cantidad + producto.cantidad }
-            : p
-        );
-      } else {
-        return [...prev, { ...producto }];
-      }
-    });
-  };
-
-  // Función para eliminar productos seleccionados
-  const eliminarProducto = (id) => {
-    setProductosSeleccionados((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  // Función para actualizar la cantidad de un producto
-  const actualizarCantidad = (id, nuevaCantidad) => {
-    setProductosSeleccionados((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, cantidad: nuevaCantidad } : p))
-    );
-  };
-
+export default function About() {
   return (
-    <div className="m-0" style={{ paddingLeft: "4.5rem" }}>
-      <div className="row m-0">
-        <List
-          productos={products}
-          onAgregarProducto={agregarProducto}
-        />
-        <div className="col p-0 m-0">
-          {/* Se pasa clienteSeleccionado al formulario de ventas */}
-          <VentaForm
-            productos={productosSeleccionados}
-            onEliminarProducto={eliminarProducto}
-            onActualizarCantidad={actualizarCantidad}
-            cliente={clienteSeleccionado}
-            clientes={clientes} // Asegúrate de pasar los clientes a VentaForm
-            setClienteSeleccionado={setClienteSeleccionado}
-            setClienteBuscado={setClienteBuscado}
-            clienteBuscado={clienteBuscado}
-          />
-        </div>
-      </div>
+    <>
 
-      <Sidebar />
+      <div className="m-0" style={{ paddingLeft: "4.5rem" }}>
+
+        <Sidebar />
       <MenuInferior />
+
+
+        <div className="col" style={{ minHeight: "100vh" }}>
+        <div className="container-fluid py-4">
+        <h2 className="text-dark mb-4">Listado de Ventas</h2>
+
+        {/* Tabla o historial */}
+        <div className="row">
+          <div className="col-12">
+            <div className="card bg-dark text-white border-0 shadow-sm">
+              <div className="card-header border-bottom">
+                <h5 className="mb-0 text-dark">Últimas ventas</h5>
+              </div>
+              <div className="card-body p-0">
+                <table className="table table-dark table-striped mb-0">
+                  <thead>
+                    <tr>
+                      <th>Cliente</th>
+                      <th>Producto</th>
+                      <th>Fecha</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Juan Pérez</td>
+                      <td>Smartphone</td>
+                      <td>2025-04-17</td>
+                      <td>$300</td>
+                    </tr>
+                    <tr>
+                      <td>Ana Gómez</td>
+                      <td>Laptop</td>
+                      <td>2025-04-16</td>
+                      <td>$850</td>
+                    </tr>
+                    <tr>
+                      <td>Carlos Ruiz</td>
+                      <td>Teclado</td>
+                      <td>2025-04-15</td>
+                      <td>$45</td>
+                    </tr>
+                    {/* Más registros si quieres... */}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
+        </div>
+        
+      </div>
+      
+    </>
   );
 }
+  

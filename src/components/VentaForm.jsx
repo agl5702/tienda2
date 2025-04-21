@@ -7,7 +7,7 @@ const VentaForm = ({ productos, onEliminarProducto, onActualizarCantidad, client
   ) || [];
 
   return (
-    <div className="p-3 card">
+    <div className="p-3 card mt-2 table-responsive">
       {/* Sección de búsqueda de cliente */}
       <div className="mb-3">
         <label className="form-label">Buscar cliente:</label>
