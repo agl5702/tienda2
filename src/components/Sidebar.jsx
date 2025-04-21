@@ -1,0 +1,130 @@
+// components/Sidebar.jsx
+import "./css/Sidebar.css"; // O tu archivo CSS general
+import { NavLink, useLocation } from "react-router-dom";
+// Iconos de react-icons
+import { FaMoneyBillWave, FaBoxOpen, FaUndoAlt, FaUserCog, FaUsers, FaChartBar, FaClipboardList, FaFileInvoiceDollar, FaHome, FaShoppingCart} from 'react-icons/fa';
+import { RiShutDownLine } from 'react-icons/ri';
+import { FiSettings } from 'react-icons/fi';
+import Visor from "./Visor.jsx";
+
+
+const Sidebar = () => {
+  const location = useLocation();
+
+  const isProductosActive = location.pathname.startsWith('/productos') || 
+                            location.pathname.startsWith('/form_producto')
+  ;
+
+  return (
+    <div id="sidebar" className="d-flex flex-column" style={{ backgroundColor: "#1b1b1b" }}>
+      <NavLink to="/" className="border-bottom text-center mt-2 mb-1 pb-1">
+        <img className="" src="/src/assets/react.svg" alt="imglogo" style={{ width: "30px" }} />
+        <span className="text-white">Tienda</span>
+      </NavLink>
+
+      <NavLink to="/" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+        {({ isActive }) => (
+            <>
+            <FaHome color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
+            <p className="pt-2 text-white text-menu">Home</p>
+            <span className={isActive ? 'selector' : 'no-selector'}></span>
+            </>
+        )}
+      </NavLink>
+
+      <NavLink to="/productos" className={`my-1 p-1 text-center card-menu mx-2 ${isProductosActive ? 'active-link' : ''}`}>
+      <>  
+      <FaBoxOpen color={isProductosActive ? '#00bfff' : ''} className="simbolo-icon "/>
+        <p className="pt-2 text-white text-menu">Productos</p>
+        <span className={isProductosActive ? 'selector' : 'no-selector'}></span>
+      </>
+    </NavLink>
+
+      <NavLink to="/ventas" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+        {({ isActive }) => (
+            <>
+            <FaShoppingCart color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
+            <p className="pt-2 text-white text-menu">Ventas</p>
+          <span className="globo-pedidos">2</span>
+            <span className={isActive ? 'selector' : 'no-selector'}></span>
+            </>
+        )}
+      </NavLink>
+
+      <NavLink to="/categorias" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+        {({ isActive }) => (
+            <>
+            <FaMoneyBillWave color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
+            <p className="pt-2 text-white text-menu">Deudas</p>
+            <span className={isActive ? 'selector' : 'no-selector'}></span>
+            </>
+        )}
+      </NavLink>
+
+      <NavLink to="/pedidos_admin" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 position-relative ${isActive ? 'active-link' : ''}`}>
+        {({ isActive }) => (
+            <>
+            <FaUsers color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
+            <p className="pt-2 text-white text-menu">Clientes</p>
+            <span className={isActive ? 'selector' : 'no-selector'}></span>
+            </>
+        )}
+      </NavLink>
+
+      <NavLink to="/usuarios" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+        {({ isActive }) => (
+            <>
+            <FaUndoAlt color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
+            <p className="pt-2 text-white text-menu">Devolucion</p>
+            <span className={isActive ? 'selector' : 'no-selector'}></span>
+            </>
+        )}
+      </NavLink>
+
+      <NavLink to="/vista_salidas" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+        {({ isActive }) => (
+            <>
+            <FaUserCog color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
+            <p className="pt-2 text-white text-menu">Users</p>
+            <span className={isActive ? 'selector' : 'no-selector'}></span>
+            </>
+        )}
+      </NavLink>
+
+      <NavLink to="/vista_entradas" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+        {({ isActive }) => (
+            <>
+            <FaChartBar color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
+            <p className="pt-2 text-white text-menu">Reportes</p>
+            <span className={isActive ? 'selector' : 'no-selector'}></span>
+            </>
+        )}
+      </NavLink>
+
+      <div className="mx-auto">
+        
+        <Visor/>
+
+      </div>
+
+      <NavLink to="/ajustes" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 mt-auto ${isActive ? 'active-link' : ''}`}>
+        {({ isActive }) => (
+            <>
+            <FiSettings color={isActive ? '#00bfff' : ''} className="simbolo-icon "/>
+            <p className="pt-2 text-white text-menu">Ajustes</p>
+            <span className={isActive ? 'selector' : 'no-selector'}></span>
+            </>
+        )}
+      </NavLink>
+
+      <hr className="text-white bg-white mx-2 my-0" />
+
+      <NavLink to="/cuenta" className={({ isActive }) => `my-1 p-1 text-center py-1 card-menu mx-2 ${isActive ? 'active-link' : 'bg-info'}`}>
+        <RiShutDownLine className="simbolo-icon "/>
+        <p className="pt-2 text-white text-menu">Cierre</p>
+      </NavLink>
+    </div>
+  );
+};
+
+export default Sidebar;

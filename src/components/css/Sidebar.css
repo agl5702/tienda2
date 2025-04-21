@@ -1,0 +1,97 @@
+ /* Estilos para el menú lateral */
+ #sidebar {
+    width: 4.5rem;
+    height: 100%; /* Altura completa de la ventana */
+    position: fixed; /* Fijo en la página */
+    top: 0;
+    left: 0;
+    z-index: 998;
+    border-right: 1px solid #2d2d2d;
+}
+
+.text-menu{
+  font-size: 60%;
+  margin-top: -11px;
+  margin-bottom: 0px;
+}
+
+.simbolo-icon{
+  font-size: 22.5px;
+}
+
+.card-menu{
+  position: relative;
+  color: white;
+  border-radius: 0.30rem;
+  text-align: center;
+}
+
+.card-menu:hover {
+  transition: color 100ms ease-out 100ms;
+  background: #2d2d2d;
+}
+
+.active-link{
+  background-color: #2d2d2d;    
+  border: 1px solid transparent; /* Empieza sin borde */
+  /* Animación */
+  animation: borderLoading 1s linear forwards;
+}
+
+.selector{
+  width: 4px;
+  height: 50%;
+  border-radius: 20px;
+  background-color: #00bfff;
+  position: absolute;
+  left: -6.8px;
+  top: 12px;
+
+  /* Inicialmente, está en escala pequeña */
+  transform: scale(0);
+  /* Aplicar la animación */
+  animation: growAnimation 600ms forwards;
+
+}
+
+  /* Definimos la animación */
+  @keyframes growAnimation {
+      from {
+      transform: scale(0);
+      }
+      to {
+      transform: scale(1.2);
+      }
+  }
+  /* Animación del borde */
+  @keyframes borderLoading {
+      0% {
+      border-color: transparent; /* Comienza sin borde visible */
+      }
+      20% {
+      border-color: #00bfff; /* Al final del efecto, el borde es verde */
+      }
+  }
+
+.no-selector{
+  display: none;
+}
+  
+  .bg-select{
+      color: #00bfff;
+  }
+
+  .globo-pedidos{
+    position: absolute;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    top: -2px;
+    right: -4px;
+    font-size: 11px;
+    background: #00bfff;
+    color: #fff;
+    border: 1px solid #00bfff;
+    font-weight: bold;
+
+  }
