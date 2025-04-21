@@ -4,12 +4,17 @@ import { NavLink, useLocation } from "react-router-dom";
 // Iconos de react-icons
 import { FaMoneyBillWave, FaBoxOpen, FaUndoAlt, FaUserCog, FaUsers, FaChartBar, FaClipboardList, FaFileInvoiceDollar, FaHome, FaShoppingCart} from 'react-icons/fa';
 import { RiShutDownLine } from 'react-icons/ri';
+import { BiSolidCategoryAlt } from "react-icons/bi";
 import { FiSettings } from 'react-icons/fi';
 import Visor from "./Visor.jsx";
 
 
 const Sidebar = () => {
   const location = useLocation();
+
+  const isCategoriaActive = location.pathname.startsWith('/categorias') || 
+                            location.pathname.startsWith('/form_categorias')
+  ;
 
   const isProductosActive = location.pathname.startsWith('/productos') || 
                             location.pathname.startsWith('/form_producto')
@@ -34,6 +39,15 @@ const Sidebar = () => {
             </>
         )}
       </NavLink>
+
+      <NavLink to="/categorias" className={`my-1 p-1 text-center card-menu mx-2 ${isProductosActive ? 'active-link' : ''}`}>
+      <>  
+      <BiSolidCategoryAlt color={isCategoriaActive ? '#00bfff' : ''} className="simbolo-icon "/>
+        <p className="pt-2 text-white text-menu">Categorias</p>
+        <span className={isCategoriaActive ? 'selector' : 'no-selector'}></span>
+      </>
+    </NavLink>
+
 
       <NavLink to="/productos" className={`my-1 p-1 text-center card-menu mx-2 ${isProductosActive ? 'active-link' : ''}`}>
       <>  
