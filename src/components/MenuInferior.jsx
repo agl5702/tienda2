@@ -26,7 +26,7 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                     
                 </NavLink>
 
-                <NavLink to="/form_ventas"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                <NavLink to="/form_ventas/1"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
                     {({ isActive }) => (
                     <>
                     <div className="p-1 position-relative">
@@ -41,7 +41,7 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                     )}
                 </NavLink>
 
-                <NavLink to="/form_ventas"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                <NavLink to="/form_ventas/2"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
                     {({ isActive }) => (
                     <>
                     <div className="p-1 position-relative">
@@ -49,14 +49,14 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                         x
                         </div>
                         <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{fontSize:"17px"}}/>
-                        <span className="text-white d-none d-sm-inline"> 200203</span>
+                        <span className="text-white d-none d-sm-inline"> 200204</span>
 
                     </div>
                     </>
                     )}
                 </NavLink>
 
-                <NavLink to="/form_ventas"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                <NavLink to="/form_ventas/3"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
                     {({ isActive }) => (
                     <>
                     <div className="p-1 position-relative">
@@ -64,14 +64,14 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                         x
                         </div>
                         <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{fontSize:"17px"}}/>
-                        <span className="text-white d-none d-sm-inline"> 200203</span>
+                        <span className="text-white d-none d-sm-inline"> 200205</span>
 
                     </div>
                     </>
                     )}
                 </NavLink>
 
-                <NavLink to="/form_ventas"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                <NavLink to="/form_ventas/4"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
                     {({ isActive }) => (
                     <>
                     <div className="p-1 position-relative">
@@ -79,14 +79,14 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                         x
                         </div>
                         <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{fontSize:"17px"}}/>
-                        <span className="text-white d-none d-sm-inline"> 200203</span>
+                        <span className="text-white d-none d-sm-inline"> 200206</span>
 
                     </div>
                     </>
                     )}
                 </NavLink>
 
-                <NavLink to="/form_ventas"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                <NavLink to="/form_ventas/5"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
                     {({ isActive }) => (
                     <>
                     <div className="p-1 position-relative">
@@ -94,14 +94,14 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                         x
                         </div>
                         <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{fontSize:"17px"}}/>
-                        <span className="text-white d-none d-sm-inline"> 200203</span>
+                        <span className="text-white d-none d-sm-inline"> 200207</span>
 
                     </div>
                     </>
                     )}
                 </NavLink>
 
-                <NavLink to="/form_ventas"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                <NavLink to="/form_ventas/6"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
                     {({ isActive }) => (
                     <>
                     <div className="p-1 position-relative">
@@ -109,14 +109,14 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                         x
                         </div>
                         <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{fontSize:"17px"}}/>
-                        <span className="text-white d-none d-sm-inline"> 200203</span>
+                        <span className="text-white d-none d-sm-inline"> 200208</span>
 
                     </div>
                     </>
                     )}
                 </NavLink>
 
-                <NavLink to="/form_ventas"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                <NavLink to="/form_ventas/7"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
                     {({ isActive }) => (
                     <>
                     <div className="p-1 position-relative">
@@ -124,14 +124,14 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                         x
                         </div>
                         <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{fontSize:"17px"}}/>
-                        <span className="text-white d-none d-sm-inline"> 200203</span>
+                        <span className="text-white d-none d-sm-inline"> 200209</span>
 
                     </div>
                     </>
                     )}
                 </NavLink>
 
-                <NavLink to="/form_ventas"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                <NavLink to="/form_ventas/8"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
                     {({ isActive }) => (
                     <>
                     <div className="p-1 position-relative">
@@ -139,14 +139,14 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                         x
                         </div>
                         <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{fontSize:"17px"}}/>
-                        <span className="text-white d-none d-sm-inline"> 200203</span>
+                        <span className="text-white d-none d-sm-inline"> 200210</span>
 
                     </div>
                     </>
                     )}
                 </NavLink>
 
-                <NavLink to="/form_ventas"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                <NavLink to="/form_ventas/9"  className={({ isActive }) => `col-auto ventana my-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
                     {({ isActive }) => (
                     <>
                     <div className="p-1 position-relative">
@@ -154,7 +154,7 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
                         x
                         </div>
                         <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{fontSize:"17px"}}/>
-                        <span className="text-white d-none d-sm-inline"> 200203</span>
+                        <span className="text-white d-none d-sm-inline"> 200211</span>
 
                     </div>
                     </>
@@ -163,7 +163,7 @@ import "./css/MenuInferior.css"; // O tu archivo CSS general
 
 
                 {/* ... */}
-                <NavLink to="/form_ventas" className="col-auto text-center my-1 border-start border-1 position-sticky " style={{right: "0px", backgroundColor: "#1b1b1b"}}>
+                <NavLink to="/form_ventas/1" className="col-auto text-center my-1 border-start border-1 position-sticky " style={{right: "0px", backgroundColor: "#1b1b1b"}}>
                     <div className=" pt-1 px-3 cursor-pointer">
                         <span className="text-white text-bold text-bold" style={{fontSize: "16px"}}>+</span>
                     </div>

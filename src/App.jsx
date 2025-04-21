@@ -14,7 +14,7 @@ function App() {
         <Route path="/productos" element={<Productos />} />
         <Route path="/form_producto" element={<FormProducto />} />
         <Route path="/ventas" element={<Ventas />} />
-        <Route path="/form_ventas" element={<FormVentas />} />
+        <Route path="/form_ventas/:id" element={<FormVentas />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
