@@ -6,6 +6,7 @@ import Categorias from "./pages/Categorias"
 import FormProducto from './pages/FormProducto';
 import FormVentas from './pages/FormVentas';
 import Deudas from './pages/Deudas';
+import Clientes from './pages/Clientes';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/ventas" element={<Ventas />} />
         <Route path="/form_ventas/:id" element={<FormVentas />} />
         <Route path="/deudas" element={<Deudas />} />
+        <Route path="/clientes" element={<Clientes />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

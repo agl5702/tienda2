@@ -40,7 +40,7 @@ const Sidebar = () => {
         )}
       </NavLink>
 
-      <NavLink to="/categorias" className={`my-1 p-1 text-center card-menu mx-2 ${isProductosActive ? 'active-link' : ''}`}>
+      <NavLink to="/categorias" className={`my-1 p-1 text-center card-menu mx-2 ${isCategoriaActive ? 'active-link' : ''}`}>
       <>  
       <BiSolidCategoryAlt color={isCategoriaActive ? '#00bfff' : ''} className="simbolo-icon "/>
         <p className="pt-2 text-white text-menu">Categorias</p>
