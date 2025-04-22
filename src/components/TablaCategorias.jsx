@@ -42,14 +42,14 @@ const CategoriaTable = () => {
         <tbody>
           {categorias.length > 0 ? (
             categorias.map((cat) => (
-              <tr key={cat.id}>
+              <tr key={cat.id} className=''>
                 <td>{cat.name}</td>
                 <td>{cat.description}</td>
                 <td>
-                  <Link to={`/categorias/editar/${cat.id}`} className="btn btn-warning btn-sm">
+                  <Link to={`/categorias/editar/${cat.id}`} className="btn mb-0 btn-warning btn-sm">
                     Editar
                   </Link>
-                  <button onClick={() => handleDelete(cat.id)} className="btn btn-danger btn-sm ms-2">
+                  <button onClick={() => handleDelete(cat.id)} className="btn mb-0 btn-danger btn-sm ms-2">
                     Eliminar
                   </button>
                 </td>
