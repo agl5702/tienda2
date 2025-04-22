@@ -3,7 +3,8 @@ import NotFound from './pages/NotFound';
 import Home from './pages/Home';
 import Ventas from './pages/Ventas';
 import Productos from './pages/Productos';
-import Categorias from "./pages/Categorias"
+import Categorias from './pages/Categorias';
+import FormCategoria from './pages/FormCategoria';
 import FormProducto from './pages/FormProducto';
 import FormVentas from './pages/FormVentas';
 import Deudas from './pages/Deudas';
@@ -18,6 +19,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/categorias" element={<Categorias />} />
+        <Route path="/categorias/nueva" element={<FormCategoria />} />
+        <Route path="/categorias/editar/:id" element={<FormCategoria />} />
+        
+        
         <Route path="/productos" element={<Productos />} />
         <Route path="/form_producto" element={<FormProducto />} />
         <Route path="/ventas" element={<Ventas />} />

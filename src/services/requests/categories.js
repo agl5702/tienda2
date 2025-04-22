@@ -20,3 +20,8 @@ export const deleteCategory = async (id) => {
 export const updateCategory = async (id, data) => {
   return fetchData("PATCH", `/categories/${id}`, data);
 };
+
+// Obtener una categoría por su ID
+export const getCategoryById = async (id) => {
+  return fetchData("GET", `/categories/${id}`);
+};
