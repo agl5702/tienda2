@@ -1,6 +1,6 @@
 import TablaProductos from "../components/TablaProductos.jsx";
 import Sidebar from "../components/Sidebar.jsx";
-
+import { Link } from "react-router-dom";
 export default function Productos() {
   return (
     <>
@@ -9,8 +9,14 @@ export default function Productos() {
 
         <Sidebar />
 
-        <div className="col" style={{ minHeight: "100vh" }}>
+        <div className="col p-2" style={{ minHeight: "100vh" }}>
             <div className="card p-2">
+              <div className="row m-0">
+                <h2 className="col my-auto">Lista de Productos</h2>
+                <div className="my-auto col-auto">
+                  <Link to="/form_producto" className="btn bg-info text-white btn-sm my-2">nuevo producto</Link>
+                </div>
+              </div>
                 <TablaProductos/>
             </div>
         </div>
