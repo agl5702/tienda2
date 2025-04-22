@@ -4,48 +4,61 @@ import { useEffect, useState } from "react";
 import { getAllSales } from "../services/requests/sales.js";
 import { getCustomerById } from "../services/requests/customers.js";
 import { getProductById } from "../services/requests/products.js";
+import { FaCirclePlus } from "react-icons/fa6";
 
 export default function About() {
   const [clientes, setClientes] = useState({});
   const [productos, setProductos] = useState({});
   const [ventas, setVentas] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchVentas = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getAllSales();
-
-        const clienteMap = {};
-        const productoMap = {};
-
-        // Recorremos todas las ventas
-        for (const venta of data) {
-          const clienteId = venta.customer_id;
-          if (!clienteMap[clienteId]) {
-            const cliente = await getCustomerById(clienteId);
-            clienteMap[clienteId] = cliente;
-          }
-
-          // Recorremos los detalles de cada venta para obtener los productos
-          for (const item of venta.details) {
-            const productoId = item.product_id;
-            if (!productoMap[productoId]) {
-              const producto = await getProductById(productoId);
-              productoMap[productoId] = producto;
+        const ventasData = await getAllSales();
+        
+        // Cargar todos los clientes y productos en paralelo
+        const clientesMap = {};
+        const productosMap = {};
+        
+        const clientePromises = ventasData.map((venta) => 
+          getCustomerById(venta.order.customer_id).then(cliente => {
+            if (cliente) {
+              clientesMap[venta.order.customer_id] = cliente;
             }
-          }
-        }
+          })
+        );
 
-        setClientes(clienteMap);
-        setProductos(productoMap);
-        setVentas(data);
+        const productoPromises = ventasData.flatMap((venta) =>
+          venta.order.items.map((item) =>
+            getProductById(item.product_id).then(producto => {
+              if (producto) {
+                productosMap[item.product_id] = producto;
+              }
+            })
+          )
+        );
+
+        // Esperamos a que todos los clientes y productos estén cargados
+        await Promise.all([...clientePromises, ...productoPromises]);
+
+        // Una vez cargados los datos, actualizamos el estado
+        setClientes(clientesMap);
+        setProductos(productosMap);
+        setVentas(ventasData);
+        setLoading(false);
       } catch (error) {
-        console.error("Error cargando ventas, clientes o productos:", error);
+        console.error("Error cargando datos:", error);
+        setLoading(false);
       }
     };
 
-    fetchVentas();
+    fetchData();
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -55,7 +68,13 @@ export default function About() {
 
         <div className="col" style={{ minHeight: "100vh" }}>
           <div className="container-fluid py-4">
-            <h2 className="text-dark mb-4">Listado de Ventas</h2>
+            <button
+              className="btn p-0 bg-transparent border-0 d-flex align-items-center justify-content-center"
+              style={{ fontSize: "50px" }}
+            >
+              <FaCirclePlus color="green" />
+            </button>
+            <h3 className="text-dark mb-4 text-center">Listado de Ventas</h3>
 
             {/* Contenedor para las facturas */}
             <div className="d-flex flex-wrap gap-4 justify-content-center">
@@ -65,7 +84,7 @@ export default function About() {
                   className="card shadow-sm"
                   style={{
                     width: "100%",
-                    maxWidth: "500px", // Añadido para limitar el ancho
+                    maxWidth: "500px",
                     border: "1px solid #ddd",
                     borderRadius: "8px",
                     marginBottom: "20px",
@@ -76,14 +95,19 @@ export default function About() {
                     <div className="text-center mb-4">
                       <h5 className="card-title">Factura #{venta.id}</h5>
                       <h6 className="card-subtitle mb-2 text-muted">
-                        Cliente: {clientes[venta.customer_id]?.name || "Cargando..."}
+                        Cliente: {clientes[venta.order.customer_id]?.name || "Cargando..."}
                       </h6>
                     </div>
 
                     <div className="mb-3">
-                      <p><strong>Fecha:</strong> {new Date(venta.date).toLocaleString()}</p>
-                      <p><strong>Pago por Transferencia:</strong> ${venta.transfer_payment}</p>
-                      <p><strong>Total:</strong> ${venta.total} <br />
+                      <p>
+                        <strong>Fecha:</strong> {new Date(venta.date).toLocaleString()}
+                      </p>
+                      <p>
+                        <strong>Pago por Transferencia:</strong> ${venta.transfer_payment}
+                      </p>
+                      <p>
+                        <strong>Total:</strong> ${venta.total} <br />
                         <strong>Saldo:</strong> ${venta.balance}
                       </p>
                     </div>
@@ -100,7 +124,7 @@ export default function About() {
                         </tr>
                       </thead>
                       <tbody>
-                        {venta.details.map((item, idx) => (
+                        {venta.order.items.map((item, idx) => (
                           <tr key={idx}>
                             <td>{productos[item.product_id]?.name || "Cargando..."}</td>
                             <td>{item.quantity}</td>
