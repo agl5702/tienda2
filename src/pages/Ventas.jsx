@@ -56,10 +56,6 @@ export default function About() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <>
       <div className="m-0" style={{ paddingLeft: "4.5rem" }}>

@@ -125,24 +125,24 @@ const FormProducto = () => {
           <form onSubmit={handleSubmit}>
             <div className="row m-0">
               <div className="col-md-6 mb-3">
-                <label>Nombre</label>
-                <input
+              <label className="fs-5" style={{ color: "#7c7979" }}>Nombre</label>
+              <input
                   type="text"
                   name="name"
                   value={producto.name}
                   onChange={handleChange}
-                  className="form-control"
+                  className="form-control fs-6"
                   required
                 />
               </div>
 
               <div className="col-md-6 mb-3">
-                <label>Categoría</label>
+              <label className="fs-5" style={{ color: "#7c7979" }}>Categoría</label>
                 <select
                   name="category_id"
                   value={producto.category_id}
                   onChange={handleChange}
-                  className="form-control"
+                  className="form-control fs-6"
                   required
                 >
                   <option value="">Selecciona una categoría</option>
@@ -153,12 +153,12 @@ const FormProducto = () => {
               </div>
 
               <div className="col-md-6 mb-3">
-                <label>Unidad</label>
+              <label className="fs-5" style={{ color: "#7c7979" }}>Unidad</label>
                 <select
                   name="unit"
                   value={producto.unit}
                   onChange={handleChange}
-                  className="form-control"
+                  className="form-control fs-6"
                   required
                 >
                   {unidades.map((u, i) => (
@@ -168,40 +168,40 @@ const FormProducto = () => {
               </div>
 
               <div className="col-md-6 mb-3">
-                <label>Precio de Compra</label>
+              <label className="fs-5" style={{ color: "#7c7979" }}>Precio de Compra</label>
                 <input
                   type="number"
                   step="0.01"
                   name="purchase_price"
                   value={producto.purchase_price}
                   onChange={handleChange}
-                  className="form-control"
+                  className="form-control fs-6"
                   required
                 />
               </div>
 
               <div className="col-md-6 mb-3">
-                <label>% Ganancia</label>
+              <label className="fs-5" style={{ color: "#7c7979" }}>% Ganancia</label>
                 <input
                   type="number"
                   step="0.1"
                   name="profit_percentage"
                   value={producto.profit_percentage}
                   onChange={handleChange}
-                  className="form-control"
+                  className="form-control fs-6"
                   required
                 />
               </div>
 
               <div className="col-md-6 mb-3">
-                <label>Precio de Venta</label>
+              <label className="fs-5" style={{ color: "#7c7979" }}>Precio de Venta</label>
                 <input
                   type="number"
                   step="0.01"
                   name="sale_price"
                   value={producto.sale_price}
                   onChange={handleChange}
-                  className="form-control"
+                  className="form-control fs-6"
                 />
               </div>
             </div>

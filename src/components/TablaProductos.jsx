@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllProducts, deleteProduct } from '../services/requests/products';
+import { BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { MdDelete } from "react-icons/md";
 
 const VentaTable = () => {
   const [productos, setProductos] = useState([]);
@@ -61,11 +63,11 @@ const VentaTable = () => {
                 <td>{producto.profit_percentage}%</td>
                 <td>${calcularPrecioVenta(producto)}</td>
                 <td>
-                  <Link to={`/productos/editar/${producto.id}`} className="btn mb-0 btn-warning btn-sm">
-                    Editar
+                  <Link to={`/productos/editar/${producto.id}`} className="btn mb-0 bg-info text-sm text-white btn-sm">
+                  <BsPencilSquare/> Editar
                   </Link>
-                  <button onClick={() => handleDelete(producto.id)} className="btn mb-0 btn-danger btn-sm ms-2">
-                    Eliminar
+                  <button onClick={() => handleDelete(producto.id)} className="btn mb-0 btn-dark text-sm btn-sm ms-2">
+                  <BsTrash /> Eliminar
                   </button>
                 </td>
               </tr>

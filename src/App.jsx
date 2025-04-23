@@ -5,6 +5,7 @@ import Ventas from './pages/Ventas';
 import Productos from './pages/Productos';
 import Categorias from './pages/Categorias';
 import FormCategoria from './pages/FormCategoria';
+import FormCliente from './pages/FormCliente';
 import FormProducto from './pages/FormProducto';
 import FormVentas from './pages/FormVentas';
 import Deudas from './pages/Deudas';
@@ -29,7 +30,11 @@ function App() {
         <Route path="/ventas" element={<Ventas />} />
         <Route path="/form_ventas/:id" element={<FormVentas />} />
         <Route path="/deudas" element={<Deudas />} />
+
         <Route path="/clientes" element={<Clientes />} />
+        <Route path="/cliente/nuevo" element={<FormCliente />} />
+        <Route path="/cliente/editar/:id" element={<FormCliente />} />
+
         <Route path="/devoluciones" element={<Devoluciones />} />
         <Route path="/users" element={<Users />} />
         <Route path="/reportes" element={<Reportes />} />

@@ -10,3 +10,19 @@ export const getCustomerById = async (id) => {
   return fetchData("GET", `/customers/${id}`);
 };
 
+// Crear un nuevo cliente
+export const createOneCustomer = async (data) => {
+  return fetchData("POST", "/customers/", data);
+};
+
+// Actualizar un cliente
+export const updateCustomer = async (id, data) => {
+  return fetchData("PATCH", `/customers/${id}`, data);
+};
+
+// Eliminar una categoría
+export const deleteCustomer = async (id) => {
+  return fetchData("DELETE", `/customers/${id}`);
+};
+
+
