@@ -126,8 +126,8 @@ const MenuInferior = () => {
 
                     {/* BOTÓN "+" PARA CREAR NUEVA ORDEN */}
                     <button onClick={registerOrders} className="col-auto text-center my-1 border-start border-1 position-sticky" style={{ right: "0px", backgroundColor: "#1b1b1b", border: "none" }}>
-                        <div className="border-radius-md px-3 py-1 border cursor-pointer">
-                            <span className="text-white text-bold" style={{ fontSize: "16px" }}>+</span>
+                        <div className="border-radius-md bg-info px-3 py-1 cursor-pointer">
+                            <span className="text-white text-bold" style={{ fontSize: "18px" }}>+</span>
                         </div>
                     </button>
 

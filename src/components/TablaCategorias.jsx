@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllCategories, deleteCategory } from '../services/requests/categories';
+import { BsPencilSquare, BsTrash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
 const CategoriaTable = () => {
@@ -46,11 +47,11 @@ const CategoriaTable = () => {
                 <td>{cat.name}</td>
                 <td>{cat.description}</td>
                 <td>
-                  <Link to={`/categorias/editar/${cat.id}`} className="btn mb-0 btn-warning btn-sm">
-                    Editar
+                  <Link to={`/categorias/editar/${cat.id}`} className="btn mb-0 bg-info text-sm text-white btn-sm">
+                   <BsPencilSquare/> Editar
                   </Link>
-                  <button onClick={() => handleDelete(cat.id)} className="btn mb-0 btn-danger btn-sm ms-2">
-                    Eliminar
+                  <button onClick={() => handleDelete(cat.id)}  className="btn mb-0 btn-dark text-sm btn-sm ms-2">
+                   <BsTrash /> Eliminar
                   </button>
                 </td>
               </tr>

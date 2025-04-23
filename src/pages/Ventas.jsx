@@ -68,7 +68,7 @@ export default function About() {
               className="btn p-0 bg-transparent border-0 d-flex align-items-center justify-content-center"
               style={{ fontSize: "50px" }}
             >
-              <FaCirclePlus color="green" />
+              <FaCirclePlus className="text-info" />
             </button>
             <h3 className="text-dark mb-4 text-center">Listado de Ventas</h3>
 
