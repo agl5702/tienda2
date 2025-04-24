@@ -29,8 +29,14 @@ export default function About() {
   const registerOrder = async () => {
     try {
       const newOrder = {
-        customer_id: 2,
-        items: [{ product_id: 4, quantity: 0, price_unit: 0 }],
+        customer_id: 7,
+        items: [
+          {
+            product_id: 15,
+            quantity: 0,
+            price_unit: 0,
+          },
+        ],
       };
       const createdOrder = await createOrder(newOrder);
       navigate(`/form_ventas/${createdOrder.id}`);
