@@ -42,8 +42,9 @@ const OrderForm = ({ orden: propOrden }) => {
     (async () => {
       try {
         const data = await getAllCustomers();
-        setCustomers(data);
-        setFilteredCustomers(data);
+        const filtered = data.filter((c) => c.name && c.name.trim() !== "");
+        setCustomers(filtered);
+        setFilteredCustomers(filtered);
       } catch (err) {
         console.error("Error al obtener clientes:", err);
       } finally {

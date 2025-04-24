@@ -11,11 +11,13 @@ const CategoriaTable = () => {
   const fetchCustomers = async () => {
     try {
       const data = await getAllCustomers();
-      setCustomers(data);
+      const filtrados = data.filter(c => c.name && c.name.trim() !== '');
+      setCustomers(filtrados);
     } catch (error) {
       console.error('Error al obtener el usuario:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchCustomers();
@@ -67,7 +69,7 @@ const CategoriaTable = () => {
               <div className="card border p-2">
                 <div className="row">
                   <div className="col-lg-4 col-md-4 text-center my-auto">
-                    <img className="avatar avatar-xl border-radius-lg" src="https://w7.pngwing.com/pngs/312/283/png-transparent-man-s-face-avatar-computer-icons-user-profile-business-user-avatar-blue-face-heroes-thumbnail.png"/>
+                    <img className="avatar avatar-xl border-radius-lg" src={customer.avatar}/>
                     <br />
                     <span className="text-xs mb-0">CC. {customer.cc}</span>
                   </div>
