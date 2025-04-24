@@ -119,6 +119,20 @@ const FormCustomer = () => {
                 />
               </div>
             </div>
+
+            <div className="col-12 col-md-6">
+              <div className="form-group mt-2">
+                <label className='mb-n3'>Dirección</label>
+                <input
+                  type="text"
+                  name="direction"
+                  value={customer.avatar}
+                  onChange={handleChange}
+                  className="form-control border ps-2"
+                  required
+                />
+              </div>
+            </div>
             <div className="col-12 col-md-6 mt-2">
               <div className="card border px-4 py-2">
               <label className="text-center">Selecciona un avatar</label>
@@ -131,7 +145,7 @@ const FormCustomer = () => {
                         key={num}
                         src={`/img/avatars/${filename}`}
                         alt={`Avatar ${num}`}
-                        onClick={() => setCustomer(prev => ({ ...prev, avatar: filename }))}
+                        onClick={() => setCustomer(prev => ({ ...prev, avatar: `/img/avatars/${filename}` }))}
                         style={{
                           width: '80px',
                           height: '80px',
