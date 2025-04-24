@@ -69,7 +69,7 @@ const VentaTable = () => {
         />
       </div>
       <div className="table-responsive">
-        <table className="table table-bordered table-striped">
+        <table className="table table-bordered table-striped  align-items-center ">
           <thead className="table bg-gradient-dark text-white">
             <tr>
               <th>Producto</th>
@@ -85,7 +85,20 @@ const VentaTable = () => {
             {productosFiltrados.length > 0 ? (
               productosFiltrados.map((producto) => (
                 <tr key={producto.id}>
-                  <td>{producto.name}</td>
+                  <td>
+                    <div className="row m-0">
+                      <div className="col-auto">
+                        <img
+                          src={producto.image_url || 'https://i.postimg.cc/pdtpX3ZN/Captura-de-pantalla-2024-09-13-010502.png'}
+                          className="img-fluid rounded-circle"
+                          style={{ width: '30px', height: '30px' }}
+                        />
+                      </div>
+                      <div className="col-auto">
+                        {producto.name}
+                      </div>
+                    </div>
+                  </td>
                   <td>{producto.category?.name || 'Sin categoría'}</td>
                   <td>{producto.unit || '---'}</td>
                   <td>${producto.purchase_price?.toFixed(2)}</td>

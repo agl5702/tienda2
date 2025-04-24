@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { createProduct, getProductById, updateProduct } from '../services/requests/products';
 import { getAllCategories } from '../services/requests/categories';
 import Sidebar from "../components/Sidebar.jsx";
-import AlertaProductoImg from "../components/AlertaProductoImg.jsx";
 import Swal from 'sweetalert2';
 
 
