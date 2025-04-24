@@ -129,14 +129,14 @@ const Sidebar = () => {
       </NavLink>
 
      
-      <div className="mx-auto">
+      <div className="mx-auto d-none">
         <Visor />
       </div>
 
        {/* Botón de pantalla completa */}
-       <div className="text-center my-2">
-        <button onClick={toggleFullscreen} className="btn btn-sm mx-auto btn-outline-light">
-          <MdFullscreen size={20} />
+       <div className="my-1 p-1 text-center card-menu mx-2 mt-auto">
+        <button onClick={toggleFullscreen} className="btn btn-sm border m-0 ms-n1">
+          <MdFullscreen size={20} color="white" className="simbolo-icon" />
         </button>
       </div>
 

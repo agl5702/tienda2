@@ -12,7 +12,8 @@ const CategoriaTable = () => {
   const fetchCategorias = async () => {
     try {
       const data = await getAllCategories();
-      setCategorias(data);
+      const filtrados = data.filter(c => c.name && c.name.trim() !== '');
+      setCategorias(filtrados);
     } catch (error) {
       console.error('Error al obtener categorías:', error);
     }

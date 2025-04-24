@@ -11,9 +11,11 @@ const List = ({ onAgregarProducto }) => {
     const fetchProductos = async () => {
       try {
         const data = await getAllProducts();
-        const productosFormateados = data.map((p) => ({
+        const filtrados = data.filter(c => c.name && c.name.trim() !== '');
+        const productosFormateados = filtrados.map((p) => ({
           ...p,
           nombre: p.name,
+          image_url: p.image_url,
           precio: p.sale_price,
           cantidad: 1,
         }));
@@ -68,7 +70,7 @@ const List = ({ onAgregarProducto }) => {
                   <div className="d-flex gap-3">
                     <div>
                       <img
-                        src={producto.image_url || 'https://via.placeholder.com/70x60'}
+                        src={producto.image_url || 'https://i.postimg.cc/pdtpX3ZN/Captura-de-pantalla-2024-09-13-010502.png'}
                         alt=""
                         width="60px"
                         height="50px"

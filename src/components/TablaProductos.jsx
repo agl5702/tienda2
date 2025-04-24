@@ -12,7 +12,8 @@ const VentaTable = () => {
   const fetchProductos = async () => {
     try {
       const data = await getAllProducts();
-      setProductos(data);
+      const filtrados = data.filter(c => c.name && c.name.trim() !== '');
+      setProductos(filtrados);
     } catch (error) {
       console.error('Error al obtener productos:', error);
     }
