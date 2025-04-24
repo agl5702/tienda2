@@ -4,8 +4,7 @@ import './css/Ventas.css';
 
 const List = ({ onAgregarProducto }) => {
   const [filtroNombre, setFiltroNombre] = useState('');
-  const [productos, setProductos] = useState([]); // ← Aquí se arregla
-
+  const [productos, setProductos] = useState([]);
   const [altura, setAltura] = useState("90vh");
 
   useEffect(() => {
@@ -82,6 +81,7 @@ const List = ({ onAgregarProducto }) => {
                     </div>
                     <div className="my-auto">
                       <button
+                        onClick={() => onAgregarProducto(producto)} // Aquí llamamos a la función al hacer clic
                         className="btn col btn-sm border my-auto border-info text-info"
                       >
                         +

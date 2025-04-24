@@ -19,9 +19,12 @@ return fetchData("POST", "/orders/", data);
 // Eliminar un producto
 export const deleteOrder = async (id) => {
     return fetchData("DELETE", `/orders/${id}/`);
-  };
+};
 
 export const putOrder = async (id, data) => {
   return fetchData("PUT", `/orders/${id}/`, data);
 };
-  
+
+export const patchOrder = async (id, data) => {
+  return fetchData("PUT", `/orders/${id}/`, data);
+};
