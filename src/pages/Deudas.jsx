@@ -1,9 +1,9 @@
-import Nav from "../components/Nav.jsx";
+import TablaDeudas from "../components/TablaDeudas.jsx"
 import Sidebar from "../components/Sidebar.jsx";
-import { FaBoxOpen, FaUsers, FaDollarSign, FaShoppingCart } from "react-icons/fa";
+import { Link } from 'react-router-dom';
+import React from 'react';
 
-
-export default function Deudas() {
+export default function Categorias() {
   return (
     <>
 
@@ -11,54 +11,16 @@ export default function Deudas() {
 
         <Sidebar />
 
-        <div className="col" style={{ minHeight: "100vh" }}>
-        <div className="container-fluid py-4">
-        <h2 className="text-dark mb-4">Deudas</h2>
-
-        {/* Tabla o historial */}
-        <div className="row">
-          <div className="col-12">
-            <div className="card bg-dark text-white border-0 shadow-sm">
-              <div className="card-header border-bottom">
-                <h5 className="mb-0 text-dack">Tabla de deudas</h5>
+        <div className="col p-2" style={{ minHeight: "100vh" }}>
+            <div className="card p-2">
+              <div className="row m-0">
+                <h3 className="col my-auto">Deudores</h3>
+                <div className="my-auto col-auto">
+                  <Link to="/cliente/nuevo" className="btn bg-info text-white btn-sm my-2">nuevo clientes</Link>
+                </div>
               </div>
-              <div className="table-responsive p-0">
-                <table className="table table-dark table-striped mb-0">
-                  <thead>
-                    <tr>
-                      <th>Cliente</th>
-                      <th>Producto</th>
-                      <th>Fecha</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Juan Pérez</td>
-                      <td>Smartphone</td>
-                      <td>2025-04-17</td>
-                      <td>$300</td>
-                    </tr>
-                    <tr>
-                      <td>Ana Gómez</td>
-                      <td>Laptop</td>
-                      <td>2025-04-16</td>
-                      <td>$850</td>
-                    </tr>
-                    <tr>
-                      <td>Carlos Ruiz</td>
-                      <td>Teclado</td>
-                      <td>2025-04-15</td>
-                      <td>$45</td>
-                    </tr>
-                    {/* Más registros si quieres... */}
-                  </tbody>
-                </table>
-              </div>
+                <TablaDeudas/>
             </div>
-          </div>
-        </div>
-    </div>
         </div>
         
       </div>

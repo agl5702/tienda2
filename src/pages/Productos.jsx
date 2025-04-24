@@ -12,7 +12,7 @@ export default function Productos() {
         <div className="col p-2" style={{ minHeight: "100vh" }}>
             <div className="card p-2">
               <div className="row m-0">
-                <h2 className="col my-auto">Lista de Productos</h2>
+                <h3 className="col my-auto">Lista de Productos</h3>
                 <div className="my-auto col-auto">
                   <Link to="/form_producto" className="btn bg-info text-white btn-sm my-2">nuevo producto</Link>
                 </div>

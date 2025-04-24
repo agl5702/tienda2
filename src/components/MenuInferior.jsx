@@ -161,6 +161,7 @@ const MenuInferior = () => {
                 </NavLink>
               ))}
 
+<<<<<<< HEAD
           {/* BOTÓN "+" PARA CREAR NUEVA ORDEN */}
           <button
             type="button" // ← IMPORTANTE: evita el submit involuntario
@@ -175,6 +176,115 @@ const MenuInferior = () => {
               >
                 +
               </span>
+||||||| ae4a175
+    useEffect(() => {
+        FechOrders(); // Solo obtenemos las órdenes al montar el componente
+    }, []);
+
+    return (
+        <div className="col w-100 position-fixed bottom-0 end-0 py-1" style={{ backgroundColor: "#1b1b1b", zIndex: "997" }}>
+            <div style={{ paddingLeft: "4.5rem" }}>
+                <div className="d-flex table-responsive m-0 p-0">
+
+                    <NavLink to="/ventas" className={({ isActive }) => `col-2 col-md-1 carrito py-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                        {({ isActive }) => (
+                            <div className="p-1 text-center">
+                                <IoCartOutline color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon " />
+                            </div>
+                        )}
+                    </NavLink>
+
+                    {orders.length > 0 ? (
+                        orders
+                            .filter(order => order.status === "pending")
+                            .map((order) => (
+                                <NavLink key={order.id} to={`/form_ventas/${order.id}`} className={({ isActive }) => `col-auto ventana my-auto border-end py-1 border-1 ${isActive ? 'active-link' : ''}`}>
+                                    {({ isActive }) => (
+                                        <div className="p-1 position-relative">
+                                            <div onClick={(e) => {
+                                                e.preventDefault(); // Evita que el NavLink se dispare
+                                                e.stopPropagation();
+                                                handleDeleteOrder(order.id);
+                                                }}
+                                            className='text-center' 
+                                            style={{
+                                                position: "absolute", fontFamily: "sans-serif", top: "6px", right: "5px",
+                                                width: "20px", height: "20px", backgroundColor: "#2d2d2d", color: "white",
+                                                fontSize: "12px", borderRadius: "50%", cursor: "pointer"
+                                            }}>x</div>
+                                            <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{ fontSize: "17px" }} />
+                                            <span className="text-white d-none d-sm-inline"> {order.id}</span>
+                                        </div>
+                                    )}
+                                </NavLink>
+                            ))
+                    ) : (
+                        <div className="d-none"></div>
+                    )}
+
+                    {/* BOTÓN "+" PARA CREAR NUEVA ORDEN */}
+                    <button onClick={registerOrders} className="col-auto text-center my-1 border-start border-1 position-sticky" style={{ right: "0px", backgroundColor: "#1b1b1b", border: "none" }}>
+                        <div className="border-radius-md bg-info px-3 py-1 cursor-pointer">
+                            <span className="text-white text-bold" style={{ fontSize: "18px" }}>+</span>
+                        </div>
+                    </button>
+
+                </div>
+=======
+    useEffect(() => {
+        FechOrders(); // Solo obtenemos las órdenes al montar el componente
+    }, []);
+
+    return (
+        <div className="col w-100 position-fixed bottom-0 end-0 py-1" style={{ backgroundColor: "#1b1b1b", zIndex: "997" }}>
+            <div style={{ paddingLeft: "4.5rem" }}>
+                <div className="d-flex table-responsive m-0 p-0">
+
+                    <NavLink to="/ventas" className={({ isActive }) => `col-2 col-md-1 carrito py-1 border-end border-1 ${isActive ? 'active-link' : ''}`}>
+                        {({ isActive }) => (
+                            <div className="p-1 text-center">
+                                <IoCartOutline color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon " />
+                            </div>
+                        )}
+                    </NavLink>
+
+                    {orders.length > 0 ? (
+                        orders
+                            .filter(order => order.status === "pending")
+                            .map((order) => (
+                                <NavLink key={order.id} to={`/form_ventas/${order.id}`} className={({ isActive }) => `col-auto ventana my-auto border-end py-1 border-1 ${isActive ? 'active-link' : ''}`}>
+                                    {({ isActive }) => (
+                                        <div className="p-1 position-relative">
+                                            <div onClick={(e) => {
+                                                e.preventDefault(); // Evita que el NavLink se dispare
+                                                e.stopPropagation();
+                                                handleDeleteOrder(order.id);
+                                                }}
+                                            className='text-center' 
+                                            style={{
+                                                position: "absolute", fontFamily: "sans-serif", top: "6px", right: "5px",
+                                                width: "20px", height: "20px", backgroundColor: "#2d2d2d", color: "white",
+                                                fontSize: "12px", borderRadius: "50%", cursor: "pointer"
+                                            }}>x</div>
+                                            <FaClipboardList color={isActive ? '#00bfff' : '#fff'} className="simbolo-icon mt-n1" style={{ fontSize: "17px" }} />
+                                            <span className="text-white d-none d-sm-inline"> {order.id}</span>
+                                        </div>
+                                    )}
+                                </NavLink>
+                            ))
+                    ) : (
+                        <div className="d-none"></div>
+                    )}
+
+                    {/* BOTÓN "+" PARA CREAR NUEVA ORDEN */}
+                    <button onClick={registerOrders} className="col-auto text-center border-start border-1 position-sticky" style={{ right: "0px", backgroundColor: "#1b1b1b", border: "none" }}>
+                        <div className="border-radius-md bg-info px-3 py-1 cursor-pointer">
+                            <span className="text-white text-bold" style={{ fontSize: "18px" }}>+</span>
+                        </div>
+                    </button>
+
+                </div>
+>>>>>>> 9f439cca29ae09cb8beb89201bab96673c38505d
             </div>
           </button>
         </div>

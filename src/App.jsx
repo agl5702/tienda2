@@ -27,9 +27,12 @@ function App() {
         <Route path="/productos" element={<Productos />} />
         <Route path="/form_producto" element={<FormProducto />} />
         <Route path="/productos/editar/:id" element={<FormProducto/>} />
+
         <Route path="/ventas" element={<Ventas />} />
         <Route path="/form_ventas/:id" element={<FormVentas />} />
+
         <Route path="/deudas" element={<Deudas />} />
+        <Route path="/cliente/agregar/:id" element={<FormCliente />} />
 
         <Route path="/clientes" element={<Clientes />} />
         <Route path="/cliente/nuevo" element={<FormCliente />} />

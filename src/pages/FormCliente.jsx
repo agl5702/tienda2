@@ -119,7 +119,38 @@ const FormCustomer = () => {
                 />
               </div>
             </div>
+            <div className="col-12 col-md-6 mt-2">
+              <div className="card border px-4 py-2">
+              <label className="text-center">Selecciona un avatar</label>
+                <div className="row justify-content-center">
+                  {[ 5, 4, 1, 2, 3, 7, 8, 9].map((num) => {
+                    const filename = `Recurso${num}.png`;
+                    const isSelected = customer.avatar === filename;
+                    return (
+                      <img
+                        key={num}
+                        src={`/img/avatars/${filename}`}
+                        alt={`Avatar ${num}`}
+                        onClick={() => setCustomer(prev => ({ ...prev, avatar: filename }))}
+                        style={{
+                          width: '80px',
+                          height: '80px',
+                          cursor: 'pointer',
+                          border: isSelected ? '3px solid #17a2b8' : '2px solid #ccc',
+                          borderRadius: '50%',
+                          padding: '2px',
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            
           </div>
+          </div>
+
+          
+
 
           <div className="text-center py-2 mt-2">
           <button type="button" className="btn btn-secondary mb-0" onClick={() => navigate('/clientes')}>

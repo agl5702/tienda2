@@ -14,7 +14,7 @@ export default function Categorias() {
         <div className="col p-2" style={{ minHeight: "100vh" }}>
             <div className="card p-2">
               <div className="row m-0">
-                <h2 className="col my-auto">Clientes</h2>
+                <h3 className="col my-auto">Clientes</h3>
                 <div className="my-auto col-auto">
                   <Link to="/cliente/nuevo" className="btn bg-info text-white btn-sm my-2">nuevo clientes</Link>
                 </div>
