@@ -18,10 +18,10 @@ const MenuInferior = () => {
   const registerOrders = async () => {
     try {
       const newOrder = {
-        customer_id: 2,
+        customer_id: 7,
         items: [
           {
-            product_id: 4,
+            product_id: 15,
             quantity: 0,
             price_unit: 0,
           },
