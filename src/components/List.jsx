@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { getAllProducts } from '../services/requests/products';
-import './css/Ventas.css';
+import React, { useState, useEffect } from "react";
+import { getAllProducts } from "../services/requests/products";
+import "./css/Ventas.css";
 
 const List = ({ onAgregarProducto }) => {
-  const [filtroNombre, setFiltroNombre] = useState('');
+  const [filtroNombre, setFiltroNombre] = useState("");
   const [productos, setProductos] = useState([]);
   const [altura, setAltura] = useState("90vh");
 
@@ -19,7 +19,7 @@ const List = ({ onAgregarProducto }) => {
         }));
         setProductos(productosFormateados);
       } catch (error) {
-        console.error('Error al obtener productos:', error);
+        console.error("Error al obtener productos:", error);
       }
     };
 
@@ -30,15 +30,15 @@ const List = ({ onAgregarProducto }) => {
 
     fetchProductos();
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   const limpiarInput = () => {
-    setFiltroNombre('');
+    setFiltroNombre("");
   };
 
   const productosFiltrados = productos.filter((producto) =>
@@ -56,19 +56,33 @@ const List = ({ onAgregarProducto }) => {
             value={filtroNombre}
             onChange={(e) => setFiltroNombre(e.target.value)}
           />
-          <button onClick={limpiarInput} className="bg-danger btn btn-sm text-white mb-0">x</button>
+          <button
+            onClick={limpiarInput}
+            className="bg-danger btn btn-sm text-white mb-0"
+          >
+            x
+          </button>
         </div>
       </div>
-      <div className="p-0 list border-bottom border-3 border-radius-2xl p-0 m-0" style={{ height: altura, overflowY: "auto" }}>
+      <div
+        className="p-0 list border-bottom border-3 border-radius-2xl p-0 m-0"
+        style={{ height: altura, overflowY: "auto" }}
+      >
         <div className="row m-0">
           {productosFiltrados.length > 0 ? (
             productosFiltrados.map((producto) => (
-              <div key={producto.id} className="col-12 col-sm-6 col-md-12 px-1 pt-1 pb-0">
+              <div
+                key={producto.id}
+                className="col-12 col-sm-6 col-md-12 px-1 pt-1 pb-0"
+              >
                 <div className="card p-2 text-center">
                   <div className="d-flex gap-3">
                     <div>
                       <img
-                        src={producto.image_url || 'https://via.placeholder.com/70x60'}
+                        src={
+                          producto.image_url ||
+                          "https://via.placeholder.com/70x60"
+                        }
                         alt=""
                         width="60px"
                         height="50px"
