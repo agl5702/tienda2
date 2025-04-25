@@ -39,8 +39,8 @@ const Sidebar = () => {
   return (
     <div id="sidebar" className="d-flex flex-column" style={{ backgroundColor: "#1b1b1b" }}>
       <NavLink to="/" className="border-bottom text-center mt-2 mb-1 pb-1">
-        <img src="/react.svg" alt="imglogo" style={{ width: "30px" }} />
-        <span className="text-white">Tienda</span>
+        <img src="/logo3.png" alt="imglogo" style={{ width: "30px" }} />
+        <span className="text-white">OCloud</span>
       </NavLink>
 
       <NavLink to="/" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>

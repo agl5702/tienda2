@@ -31,6 +31,9 @@ const OrderForm = ({ orden: propOrden }) => {
   const [loadingCustomers, setLoadingCustomers] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
+
+
   useEffect(() => {
     if (propOrden) {
       setOrder(propOrden);
@@ -123,7 +126,13 @@ const OrderForm = ({ orden: propOrden }) => {
         showConfirmButton: false,
         timer: 1000,
       });
-      navigate("/ventas");
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "La orden ha sido guardada.",
+        showConfirmButton: false,
+        timer: 500,
+      });
     } catch (err) {
       console.error(err);
       Swal.fire({ icon: "error", title: "Error al eliminar pedido" });
@@ -152,7 +161,13 @@ const OrderForm = ({ orden: propOrden }) => {
         orderId = created.id;
         setOrder((o) => ({ ...o, id: orderId }));
       }
-      navigate("/ventas");
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "La orden ha sido guardada.",
+        showConfirmButton: false,
+        timer: 500,
+      });
     } catch (err) {
       console.error(err);
       Swal.fire({ icon: "error", title: "Error al guardar pedido" });
@@ -170,45 +185,86 @@ const OrderForm = ({ orden: propOrden }) => {
   );
 
   return (
-    <div className="card p-3">
+    <div className="card mb-6 p-3">
+      <div className="col d-flex">
       <h4>Orden #{order.id ?? "(nueva)"}</h4>
-      <p>
-        <strong>Fecha:</strong> {new Date(order.date).toLocaleString()}
+      <p className="text-muted text-end ms-auto my-auto">
+        {new Date(order.date).toLocaleString()}
       </p>
-      <p>
-        <strong>Total:</strong> $
-        {visibleItems.reduce(
-          (sum, i) => sum + i.quantity * i.product.sale_price,
-          0
-        )}
-      </p>
+      </div>
 
-      <h5>Seleccionar Cliente</h5>
-      {loadingCustomers ? (
-        <p>Cargando clientes…</p>
-      ) : (
-        <>
-          <input
-            type="text"
-            placeholder="Buscar por nombre..."
-            className="form-control mb-2"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <select
-            className="form-select mb-4"
-            value={selectedCustomer}
-            onChange={handleCustomerChange}
-          >
-            <option value="">-- Seleccione un cliente --</option>
-            {filteredCustomers.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </>
+      <div className="d-flex mb-2">
+        <button className="btn bg-info btn-sm text-white" onClick={() => setShowModal(true)}>
+          {order.customer? "Cambiar Cliente" : "Seleccionar Cliente"}
+        </button>
+        <div className="ps-2 my-auto">
+        {order.customer ? (
+        <span className="text-dark">
+          <strong>Seleccionado:</strong> {order.customer.name}
+        </span>
+        ) : (
+          <p className="text-muted my-auto">Ningún cliente seleccionado</p>
+        )}
+        </div>
+        
+      </div>
+      
+      
+
+      
+
+      {/* Modal */}
+      {showModal && (
+        <div className="modal d-block" tabIndex="-1">
+          <div className="modal-dialog modal-dialog-scrollable">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Seleccionar Cliente</h5>
+                <button
+                  type="button"
+                  className="btn-close bg-danger"
+                  onClick={() => setShowModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <input
+                  type="text"
+                  className="form-control border ps-3 mb-2"
+                  placeholder="Buscar cliente..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    const filtered = customers.filter((c) =>
+                      c.name.toLowerCase().includes(e.target.value.toLowerCase())
+                    );
+                    setFilteredCustomers(filtered);
+                  }}
+                />
+                <ul className="list-group">
+                  {filteredCustomers.map((c) => (
+                    <li
+                      key={c.id}
+                      className="list-group-item list-group-item-action"
+                      onClick={() => {
+                        setOrder((o) => ({ ...o, customer: c }));
+                        setSelectedCustomer(c.id);
+                        handleSubmit(); // simula el evento de submit
+                        setShowModal(false);
+                        // Ejecutar el guardado automáticamente después de seleccionar cliente
+                        
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {c.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
+
 
       <h5>Productos</h5>
       <ul className="list-group mb-3">
@@ -235,6 +291,14 @@ const OrderForm = ({ orden: propOrden }) => {
           <li className="list-group-item">No hay productos agregados.</li>
         )}
       </ul>
+
+      <p className="ms-auto">
+        <strong>Total:</strong> $
+        {visibleItems.reduce(
+          (sum, i) => sum + i.quantity * i.product.sale_price,
+          0
+        )}
+      </p>
 
       <div className="d-flex justify-content-between">
         <button

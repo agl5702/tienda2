@@ -120,13 +120,13 @@ const FormCustomer = () => {
               </div>
             </div>
 
-            <div className="col-12 col-md-6">
+            <div className="col-12 col-md-6 d-none">
               <div className="form-group mt-2">
-                <label className='mb-n3'>Dirección</label>
+                <label className='mb-n3'>Avatar</label>
                 <input
                   type="text"
                   name="direction"
-                  value={customer.avatar}
+                  value={customer.avatar || "/img/avatars/Recurso5.png"}
                   onChange={handleChange}
                   className="form-control border ps-2"
                   required
@@ -135,6 +135,10 @@ const FormCustomer = () => {
             </div>
             <div className="col-12 col-md-6 mt-2">
               <div className="card border px-4 py-2">
+                <div className="col text-center">
+                <img src={customer.avatar || "/img/avatars/Recurso5.png"} alt="Avatar" style={{ width: '80px', height: '80px', borderRadius: '50%' }} />
+                </div>
+
               <label className="text-center">Selecciona un avatar</label>
                 <div className="row justify-content-center">
                   {[ 5, 4, 1, 2, 3, 7, 8, 9].map((num) => {
