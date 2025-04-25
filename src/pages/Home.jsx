@@ -7,6 +7,7 @@ import {
   FaDollarSign,
   FaShoppingCart,
 } from "react-icons/fa";
+
 export default function About() {
   return (
     <>
@@ -14,12 +15,12 @@ export default function About() {
         <Sidebar />
 
         <div className="col" style={{ minHeight: "100vh" }}>
-          <div className="container-fluid py-4">
-            <h2 className="text-dark mb-4">Panel de Inicio</h2>
+          <div className="container-fluid">
+            <h3 className="text-dark text-center my-1">Panel de Inicio</h3>
 
             <div className="row">
               {/* Ventas Totales */}
-              <div className="col-md-3 mb-4">
+              <div className="col-sm-6 col-lg-3 mb-4 ">
                 <div className="card shadow-sm border-0 bg-gradient-primary text-white">
                   <div className="card-body d-flex align-items-center justify-content-between">
                     <div>
@@ -32,7 +33,7 @@ export default function About() {
               </div>
 
               {/* Productos */}
-              <div className="col-md-3 mb-4">
+              <div className="col-sm-6 col-lg-3 mb-4 ">
                 <div className="card shadow-sm border-0 bg-gradient-info text-white">
                   <div className="card-body d-flex align-items-center justify-content-between">
                     <div>
@@ -45,7 +46,7 @@ export default function About() {
               </div>
 
               {/* Pedidos del día */}
-              <div className="col-md-3 mb-4">
+              <div className="col-sm-6 col-lg-3 mb-4 ">
                 <div className="card shadow-sm border-0 bg-gradient-warning text-white">
                   <div className="card-body d-flex align-items-center justify-content-between">
                     <div>
@@ -58,7 +59,7 @@ export default function About() {
               </div>
 
               {/* Clientes */}
-              <div className="col-md-3 mb-4">
+              <div className="col-sm-6 col-lg-3 mb-4 ">
                 <div className="card shadow-sm border-0 bg-gradient-success text-white">
                   <div className="card-body d-flex align-items-center justify-content-between">
                     <div>
@@ -71,7 +72,9 @@ export default function About() {
               </div>
             </div>
 
-            <SalesDashboard />
+            <div className="col ">
+                <SalesDashboard />
+            </div>
 
           </div>
         </div>

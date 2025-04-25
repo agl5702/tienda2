@@ -108,7 +108,7 @@ const Sidebar = () => {
         )}
       </NavLink>
 
-      <NavLink to="/users" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
+      {/* <NavLink to="/users" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
         {({ isActive }) => (
           <>
             <FaUserCog color={isActive ? '#00bfff' : ''} className="simbolo-icon" />
@@ -116,7 +116,7 @@ const Sidebar = () => {
             <span className={isActive ? 'selector' : 'no-selector'}></span>
           </>
         )}
-      </NavLink>
+      </NavLink> */}
 
       <NavLink to="/reportes" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
         {({ isActive }) => (

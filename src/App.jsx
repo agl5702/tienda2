@@ -39,7 +39,7 @@ function App() {
         <Route path="/cliente/editar/:id" element={<FormCliente />} />
 
         <Route path="/devoluciones" element={<Devoluciones />} />
-        <Route path="/users" element={<Users />} />
+        {/* <Route path="/users" element={<Users />} /> */}
         <Route path="/reportes" element={<Reportes />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
