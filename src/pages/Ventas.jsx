@@ -580,7 +580,7 @@ export default function Ventas() {
             className="col-11 d-flex justify-content-center align-items-center"
             style={{ height: "100vh" }}
           >
-            <div className="spinner-border text-primary" role="status">
+            <div className="spinner-border text-info" role="status">
               <span className="visually-hidden">Cargando...</span>
             </div>
           </div>
@@ -715,7 +715,7 @@ export default function Ventas() {
                                     Completar
                                   </button>
                                   <button
-                                    className="btn btn-primary btn-sm"
+                                    className="btn btn-info btn-sm"
                                     onClick={() =>
                                       editarOrdenPendiente(orden.id)
                                     }
@@ -815,7 +815,7 @@ export default function Ventas() {
                       </div>
                       <div>
                         <button
-                          className="btn btn-primary me-2"
+                          className="btn btn-info me-2"
                           onClick={() => actualizarOrden(id)}
                         >
                           Guardar Orden
@@ -844,7 +844,7 @@ export default function Ventas() {
                             <button
                               key={cliente.id}
                               className={`btn d-flex align-items-center ${
-                                isActive ? "btn-primary" : "btn-outline-primary"
+                                isActive ? "btn-info" : "btn-outline-info"
                               }`}
                               onClick={() =>
                                 cambiarUsuarioVenta(id, cliente.id)
@@ -902,7 +902,7 @@ export default function Ventas() {
                                     <p>${p.sale_price}</p>
                                     <div className="d-flex justify-content-between">
                                       <button
-                                        className="btn btn-primary btn-sm"
+                                        className="btn btn-info btn-sm"
                                         onClick={() =>
                                           agregarProductoAVenta(id, p)
                                         }
