@@ -13,6 +13,7 @@ const FormProducto = () => {
 
   const [producto, setProducto] = useState({
     name: '',
+    state: false,
     image_url: '',
     category_id: '',
     unit: '',
@@ -39,6 +40,7 @@ const FormProducto = () => {
       getProductById(id).then(data => {
         setProducto({
           name: data.name,
+          state: data.state,
           category_id: data.category.id,
           unit: data.unit,
           image_url: data.image_url || 'https://biblioteca.acropolis.org/wp-content/uploads/2014/12/azul.png', // Asegúrate de que la URL de la imagen esté definida
@@ -109,7 +111,7 @@ const FormProducto = () => {
 
     const productoConPrecioVenta = {
       ...producto,
-      state: true  // Agregar state como true
+      // state: true  // Agregar state como true
     };
 
     try {
@@ -133,7 +135,7 @@ const FormProducto = () => {
         showConfirmButton: false,
         showCancelButton: false,
         html: `
-          <p>Dirigete a la pagina y selecciona la imagen a subir:</p><img class="w-50" src="/img/guia1.png" alt="guia1"><p>Espera que cargue la imagen y copia la URL que dice "Enlace directo"</p><img class="w-80" src="/img/guia3.png" alt="guia1"><p>luego vuelve y pega la URL copiada</p><a class="btn bg-info text-white" href="https://postimages.org/" target="_blank">ir a la pagina</a>
+          <p>Dirigete a la pagina y selecciona la imagen a subir:</p><img className="w-50" src="/img/guia1.png" alt="guia1"><p>Espera que cargue la imagen y copia la URL que dice "Enlace directo"</p><img className="w-80" src="/img/guia3.png" alt="guia1"><p>luego vuelve y pega la URL copiada</p><a className="btn bg-info text-white" href="https://postimages.org/" target="_blank">ir a la pagina</a>
         `, // Aquí usas HTML
       });
     };
@@ -174,8 +176,28 @@ const FormProducto = () => {
                 </select>
               </div>
 
-              <div className="col-md-6 mb-3">
-              <label className="">Unidad</label>
+
+              <div className="col-md-6 d-flex mb-3">
+
+              <div className="col-auto border border-radius-2xl mb-3 p-2">
+                <label className="form-label d-block">¿Declara?</label>
+                <div className="form-check form-switch">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="stateSwitch"
+                    checked={producto.state}
+                    onChange={() =>
+                      setProducto((prev) => ({ ...prev, state: !prev.state }))
+                    }
+                  />
+                  <label className="form-check-label ms-2" htmlFor="stateSwitch">
+                    {producto.state ? 'Sí' : 'No'}
+                  </label>
+                </div>
+              </div>
+              <div className="col ps-2">
+                <label className="">Unidad</label>
                 <select
                   name="unit"
                   value={producto.unit}
@@ -187,6 +209,8 @@ const FormProducto = () => {
                     <option key={i} value={u}>{u}</option>
                   ))}
                 </select>
+              </div>
+              
               </div>
 
               <div className="col-md-6 mb-3">
