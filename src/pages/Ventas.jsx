@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Sidebar from "../components/Sidebar";
 import {
   createOrder,
@@ -11,6 +11,10 @@ import { createSale } from "../services/requests/sales";
 import { getAllCustomers } from "../services/requests/customers";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+
+import "../components/css/MenuInferior.css";
+import { LuChevronDown } from "react-icons/lu";
+
 
 // Helpers de localStorage
 const saveToStorage = (key, value) => {
@@ -569,6 +573,21 @@ export default function Ventas() {
     producto.name.toLowerCase().includes(filtroProducto.toLowerCase())
   );
 
+
+  // mostrar el dropdown
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="container-fluid">
@@ -590,433 +609,465 @@ export default function Ventas() {
   }
 
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col-1">
-          <Sidebar />
-        </div>
-        <div className="col-11">
-          <div className="d-flex justify-content-between align-items-center mt-3">
-            <h2>Gestión de Ventas</h2>
-            <button className="btn btn-success" onClick={crearVenta}>
-              + Nueva Venta
-            </button>
-          </div>
+    <>
 
-          <ul className="nav nav-tabs mt-3">
-            <li className="nav-item">
-              <button
-                className={`nav-link ${
-                  activeTab === "pedidos" ? "active" : ""
-                }`}
-                onClick={() => setActiveTab("pedidos")}
-              >
-                Pedidos Pendientes
-              </button>
-            </li>
-            {ventas.map((id) => (
-              <li className="nav-item" key={id}>
-                <button
-                  className={`nav-link ${activeTab === id ? "active" : ""}`}
-                  onClick={() => setActiveTab(id)}
-                >
-                  {id.replace("venta-", "Venta #")}
-                  <button
-                    type="button"
-                    className="ms-2 btn-close btn-close-white"
-                    style={{ fontSize: "0.5rem" }}
-                    onClick={(e) => handleCloseTab(id, e)}
-                    aria-label="Cerrar"
-                  />
+      <div className="m-0" style={{ paddingLeft: "4.5rem" }}>
+
+        <Sidebar />
+
+        <div className="col" style={{ minHeight: "100vh" }}>
+          <div className="container-fluid py-2">
+            {/*  */}
+            <div className="col-12">
+              <div className="d-flex justify-content-between align-items-center">
+                <h3 className="my-auto">Gestión de Ventas</h3>
+                <button className="btn bg-info btn-sm text-white pt-2" onClick={crearVenta}>
+                  + Nueva Venta
                 </button>
-              </li>
-            ))}
-          </ul>
-
-          <div className="tab-content mt-3">
-            {activeTab === "pedidos" && (
-              <div className="tab-pane fade show active">
-                <h4>Pedidos Pendientes</h4>
-                {ordenesPendientes.length === 0 ? (
-                  <div className="alert alert-info">
-                    No hay órdenes pendientes.
-                  </div>
-                ) : (
-                  <table className="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Alias</th>
-                        <th>Productos</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ordenesPendientes
-                        .filter((orden) => {
-                          // Filtrar órdenes con total mayor a 0
-                          const itemsFiltrados = orden.items.filter(
-                            (item) => item.product_id !== PRODUCTO_A_FILTRAR
-                          );
-                          const total = itemsFiltrados.reduce(
-                            (sum, item) =>
-                              sum + item.price_unit * item.quantity,
-                            0
-                          );
-                          return total > 0;
-                        })
-                        .map((orden) => {
-                          // Filtrar el producto 1 para no mostrarlo
-                          const itemsFiltrados = orden.items.filter(
-                            (item) => item.product_id !== PRODUCTO_A_FILTRAR
-                          );
-                          const total = itemsFiltrados.reduce(
-                            (sum, item) =>
-                              sum + item.price_unit * item.quantity,
-                            0
-                          );
-
-                          return (
-                            <tr key={orden.id}>
-                              <td>{orden.id}</td>
-                              <td>
-                                {orden.customer?.name ||
-                                  "Cliente no especificado"}
-                              </td>
-                              <td>{orden.customer?.alias || "-"}</td>
-                              <td>
-                                <ul className="list-unstyled">
-                                  {itemsFiltrados.map((item) => (
-                                    <li key={item.product_id}>
-                                      {item.quantity} x{" "}
-                                      {productos.find(
-                                        (p) => p.id === item.product_id
-                                      )?.name || `Producto ${item.product_id}`}
-                                      (${item.price_unit})
-                                    </li>
-                                  ))}
-                                </ul>
-                              </td>
-                              <td>${total.toFixed(2)}</td>
-                              <td>
-                                <span className="badge bg-warning text-dark">
-                                  Pendiente
-                                </span>
-                              </td>
-                              <td>
-                                <div className="d-flex gap-2">
-                                  <button
-                                    className="btn btn-success btn-sm"
-                                    onClick={() => completarOrden(orden.id)}
-                                  >
-                                    Completar
-                                  </button>
-                                  <button
-                                    className="btn btn-info btn-sm"
-                                    onClick={() =>
-                                      editarOrdenPendiente(orden.id)
-                                    }
-                                  >
-                                    Editar
-                                  </button>
-                                  <button
-                                    className="btn btn-danger btn-sm"
-                                    onClick={() =>
-                                      eliminarOrdenPendiente(orden.id)
-                                    }
-                                  >
-                                    Eliminar
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </table>
-                )}
-
-                <h4 className="mt-5">Pedidos Completados</h4>
-                {ordenesCompletadas.length === 0 ? (
-                  <div className="alert alert-info">
-                    No hay órdenes completadas.
-                  </div>
-                ) : (
-                  <table className="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Alias</th>
-                        <th>Productos</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ordenesCompletadas.map((orden) => {
-                        // Filtrar el producto 1 para no mostrarlo
-                        const itemsFiltrados = orden.items.filter(
-                          (item) => item.product_id !== PRODUCTO_A_FILTRAR
-                        );
-                        const total = itemsFiltrados.reduce(
-                          (sum, item) => sum + item.price_unit * item.quantity,
-                          0
-                        );
-
-                        return (
-                          <tr key={orden.id}>
-                            <td>{orden.id}</td>
-                            <td>
-                              {orden.customer?.name ||
-                                "Cliente no especificado"}
-                            </td>
-                            <td>{orden.customer?.alias || "-"}</td>
-                            <td>
-                              <ul className="list-unstyled">
-                                {itemsFiltrados.map((item) => (
-                                  <li key={item.product_id}>
-                                    {item.quantity} x{" "}
-                                    {productos.find(
-                                      (p) => p.id === item.product_id
-                                    )?.name || `Producto ${item.product_id}`}
-                                    (${item.price_unit})
-                                  </li>
-                                ))}
-                              </ul>
-                            </td>
-                            <td>${total.toFixed(2)}</td>
-                            <td>
-                              <span className="badge bg-success">
-                                Completado
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                )}
               </div>
-            )}
 
-            {ventas.map(
-              (id) =>
-                activeTab === id && (
-                  <div key={id} className="tab-pane fade show active">
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                      <div>
-                        <strong>Cliente:</strong>{" "}
-                        {clientes.find((u) => u.id === orderUsers[id])?.name ||
-                          "Cliente no encontrado"}
-                      </div>
-                      <div>
-                        <button
-                          className="btn btn-info me-2"
-                          onClick={() => actualizarOrden(id)}
-                        >
-                          Guardar Orden
-                        </button>
-                        <button
-                          className="btn btn-outline-danger"
-                          onClick={() => eliminarVenta(id)}
-                        >
-                          Eliminar Venta
-                        </button>
-                      </div>
-                    </div>
 
-                    <div className="mb-3">
-                      <input
-                        type="text"
-                        className="form-control mb-2"
-                        placeholder="Filtrar clientes por nombre..."
-                        value={filtroCliente}
-                        onChange={(e) => setFiltroCliente(e.target.value)}
-                      />
-                      <div className="d-flex flex-wrap gap-2">
-                        {clientesFiltrados.map((cliente) => {
-                          const isActive = orderUsers[id] === cliente.id;
-                          return (
-                            <button
-                              key={cliente.id}
-                              className={`btn d-flex align-items-center ${
-                                isActive ? "btn-info" : "btn-outline-info"
-                              }`}
-                              onClick={() =>
-                                cambiarUsuarioVenta(id, cliente.id)
-                              }
-                              style={{ height: "40px" }}
-                            >
-                              {cliente.avatar && (
-                                <img
-                                  src={cliente.avatar}
-                                  alt={cliente.name}
-                                  className="rounded-circle me-2"
-                                  width="30"
-                                  height="30"
-                                  style={{ objectFit: "cover" }}
-                                />
-                              )}
-                              <span>{cliente.name}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
+              {/* ventanas */}
+              <div className="d-flex mt-1">
+
+                {/* Dropdown para seleccionar ventas abiertas */}
+                <div className="my-auto mb-2" style={{ position: "relative", display: "inline-block" }} ref={ref}>
+                  <div className={`list me-1 mb-n1 border bg-gradient-dark text-white ms-1 px-2 py-1`}>
+                    <div className=""> 
+                      <LuChevronDown onClick={() => setOpen(!open)}  size={20} className="" />
                     </div>
-                    <div className="row">
-                      <div className="col-md-8">
-                        <h5>Productos</h5>
-                        <input
-                          type="text"
-                          className="form-control mb-3"
-                          placeholder="Filtrar productos por nombre..."
-                          value={filtroProducto}
-                          onChange={(e) => setFiltroProducto(e.target.value)}
-                        />
-                        <div className="row">
-                          {productosFiltrados
-                            .filter((p) => p.id !== PRODUCTO_A_FILTRAR) // Filtrar producto con ID 1
-                            .map((p) => (
-                              <div
-                                key={p.id}
-                                className="col-md-3 col-sm-6 mb-3"
-                              >
-                                <div className="card">
-                                  {p.image_url && (
-                                    <img
-                                      src={p.image_url}
-                                      className="card-img-top"
-                                      alt={p.name}
-                                      style={{
-                                        height: "120px",
-                                        objectFit: "cover",
-                                      }}
-                                    />
-                                  )}
-                                  <div className="card-body">
-                                    <h6>{p.name}</h6>
-                                    <p>${p.sale_price}</p>
-                                    <div className="d-flex justify-content-between">
-                                      <button
-                                        className="btn btn-info btn-sm"
-                                        onClick={() =>
-                                          agregarProductoAVenta(id, p)
-                                        }
-                                      >
-                                        + Añadir
-                                      </button>
-                                      <button
-                                        className="btn btn-danger btn-sm"
-                                        onClick={() =>
-                                          quitarProductoDeVenta(id, p.id)
-                                        }
-                                      >
-                                        - Quitar
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
+                  </div>
+                  {open && (
+                    <div className="ventana-list bg-gradient-dark border border-1 border-dark card" style={{ position: "absolute", top: "122%", left: 0, zIndex: 1000, borderRadius: "10px",}}>
+                      {ventas.map((id) => (
+                      <div className={`col-auto text-center my-auto py-1 px-2 ${activeTab === id ? "bg-white text-dark" : "text-white"}`} style={{borderRadius: "10px"}} key={id}>
+                        <div className="py-1" onClick={() => setActiveTab(id)}>
+                          {id.replace("venta-", "Venta #")}
                         </div>
                       </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {/* /Dropdown */} 
 
-                      <div className="col-md-4">
-                        <h5>Detalles de la Venta</h5>
-                        <table className="table">
-                          <thead>
+                <div className="d-flex table-responsive">
+
+                <div className={`col-auto ventana my-auto px-3 ${activeTab === "pedidos" ? "active-ventana" : "border text-dark"}`}>
+                  <div className="py-2" onClick={() => setActiveTab("pedidos")}>Pedidos Pendientes</div>
+                </div>
+
+                {ventas.map((id) => (
+                  <div className={`col-auto ventana my-auto px-3 ${activeTab === id ? "active-ventana" : "border text-dark"}`} key={id}>
+                    <div className="py-2" onClick={() => setActiveTab(id)}>
+                      {id.replace("venta-", "Venta #")}
+                      <button type="button" className={`ms-4 me-n2 btn-close border border-radius-2xl p-1 bg-danger ${activeTab === id ? "" : "d-none"}`} style={{ fontSize: "0.5rem" }} onClick={(e) => handleCloseTab(id, e)} aria-label="Cerrar"/>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              </div>
+              {/* /ventanas */}
+
+              
+
+              <div className="tab-content card border border-1 border-dark p-3" style={{ marginTop: "-1px" }}>
+                {activeTab === "pedidos" && (
+                  <div className="tab-pane fade show active">
+                    <h4>Pedidos Pendientes</h4>
+                    {ordenesPendientes.length === 0 ? (
+                      <div className="alert alert-info">
+                        No hay órdenes pendientes.
+                      </div>
+                    ) : (
+                      <div className="table-responsive">
+                        <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
+                          <thead className="bg-gradient-dark text-white ">
                             <tr>
-                              <th>Producto</th>
-                              <th>Precio</th>
-                              <th>Cantidad</th>
+                              <th>#</th>
+                              <th>Cliente</th>
+                              <th>Alias</th>
+                              {/* <th>Productos</th> */}
                               <th>Total</th>
+                              <th>Estado</th>
                               <th>Acciones</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {(detalleVentas[id] || [])
-                              .filter(
-                                (item) => item.product_id !== PRODUCTO_A_FILTRAR
-                              ) // Filtramos el producto 1
-                              .map((i) => (
-                                <tr key={i.product_id}>
-                                  <td>{i.name}</td>
-                                  <td>
-                                    {editandoPrecio?.ventaId === id &&
-                                    editandoPrecio?.productId ===
-                                      i.product_id ? (
-                                      <div className="d-flex align-items-center">
-                                        <input
-                                          type="number"
-                                          className="form-control form-control-sm"
-                                          value={nuevoPrecio}
-                                          onChange={(e) =>
-                                            setNuevoPrecio(e.target.value)
-                                          }
-                                          style={{ width: "80px" }}
-                                        />
+                            {ordenesPendientes
+                              .filter((orden) => {
+                                // Filtrar órdenes con total mayor a 0
+                                const itemsFiltrados = orden.items.filter(
+                                  (item) => item.product_id !== PRODUCTO_A_FILTRAR
+                                );
+                                const total = itemsFiltrados.reduce(
+                                  (sum, item) =>
+                                    sum + item.price_unit * item.quantity,
+                                  0
+                                );
+                                return total > 0;
+                              })
+                              .map((orden) => {
+                                // Filtrar el producto 1 para no mostrarlo
+                                const itemsFiltrados = orden.items.filter(
+                                  (item) => item.product_id !== PRODUCTO_A_FILTRAR
+                                );
+                                const total = itemsFiltrados.reduce(
+                                  (sum, item) =>
+                                    sum + item.price_unit * item.quantity,
+                                  0
+                                );
+
+                                return (
+                                  <tr key={orden.id}>
+                                    <td>{orden.id}</td>
+                                    <td>
+                                      {orden.customer?.name ||
+                                        "Cliente no especificado"}
+                                    </td>
+                                    <td>{orden.customer?.alias || "-"}</td>
+                                    {/* <td>
+                                      <ul className="list-unstyled">
+                                        {itemsFiltrados.map((item) => (
+                                          <li key={item.product_id}>
+                                            {item.quantity} x{" "}
+                                            {productos.find(
+                                              (p) => p.id === item.product_id
+                                            )?.name || `Producto ${item.product_id}`}
+                                            (${item.price_unit})
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </td> */}
+                                    <td>${total.toFixed(2)}</td>
+                                    <td>
+                                      <span className="badge border border-warning text-warning">
+                                        Pendiente
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <div className="">
                                         <button
-                                          className="btn btn-success btn-sm ms-2"
-                                          onClick={guardarNuevoPrecio}
+                                          className="btn btn-success btn-sm"
+                                          onClick={() => completarOrden(orden.id)}
                                         >
-                                          ✓
+                                          Completar
                                         </button>
                                         <button
-                                          className="btn btn-danger btn-sm ms-1"
-                                          onClick={() => {
-                                            setEditandoPrecio(null);
-                                            setNuevoPrecio("");
-                                          }}
+                                          className="btn btn-info btn-sm ms-2"
+                                          onClick={() =>
+                                            editarOrdenPendiente(orden.id)
+                                          }
                                         >
-                                          ✕
+                                          Editar
+                                        </button>
+                                        <button
+                                          className="btn btn-danger btn-sm ms-2"
+                                          onClick={() =>
+                                            eliminarOrdenPendiente(orden.id)
+                                          }
+                                        >
+                                          Eliminar
                                         </button>
                                       </div>
-                                    ) : (
-                                      <span
-                                        onClick={() =>
-                                          editarPrecioProducto(id, i.product_id)
-                                        }
-                                        style={{ cursor: "pointer" }}
-                                      >
-                                        ${i.price_unit}
-                                      </span>
-                                    )}
-                                  </td>
-                                  <td>{i.quantity}</td>
-                                  <td>
-                                    ${(i.price_unit * i.quantity).toFixed(2)}
-                                  </td>
-                                  <td>
-                                    <button
-                                      className="btn btn-sm btn-outline-danger"
-                                      onClick={() =>
-                                        quitarProductoDeVenta(id, i.product_id)
-                                      }
-                                    >
-                                      Quitar
-                                    </button>
-                                  </td>
-                                </tr>
-                              ))}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
                           </tbody>
                         </table>
-                        <div className="text-end">
-                          <strong>
-                            Total: ${calcularTotalVenta(id).toFixed(2)}
-                          </strong>
+                      </div>
+                      
+                    )}
+
+                    <h4 className="mt-5">Pedidos Completados</h4>
+                    {ordenesCompletadas.length === 0 ? (
+                      <div className="alert alert-info">
+                        No hay órdenes completadas.
+                      </div>
+                    ) : (
+                      <div className="table-responsive">
+                        <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
+                          <thead className="bg-gradient-dark text-white ">
+                            <tr>
+                              <th>#</th>
+                              <th>Cliente</th>
+                              <th>Alias</th>
+                              {/* <th>Productos</th> */}
+                              <th>Total</th>
+                              <th>Estado</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {ordenesCompletadas.map((orden) => {
+                              // Filtrar el producto 1 para no mostrarlo
+                              const itemsFiltrados = orden.items.filter(
+                                (item) => item.product_id !== PRODUCTO_A_FILTRAR
+                              );
+                              const total = itemsFiltrados.reduce(
+                                (sum, item) => sum + item.price_unit * item.quantity,
+                                0
+                              );
+
+                              return (
+                                <tr key={orden.id}>
+                                  <td>{orden.id}</td>
+                                  <td>
+                                    {orden.customer?.name ||
+                                      "Cliente no especificado"}
+                                  </td>
+                                  <td>{orden.customer?.alias || "-"}</td>
+                                  {/* <td>
+                                    <ul className="list-unstyled">
+                                      {itemsFiltrados.map((item) => (
+                                        <li key={item.product_id}>
+                                          {item.quantity} x{" "}
+                                          {productos.find(
+                                            (p) => p.id === item.product_id
+                                          )?.name || `Producto ${item.product_id}`}
+                                          (${item.price_unit})
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </td> */}
+                                  <td>${total.toFixed(2)}</td>
+                                  <td>
+                                    <span className="badge bg-success">
+                                      Completado
+                                    </span>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                    )}
+                  </div>
+                )}
+
+                {/* Renderizar las pestañas de ventas individuales */}
+
+                {ventas.map(
+                  (id) =>
+                    activeTab === id && (
+                      <div key={id} className="tab-pane fade show active">
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                          <div>
+                            <strong>Cliente:</strong>{" "}
+                            {clientes.find((u) => u.id === orderUsers[id])?.name ||
+                              "Cliente no encontrado"}
+                          </div>
+                          <div>
+                            <button
+                              className="btn btn-info me-2"
+                              onClick={() => actualizarOrden(id)}
+                            >
+                              Guardar Orden
+                            </button>
+                            <button
+                              className="btn btn-outline-danger"
+                              onClick={() => eliminarVenta(id)}
+                            >
+                              Eliminar Venta
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="mb-3">
+                          <input
+                            type="text"
+                            className="form-control mb-2"
+                            placeholder="Filtrar clientes por nombre..."
+                            value={filtroCliente}
+                            onChange={(e) => setFiltroCliente(e.target.value)}
+                          />
+                          <div className="d-flex flex-wrap gap-2">
+                            {clientesFiltrados.map((cliente) => {
+                              const isActive = orderUsers[id] === cliente.id;
+                              return (
+                                <button
+                                  key={cliente.id}
+                                  className={`btn d-flex align-items-center ${
+                                    isActive ? "btn-info" : "btn-outline-info"
+                                  }`}
+                                  onClick={() =>
+                                    cambiarUsuarioVenta(id, cliente.id)
+                                  }
+                                  style={{ height: "40px" }}
+                                >
+                                  {cliente.avatar && (
+                                    <img
+                                      src={cliente.avatar}
+                                      alt={cliente.name}
+                                      className="rounded-circle me-2"
+                                      width="30"
+                                      height="30"
+                                      style={{ objectFit: "cover" }}
+                                    />
+                                  )}
+                                  <span>{cliente.name}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-md-8">
+                            <h5>Productos</h5>
+                            <input
+                              type="text"
+                              className="form-control mb-3"
+                              placeholder="Filtrar productos por nombre..."
+                              value={filtroProducto}
+                              onChange={(e) => setFiltroProducto(e.target.value)}
+                            />
+                            <div className="row">
+                              {productosFiltrados
+                                .filter((p) => p.id !== PRODUCTO_A_FILTRAR) // Filtrar producto con ID 1
+                                .map((p) => (
+                                  <div
+                                    key={p.id}
+                                    className="col-md-3 col-sm-6 mb-3"
+                                  >
+                                    <div className="card">
+                                      {p.image_url && (
+                                        <img
+                                          src={p.image_url}
+                                          className="card-img-top"
+                                          alt={p.name}
+                                          style={{
+                                            height: "120px",
+                                            objectFit: "cover",
+                                          }}
+                                        />
+                                      )}
+                                      <div className="card-body">
+                                        <h6>{p.name}</h6>
+                                        <p>${p.sale_price}</p>
+                                        <div className="d-flex justify-content-between">
+                                          <button
+                                            className="btn btn-info btn-sm"
+                                            onClick={() =>
+                                              agregarProductoAVenta(id, p)
+                                            }
+                                          >
+                                            + Añadir
+                                          </button>
+                                          <button
+                                            className="btn btn-danger btn-sm"
+                                            onClick={() =>
+                                              quitarProductoDeVenta(id, p.id)
+                                            }
+                                          >
+                                            - Quitar
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+
+                          <div className="col-md-4">
+                            <h5>Detalles de la Venta</h5>
+                            <table className="table">
+                              <thead>
+                                <tr>
+                                  <th>Producto</th>
+                                  <th>Precio</th>
+                                  <th>Cantidad</th>
+                                  <th>Total</th>
+                                  <th>Acciones</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {(detalleVentas[id] || [])
+                                  .filter(
+                                    (item) => item.product_id !== PRODUCTO_A_FILTRAR
+                                  ) // Filtramos el producto 1
+                                  .map((i) => (
+                                    <tr key={i.product_id}>
+                                      <td>{i.name}</td>
+                                      <td>
+                                        {editandoPrecio?.ventaId === id &&
+                                        editandoPrecio?.productId ===
+                                          i.product_id ? (
+                                          <div className="d-flex align-items-center">
+                                            <input
+                                              type="number"
+                                              className="form-control form-control-sm"
+                                              value={nuevoPrecio}
+                                              onChange={(e) =>
+                                                setNuevoPrecio(e.target.value)
+                                              }
+                                              style={{ width: "80px" }}
+                                            />
+                                            <button
+                                              className="btn btn-success btn-sm ms-2"
+                                              onClick={guardarNuevoPrecio}
+                                            >
+                                              ✓
+                                            </button>
+                                            <button
+                                              className="btn btn-danger btn-sm ms-1"
+                                              onClick={() => {
+                                                setEditandoPrecio(null);
+                                                setNuevoPrecio("");
+                                              }}
+                                            >
+                                              ✕
+                                            </button>
+                                          </div>
+                                        ) : (
+                                          <span
+                                            onClick={() =>
+                                              editarPrecioProducto(id, i.product_id)
+                                            }
+                                            style={{ cursor: "pointer" }}
+                                          >
+                                            ${i.price_unit}
+                                          </span>
+                                        )}
+                                      </td>
+                                      <td>{i.quantity}</td>
+                                      <td>
+                                        ${(i.price_unit * i.quantity).toFixed(2)}
+                                      </td>
+                                      <td>
+                                        <button
+                                          className="btn btn-sm btn-outline-danger"
+                                          onClick={() =>
+                                            quitarProductoDeVenta(id, i.product_id)
+                                          }
+                                        >
+                                          Quitar
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                            <div className="text-end">
+                              <strong>
+                                Total: ${calcularTotalVenta(id).toFixed(2)}
+                              </strong>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                )
-            )}
+                    )
+                )}
+              </div>
+            </div>   
+            {/*  */}
           </div>
         </div>
+
       </div>
-    </div>
+    </>
+    
   );
 }

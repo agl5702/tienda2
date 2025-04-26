@@ -1,13 +1,35 @@
+tbody{
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
 .ventana{
     min-width: 120px ;
+    cursor: pointer;
+    border-radius: 10px 10px 0px 0px;
+    background-color: rgb(243, 243, 243);   
 }
 
-.carrito{
-    min-width: 50px;
-    max-width: 50px;
+.active-ventana{
+    background-color: #fff;
+    border-width: 1px 1px 0px 1px; /* Arriba, derecha, abajo, izquierda */
+    border-style: solid;
+    border-color: black;
+    color: black;
+    z-index: 1;
+
 }
 
+.list{
+    border-radius: 8px;
+}
 
+.ventana-list{
+    width: 120px;
+    max-height: 50vh ;
+    overflow: auto;
+}
 @media screen and (max-width: 768px) {
     .ventana{
         min-width: 70px ;
