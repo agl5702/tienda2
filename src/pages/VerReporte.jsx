@@ -2,9 +2,8 @@ import Nav from "../components/Nav.jsx";
 import Sidebar from "../components/Sidebar.jsx";
 import PdfReportDay from "../components/PdfReportDay.jsx";
 import PdfReportDian from "../components/PdfReportDian.jsx";
-import { FaBoxOpen, FaUsers, FaDollarSign, FaShoppingCart } from "react-icons/fa";
 import DownloadButton from "../components/DownloadButton.jsx";
-import TablaReportes from "../components/TablaReportes.jsx";
+import { Link } from 'react-router-dom';
 
 
 export default function Reportes() {
@@ -29,9 +28,6 @@ export default function Reportes() {
         <div className="col" style={{ minHeight: "100vh" }}>
           <div className="container-fluid py-4">
 
-            <div className="card p-4">
-              <TablaReportes/>
-            </div>
             <div className="row">
             <h3 className="text-dark text-center">Reporte del {fechaFormateada}</h3>
               <div className="col-6">
@@ -43,6 +39,9 @@ export default function Reportes() {
 
               <div className="col-6">
                 <DownloadButton productos={productos}/>
+                <Link to="/vista-pdf" className="btn ms-2 mb-0 bg-info text-sm text-white btn-sm">
+                    VER
+                    </Link>
               </div>
             </div>
 

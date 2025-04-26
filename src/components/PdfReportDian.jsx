@@ -34,7 +34,7 @@ const TablaConPDF = () => {
       <div id="tabla-pdf" className="border p-4 bg-white">
         Reporte de Ventas para declaración del {fechaFormateada}
 
-        <table className="w-full border border-gray-300">
+        <table  className="w-full border border-gray-300">
           <thead className="bg-gray-200">
             <tr>
               <th className="border p-2">Producto</th>
@@ -62,7 +62,7 @@ const TablaConPDF = () => {
         onClick={generarPDF}
         className="mt-4 px-4 py-2 bg-info text-white rounded hover:bg-blue-600"
       >
-        Descargar Reporte para DIAN
+        Descargar Reporte para DIAN - html2canvas
       </button>
     </div>
   );

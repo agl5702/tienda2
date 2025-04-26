@@ -35,6 +35,7 @@ const Sidebar = () => {
   const isCategoriaActive = location.pathname.startsWith('/categorias') || location.pathname.startsWith('/form_categorias');
   const isProductosActive = location.pathname.startsWith('/productos') || location.pathname.startsWith('/form_producto');
   const isVentasActive = location.pathname.startsWith('/ventas') || location.pathname.startsWith('/form_ventas');
+  const isReportesActive = location.pathname.startsWith('/reportes') || location.pathname.startsWith('/reporte/');
 
   return (
     <div id="sidebar" className="d-flex flex-column" style={{ backgroundColor: "#1b1b1b" }}>
@@ -118,14 +119,12 @@ const Sidebar = () => {
         )}
       </NavLink> */}
 
-      <NavLink to="/reportes" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
-        {({ isActive }) => (
-          <>
-            <FaChartBar color={isActive ? '#00bfff' : ''} className="simbolo-icon" />
-            <p className="pt-2 text-white text-menu">Reportes</p>
-            <span className={isActive ? 'selector' : 'no-selector'}></span>
-          </>
-        )}
+      <NavLink to="/reportes" className={`my-1 p-1 text-center card-menu mx-2 ${isReportesActive ? 'active-link' : ''}`}>
+        <>
+          <FaChartBar color={isReportesActive ? '#00bfff' : ''} className="simbolo-icon" />
+          <p className="pt-2 text-white text-menu">Reportes</p>
+          <span className={isReportesActive ? 'selector' : 'no-selector'}></span>
+        </>
       </NavLink>
 
      

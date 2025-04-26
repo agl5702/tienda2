@@ -60,9 +60,8 @@ const TablaConPDF = () => {
       {/* Botón para generar PDF */}
       <button
         onClick={generarPDF}
-        className="mt-4 px-4 py-2 bg-info text-white rounded hover:bg-blue-600"
-      >
-        Descargar Reporte personal
+        className="mt-4 px-4 py-2 bg-info text-white rounded hover:bg-blue-600">
+        Descargar Reporte personal - html2canvas                                                                                     
       </button>
     </div>
   );

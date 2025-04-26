@@ -13,6 +13,7 @@ import Clientes from './pages/Clientes';
 import Devoluciones from './pages/Devoluciones';
 import Users from './pages/Users';
 import Reportes from './pages/Reportes';
+import VerReporte from './pages/VerReporte';
 
 function App() {
   return (
@@ -41,6 +42,8 @@ function App() {
         <Route path="/devoluciones" element={<Devoluciones />} />
         {/* <Route path="/users" element={<Users />} /> */}
         <Route path="/reportes" element={<Reportes />} />
+        <Route path="/reporte/:id" element={<VerReporte />} />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
