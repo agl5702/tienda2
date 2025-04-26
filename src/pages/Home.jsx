@@ -102,9 +102,7 @@ export default function About() {
           <div className="container-fluid">
             <h3 className="text-dark text-center my-3">
               Panel de Inicio
-              <span style={{ visibility: "hidden" }}>
-                hhhhhhhhhhhhhhhhhhhhhh
-              </span>
+              
             </h3>
 
             <div className="row">

@@ -10,6 +10,7 @@ import FormProducto from "./pages/FormProducto";
 import Deudas from "./pages/Deudas";
 import Clientes from "./pages/Clientes";
 import Devoluciones from "./pages/Devoluciones";
+import FormDevolucion from "./pages/FormDevolucion";
 import Reportes from "./pages/Reportes";
 
 import VerReporte from './pages/VerReporte';
@@ -37,6 +38,9 @@ function App() {
         <Route path="/cliente/editar/:id" element={<FormCliente />} />
 
         <Route path="/devoluciones" element={<Devoluciones />} />
+        <Route path="/devolucion/nueva" element={<FormDevolucion />} />
+        <Route path="/devolucion/editar/:id" element={<FormDevolucion />} />
+
         {/* <Route path="/users" element={<Users />} /> */}
         <Route path="/reportes" element={<Reportes />} />
         <Route path="/reporte/:id" element={<VerReporte />} />

@@ -13,7 +13,7 @@ const TablaConPDF = () => {
   // Generar el PDF
 
   const generarPDF = async () => {
-    const elemento = document.getElementById('tabla-pdf');
+    const elemento = document.getElementById('tabla-pdf2');
 
     if (!elemento) return;
 
@@ -31,10 +31,10 @@ const TablaConPDF = () => {
   return (
     <div className="p-4">
       {/* Tabla que se exportará a PDF */}
-      <div id="tabla-pdf" className="border p-4 bg-white">
+      <div  className="border p-4 bg-white">
         Reporte de Ventas personal del {fechaFormateada}
 
-        <table className="w-full border border-gray-300">
+        <table id="tabla-pdf2" className="w-full border border-gray-300">
           <thead className="bg-gray-200">
             <tr>
               <th className="border p-2">Producto</th>
