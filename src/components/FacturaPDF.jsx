@@ -1,5 +1,6 @@
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
+
 
 // Estilos para el PDF
 const styles = StyleSheet.create({
@@ -113,6 +114,26 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingTop: 5,
   },
+
+  pageFooter: {
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  footerLogo: {
+    width: 25,
+    height: 15,
+    marginRight: 3,
+  },
+  footerText: {
+    fontSize: 10,
+    color: '#00bfff',
+  }
 });
 const FacturaPDF = ({ order }) => {
   // Formatear números con separadores de miles
@@ -132,10 +153,13 @@ const FacturaPDF = ({ order }) => {
       <Page size="A5" style={styles.page}>
         {/* Encabezado */}
         <View style={styles.header}>
-          <Text style={styles.title}>Quesera Edwin</Text>
-          <Text style={styles.subtitle}>Nit: 123456789</Text>
+          <Text style={styles.title}>JHS.CRISTO EN MI</Text>
+          <Text style={styles.subtitle}>Nit: 01-77159558</Text>
           <Text style={styles.businessInfo}>
-            Mercabastos local # ? | Tel: 300 5092939
+            Perecederos #1 local 13 Mercabastos - valledupar
+          </Text>
+          <Text style={styles.businessInfo}>
+            Whatsapp: 3005092939
           </Text>
         </View>
 
@@ -144,17 +168,17 @@ const FacturaPDF = ({ order }) => {
           <View style={styles.infoColumn}>
             
 
-            <Text style={styles.infoLabel}>CLIENTE:</Text>
+            <Text style={styles.infoLabel}>CLIENTE</Text>
             <Text style={styles.infoText}>{order.customer?.name || 'Cliente ocasional'}</Text>
-            <Text style={styles.infoLabel}>DOCUMENTO:</Text>
+            <Text style={styles.infoLabel}>DOCUMENTO</Text>
             <Text style={styles.infoText}>{order.customer?.cc || 'No especificado'}</Text>
-            <Text style={styles.infoLabel}>TELÉFONO:</Text>
+            <Text style={styles.infoLabel}>TELÉFONO</Text>
             <Text style={styles.infoText}>{order.customer?.phone || 'No especificado'}</Text>
-            <Text style={styles.infoLabel}>DIRECCIÓN:</Text>
+            <Text style={styles.infoLabel}>DIRECCIÓN</Text>
             <Text style={styles.infoText}>{order.customer?.direction || 'No especificado'}</Text>
           </View>
           <View style={styles.infoColumn}>
-          <Text style={styles.infoLabel}>FECHA:</Text>
+          <Text style={styles.infoLabel}>FECHA</Text>
             <Text style={styles.infoText}>{new Date(order.date).toLocaleString()}</Text>
             <Text style={styles.infoLabel}>VENTA No.</Text>
             <Text style={styles.infoText}>{order.id.toString().padStart(8, '0')}</Text>
@@ -222,9 +246,19 @@ const FacturaPDF = ({ order }) => {
 
         {/* Pie de página */}
         <View style={styles.footer}>
-          <Text>ATENDIDO POR: {order.employee?.name || 'No especificado'}</Text>
+          {/* <Text>ATENDIDO POR: {order.employee?.name || 'No especificado'}</Text> */}
           <Text>--- Gracias por su compra ---</Text>
           <Text>Impreso el {new Date().toLocaleDateString()} a las {new Date().toLocaleTimeString()}</Text>
+          
+        </View>
+
+        {/* Pie de página fijo */}
+        <View style={styles.pageFooter} fixed>
+          <Image 
+            src="/logo3.png" // o usa base64
+            style={styles.footerLogo}
+          />
+          <Text style={styles.footerText}>loud</Text>
         </View>
       </Page>
     </Document>
