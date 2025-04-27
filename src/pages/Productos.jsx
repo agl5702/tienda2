@@ -1,6 +1,8 @@
 import TablaProductos from "../components/TablaProductos.jsx";
 import Sidebar from "../components/Sidebar.jsx";
 import { Link } from "react-router-dom";
+import Footer from "../components/Footer.jsx";
+
 export default function Productos() {
   return (
     <>
@@ -19,6 +21,9 @@ export default function Productos() {
               </div>
                 <TablaProductos/>
             </div>
+
+            <Footer/>
+
         </div>
         
       </div>

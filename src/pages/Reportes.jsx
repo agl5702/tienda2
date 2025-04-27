@@ -5,7 +5,7 @@ import PdfReportDian from "../components/PdfReportDian.jsx";
 import { FaBoxOpen, FaUsers, FaDollarSign, FaShoppingCart } from "react-icons/fa";
 import DownloadButton from "../components/DownloadButton.jsx";
 import TablaReportes from "../components/TablaReportes.jsx";
-
+import Footer from "../components/Footer.jsx";
 
 export default function Reportes() {
   // Obtener la fecha actual y formatearla
@@ -32,19 +32,8 @@ export default function Reportes() {
             <div className="card p-4">
               <TablaReportes/>
             </div>
-            <div className="row">
-            <h3 className="text-dark text-center">Reporte del {fechaFormateada}</h3>
-              <div className="col-6">
-              <PdfReportDay/>
-              </div>
-              <div className="col-6">
-              <PdfReportDian/>
-              </div>
-
-              <div className="col-6">
-                <DownloadButton productos={productos}/>
-              </div>
-            </div>
+            <Footer/>
+            
 
           </div>
         </div>

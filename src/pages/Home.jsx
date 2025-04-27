@@ -11,6 +11,8 @@ import { getAllSales } from "@/services/requests/sales";
 import { getAllProducts } from "@/services/requests/products";
 import { getAllOrders } from "@/services/requests/orders";
 import { getAllCustomers } from "@/services/requests/customers";
+import Footer from "../components/Footer.jsx";
+
 
 export default function About() {
   const [salesCount, setSalesCount] = useState(0);
@@ -176,6 +178,9 @@ export default function About() {
               <SalesDashboard />
             </div>
           </div>
+
+          <Footer/>
+
         </div>
       </div>
     </>

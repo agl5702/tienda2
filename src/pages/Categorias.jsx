@@ -2,6 +2,7 @@ import TablaCategorias from "../components/TablaCategorias.jsx"
 import Sidebar from "../components/Sidebar.jsx";
 import { Link } from 'react-router-dom';
 import React from 'react';
+import Footer from "../components/Footer.jsx";
 
 export default function Categorias() {
   return (
@@ -21,6 +22,9 @@ export default function Categorias() {
               </div>
                 <TablaCategorias/>
             </div>
+
+            <Footer/>
+
         </div>
         
       </div>

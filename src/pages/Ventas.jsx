@@ -17,6 +17,10 @@ import { LuChevronDown } from "react-icons/lu";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { CiBadgeDollar } from "react-icons/ci";
 import { FaHandHoldingDollar } from "react-icons/fa6";
+import { TbClipboardList } from "react-icons/tb";
+import { FaRegEdit } from "react-icons/fa";
+import Footer from "../components/Footer.jsx";
+
 
 // Helpers de localStorage
 const saveToStorage = (key, value) => {
@@ -54,8 +58,10 @@ export default function Ventas() {
   const [clientes, setClientes] = useState([]);
   const [filtroCliente, setFiltroCliente] = useState("");
   const [filtroProducto, setFiltroProducto] = useState("");
-  const [editandoPrecio, setEditandoPrecio] = useState(null);
-  const [nuevoPrecio, setNuevoPrecio] = useState("");
+
+  const [editandoItem, setEditandoItem] = useState(null); // Ahora guardará {ventaId, productId}
+  const [nuevoValores, setNuevoValores] = useState({ precio: "", cantidad: "" });
+
   const navigate = useNavigate();
 
   // Constante para el ID del producto a filtrar (precio 0)
@@ -142,44 +148,53 @@ export default function Ventas() {
     });
   };
 
-  // Función para editar precio de un producto
-  const editarPrecioProducto = (ventaId, productId) => {
-    const items = detalleVentas[ventaId] || [];
-    const item = items.find((i) => i.product_id === productId);
-    if (item) {
-      setEditandoPrecio({ ventaId, productId });
-      setNuevoPrecio(item.price_unit.toString());
-    }
-  };
+  // Función para guardar los nuevos valores
+const guardarNuevosValores = () => {
+  if (!editandoItem || !nuevoValores.precio || !nuevoValores.cantidad) {
+    showErrorAlert("Por favor complete todos los campos");
+    return;
+  }
 
-  // Función para guardar el nuevo precio
-  const guardarNuevoPrecio = () => {
-    if (!editandoPrecio || !nuevoPrecio || isNaN(parseFloat(nuevoPrecio))) {
-      showErrorAlert("Por favor ingrese un precio válido");
-      return;
-    }
+  const precioNumerico = parseFloat(nuevoValores.precio);
+  const cantidadNumerica = parseFloat(nuevoValores.cantidad);
 
-    const precioNumerico = parseFloat(nuevoPrecio);
-    if (precioNumerico <= 0) {
-      showErrorAlert("El precio debe ser mayor que cero");
-      return;
-    }
+  if (isNaN(precioNumerico) || isNaN(cantidadNumerica)) {
+    showErrorAlert("Por favor ingrese valores válidos");
+    return;
+  }
 
-    setDetalleVentas((prev) => {
-      const items = prev[editandoPrecio.ventaId] || [];
-      const nuevosItems = items.map((item) =>
-        item.product_id === editandoPrecio.productId
-          ? { ...item, price_unit: precioNumerico }
-          : item
-      );
-      return { ...prev, [editandoPrecio.ventaId]: nuevosItems };
-    });
+  if (precioNumerico <= 0 || cantidadNumerica <= 0) {
+    showErrorAlert("El precio y la cantidad deben ser mayores que cero");
+    return;
+  }
 
-    setEditandoPrecio(null);
-    setNuevoPrecio("");
-    showSuccessAlert("Precio actualizado correctamente");
-  };
+  setDetalleVentas((prev) => {
+    const items = prev[editandoItem.ventaId] || [];
+    const nuevosItems = items.map((item) =>
+      item.product_id === editandoItem.productId
+        ? { 
+            ...item, 
+            price_unit: precioNumerico,
+            quantity: cantidadNumerica
+          }
+        : item
+    );
+    return { ...prev, [editandoItem.ventaId]: nuevosItems };
+  });
 
+  setEditandoItem(null);
+  setNuevoValores({ precio: "", cantidad: "" });
+  showSuccessAlert("Valores actualizados correctamente");
+};
+
+// Función para iniciar la edición
+const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
+  setEditandoItem({ ventaId, productId });
+  setNuevoValores({ 
+    precio: precioActual.toString(),
+    cantidad: cantidadActual.toString()
+  });
+};
   // Función para completar una orden
   const completarOrden = async (ordenId) => {
     try {
@@ -581,6 +596,7 @@ export default function Ventas() {
   const ref = useRef(null);
   // modal productos
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenCliente, setIsOpenCliente] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -658,7 +674,8 @@ export default function Ventas() {
                 <div className="d-flex table-responsive">
 
                 <div className={`col-auto ventana my-auto px-3 ${activeTab === "pedidos" ? "active-ventana" : "border text-dark"}`}>
-                  <div className="py-2" onClick={() => setActiveTab("pedidos")}>Pedidos Pendientes</div>
+                      
+                      <div className="py-2" onClick={() => setActiveTab("pedidos")}><TbClipboardList className="mt-n1"/> Pedidos</div>
                 </div>
 
                 {ventas.map((id) => (
@@ -967,177 +984,264 @@ export default function Ventas() {
                           </div>
                         )}
                       </div>
+
+                      {/* Modal clientes */}
+                      <div className="">
+                        {isOpenCliente && (
+                          <div
+                            className="modal modal-xl fade show d-block"
+                            tabIndex="-1"
+                            role="dialog"
+                            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                            onClick={() => setIsOpenCliente(false)}
+                          >
+                            <div
+                              className="modal-dialog modal-dialog-centered"
+                              role="document"
+                              onClick={(e) => e.stopPropagation()} // Evitar que se cierre al hacer clic dentro
+                            >
+                              <div className="modal-content">
+                                {/* Modal Header */}
+                                <div className="modal-header">
+                                  <h5 className="modal-title">Seleccionar cliente</h5>
+                                  <button
+                                    type="button"
+                                    className="btn-close bg-danger"
+                                    onClick={() => setIsOpenCliente(false)}
+                                    aria-label="Close"
+                                  ></button>
+                                </div>
+
+                                <div className="modal-body">
+                                  {/* productos */}
+                                  <div className="col-12">
+                                    <input
+                                      type="text"
+                                      className="form-control mb-2 border ps-3"
+                                      placeholder="Filtra Clientes por nombre o apodo"
+                                      value={filtroCliente}
+                                      onChange={(e) => setFiltroCliente(e.target.value)}
+                                    />
+
+                                    {/* selecionar cliente */}
+                                    <div className="row m-0" style={{ maxHeight: "400px", overflowY: "auto" }}>
+                                      {clientesFiltrados.map((cliente) => {
+                                        const isActive = orderUsers[id] === cliente.id;
+                                        return (
+                                          <div className="col-auto px-1 py-1">
+                                            <div key={cliente.id}
+                                            className={`btn px-3 ${ isActive ? "btn-info" : "btn-outline-dark"}`}
+                                            onClick={() =>
+                                              cambiarUsuarioVenta(id, cliente.id)
+                                            }
+                                          >
+                                            {cliente.avatar && (
+                                              <img
+                                                src={cliente.avatar}
+                                                alt={cliente.name}
+                                                className="rounded-circle me-2"
+                                                width="30"
+                                                height="30"
+                                                style={{ objectFit: "cover" }}
+                                              />
+                                            )}
+                                            <span>{cliente.name}</span>
+                                          </div>
+                                          </div>
+                                          
+                                        );
+                                      })}
+                                    </div>
+
+                                  </div>
+
+                                </div>
+
+                                <div className="modal-footer">
+                                  <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() => setIsOpenCliente(false)}
+                                  >
+                                    Cerrar
+                                  </button>
+                                </div>
+                              </div>
+
+                            </div>
+
+                          </div>
+                        )}
+                      </div>
                         
 
                         
                       <div className="">
 
-                        <div className="mb-3">
-                          <input
-                            type="text"
-                            className="form-control mb-2 border ps-3"
-                            placeholder="Filtrar clientes por nombre..."
-                            value={filtroCliente}
-                            onChange={(e) => setFiltroCliente(e.target.value)}
-                          />
-                          <div className="d-flex flex-wrap gap-2">
-                            {clientesFiltrados.map((cliente) => {
-                              const isActive = orderUsers[id] === cliente.id;
-                              return (
-                                <button
-                                  key={cliente.id}
-                                  className={`btn d-flex align-items-center ${
-                                    isActive ? "btn-info" : "btn-outline-info"
-                                  }`}
-                                  onClick={() =>
-                                    cambiarUsuarioVenta(id, cliente.id)
-                                  }
-                                  style={{ height: "40px" }}
-                                >
-                                  {cliente.avatar && (
+                      
+                        <h5 className="">Detalles de la Venta</h5>
+
+
+                        {/* Seleccionar cliente */}
+                        <div className="col-12 d-flex">
+                          <h6 className="mb-0 mt-1 pe-2">Cliente</h6>
+                          <button onClick={() => setIsOpenCliente(true)} className="btn btn-sm bg-info text-white ">Seleccionar otro</button>
+                        </div>
+
+                        {/* mostrar cliente seleccionado */}
+                        
+                        <div className="row">
+                          <div className="col-auto">
+                            <div className="card p-2 border border-dark mt-2">
+                              <div className="row m-0">
+                                <div className="col-auto">
+                                  {clientes.find((u) => u.id === orderUsers[id])?.avatar && (
                                     <img
-                                      src={cliente.avatar}
-                                      alt={cliente.name}
+                                      src={clientes.find((u) => u.id === orderUsers[id])?.avatar}
+                                      alt={clientes.find((u) => u.id === orderUsers[id])?.name}
                                       className="rounded-circle me-2"
                                       width="30"
                                       height="30"
                                       style={{ objectFit: "cover" }}
                                     />
                                   )}
-                                  <span>{cliente.name}</span>
-                                </button>
-                              );
-                            })}
+                                </div>
+                                <div className="col-auto my-auto">
+                                  <span className="text-dark">{clientes.find((u) => u.id === orderUsers[id])?.name || "Cliente no encontrado"}</span>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
 
-                        <div>
-                          <strong>Cliente:</strong>{" "}
-                          {clientes.find((u) => u.id === orderUsers[id])?.name ||
-                            "Cliente no encontrado"}
-                        </div>
+                        {/* Tabla de pedido */}
 
-                          <h5>Detalles de la Venta</h5>
-                          <div className="table-responsive">
-                            <table className="table">
-                              <thead>
-                                <tr>
-                                  <th>Producto</th>
-                                  <th>Precio</th>
-                                  <th>Cantidad</th>
-                                  <th>Total</th>
-                                  <th>Acciones</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {(detalleVentas[id] || [])
-                                  .filter(
-                                    (item) => item.product_id !== PRODUCTO_A_FILTRAR
-                                  ) // Filtramos el producto 1
-                                  .map((i) => (
-                                    <tr key={i.product_id}>
-                                      <td>{i.name}</td>
-                                      <td>
-                                        {editandoPrecio?.ventaId === id &&
-                                        editandoPrecio?.productId ===
-                                          i.product_id ? (
-                                          <div className="d-flex align-items-center">
-                                            <input
-                                              type="number"
-                                              className="form-control form-control-sm"
-                                              value={nuevoPrecio}
-                                              onChange={(e) =>
-                                                setNuevoPrecio(e.target.value)
-                                              }
-                                              style={{ width: "80px" }}
-                                            />
+                        <h5 className=" mt-3">Productos agregados</h5>
+                        <div className="table-responsive">
+                          <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
+                            <thead className="bg-gradient-dark text-white ">
+                              <tr>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {(detalleVentas[id] || [])
+                                .filter((item) => item.product_id !== PRODUCTO_A_FILTRAR)
+                                .map((i) => (
+                                  <tr key={i.product_id}>
+                                    <td>{i.name}</td>
+                                    <td>
+                                      {editandoItem?.ventaId === id && editandoItem?.productId === i.product_id ? (
+                                        <input
+                                          type="number"
+                                          className="form-control form-control-sm border border-warning border-2"
+                                          value={nuevoValores.precio}
+                                          onChange={(e) => setNuevoValores({...nuevoValores, precio: e.target.value})}
+                                          placeholder="Precio"
+                                        />
+                                      ) : (
+                                        `$${i.price_unit}`
+                                      )}
+                                    </td>
+                                    <td>
+                                      {editandoItem?.ventaId === id && editandoItem?.productId === i.product_id ? (
+                                        <input
+                                          type="number"
+                                          className="form-control form-control-sm border border-warning border-2"
+                                          value={nuevoValores.cantidad}
+                                          onChange={(e) => setNuevoValores({...nuevoValores, cantidad: e.target.value})}
+                                          placeholder="Cantidad"
+                                        />
+                                      ) : (
+                                        i.quantity
+                                      )}
+                                    </td>
+                                    <td>
+                                      ${(i.price_unit * i.quantity).toFixed(2)}
+                                    </td>
+                                    <td>
+                                      <div className="d-flex">
+                                        {editandoItem?.ventaId === id && editandoItem?.productId === i.product_id ? (
+                                          <>
                                             <button
-                                              className="btn btn-success btn-sm ms-2"
-                                              onClick={guardarNuevoPrecio}
+                                              className="btn btn-success btn-sm me-1"
+                                              onClick={guardarNuevosValores}
                                             >
                                               ✓
                                             </button>
                                             <button
-                                              className="btn btn-danger btn-sm ms-1"
+                                              className="btn btn-danger btn-sm me-1"
                                               onClick={() => {
-                                                setEditandoPrecio(null);
-                                                setNuevoPrecio("");
+                                                setEditandoItem(null);
+                                                setNuevoValores({ precio: "", cantidad: "" });
                                               }}
                                             >
-                                              ✕
+                                              cancelar
                                             </button>
-                                          </div>
+                                          </>
                                         ) : (
-                                          <span
-                                            onClick={() =>
-                                              editarPrecioProducto(id, i.product_id)
-                                            }
-                                            style={{ cursor: "pointer" }}
-                                          >
-                                            ${i.price_unit}
-                                          </span>
+
+                                          <>
+                                          
+                                          <button
+                                            className="btn btn-sm btn-outline-warning me-1"
+                                            onClick={() => editarItem(id, i.product_id, i.price_unit, i.quantity)}
+                                            title="Editar">
+                                            <FaRegEdit/>
+                                          </button>
+                                          
+                                          <button
+                                            className="btn btn-sm btn-outline-danger"
+                                            onClick={() => quitarProductoDeVenta(id, i.product_id)}>
+                                            Quitar
+                                          </button>
+                                          </>
+                                          
                                         )}
-                                      </td>
-                                      <td>{i.quantity}</td>
-                                      <td>
-                                        ${(i.price_unit * i.quantity).toFixed(2)}
-                                      </td>
-                                      <td>
-                                        <button
-                                          className="btn btn-sm btn-outline-danger"
-                                          onClick={() =>
-                                            quitarProductoDeVenta(id, i.product_id)
-                                          }
-                                        >
-                                          Quitar
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  ))}
-                              </tbody>
-                            </table>
-                          </div>
-                          
+                                        
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        
 
-                          {/* Botón para abrir el modal */}
-                          <button onClick={() => setIsOpen(true)} className="btn btn-sm bg-info text-white mt-n3">Añadir productos</button>
+                        {/* Botón para abrir el modal */}
+                        <button onClick={() => setIsOpen(true)} className="btn btn-sm bg-info text-white mt-n3">+ Añadir productos</button>
 
-                          {/* total */}
-                          <div className="text-end">
-                            <strong>
-                              Total: ${calcularTotalVenta(id).toFixed(2)}
-                            </strong>
-                          </div>
-
+                        {/* total */}
+                        <div className="text-end">
+                          <strong>
+                            Total: ${calcularTotalVenta(id).toFixed(2)}
+                          </strong>
                         </div>
 
-                        <div className="bg-white border-top border-2 text-center" style={{ position: "sticky", bottom: "0px" }}>
-                          
-                          <div className="row m-0 py-2">
-                            <div className="col-6">
-                              <button className="btn btn-info me-2 "
-                                onClick={() => actualizarOrden(id)}>
-                                Guardar
-                              </button>
-                            </div>
-                            <div className="col-6">
-                              <button
-                                className="btn btn-outline-danger"
-                                onClick={() => eliminarVenta(id)}
-                              >
-                                Eliminar
-                              </button>
-                            </div>
-                            
-                          </div>
-                        </div>
                       </div>
+
+                      <div className="bg-white col-12 border-top border-2 pt-2 text-center" style={{ position: "sticky", bottom: "0px" }}>
+                        <button className="btn btn-info me-2 mb-n2" onClick={() => actualizarOrden(id)}>
+                          Guardar
+                        </button>
+
+                        <button className="btn btn-outline-danger mb-n2" onClick={() => eliminarVenta(id)}>
+                          Eliminar
+                        </button>
+                      </div>
+                    </div>
                     )
                 )}
               </div>
             </div>   
             {/*  */}
           </div>
+                      <Footer/>
+          
         </div>
 
       </div>
