@@ -6,6 +6,9 @@ import {
   createDebt,
 } from "../services/requests/debts.js";
 import { getAllCustomers } from "../services/requests/customers.js";
+import UserDebt from "../components/debts/UserDebt.jsx";
+import PendingDebt from "../components/debts/PendingDebt.jsx";
+import PaidDebt from "../components/debts/PaidDebt.jsx";
 import DebtHeader from "../components/debts/DebtHeader.jsx";
 import DebtList from "../components/debts/DebtList.jsx";
 import AddDebt from "../components/debts/AddDebt.jsx";
@@ -18,6 +21,12 @@ function Deudas() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedUserDebts, setSelectedUserDebts] = useState([]);
+
+  const handleUserSelected = (userId, debts) => {
+    console.log("Deudas recibidas:", debts);
+    setSelectedUserDebts(debts);
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -75,7 +84,13 @@ function Deudas() {
       <Sidebar />
       <div className="col p-4" style={{ minHeight: "100vh" }}>
         <DebtHeader stats={stats} />
-        <AddDebt customers={customers} onDebtAdded={handleDataUpdate} />
+        <div className="d-flex justify-content-center">
+          <AddDebt customers={customers} onDebtAdded={handleDataUpdate} />
+          <UserDebt customers={customers} onUserSelected={handleUserSelected} />
+          <PendingDebt customers={customers} />
+          <PaidDebt customers={customers} />
+        </div>
+
         <DebtList
           debtors={debtors}
           customers={customers}
