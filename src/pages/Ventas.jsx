@@ -930,7 +930,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                                     style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}/>
                                                 </div>
                                                 <div className="blur opacity-9 col-8 col-sm-6 text-dark text-center position-absolute" style={{ zIndex: 3, borderRadius: "7px 0px 0px", bottom: "1px", right: "1px", height: "20px", fontSize: "15px" }}>
-                                                  stock 96
+                                                  {p.category.name}
                                                 </div>
                                                 <div className="colored-shadow" style={{ backgroundImage: `url('${p.image_url}')` }}></div>
 
@@ -941,7 +941,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                                   
                                                 </div>
                                                 <div className="text-dark text-center border-bottom pb-1 border-gray mb-2"> 
-                                                  ${p.sale_price} / {p.unit}
+                                                  <span className="text-muted">COP </span>{p.sale_price} / {p.unit}
                                                 </div>
                                                 <div className="row m-0 mb-2 text-center">
                                                   <div className="col-6">
@@ -1144,7 +1144,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                           placeholder="Precio"
                                         />
                                       ) : (
-                                        `$${i.price_unit}`
+                                        `COP ${i.price_unit}`
                                       )}
                                     </td>
                                     <td>
@@ -1161,7 +1161,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                       )}
                                     </td>
                                     <td>
-                                      ${(i.price_unit * i.quantity).toFixed(2)}
+                                      COP {(i.price_unit * i.quantity).toFixed(2)}
                                     </td>
                                     <td>
                                       <div className="d-flex">
@@ -1216,10 +1216,10 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                         <button onClick={() => setIsOpen(true)} className="btn btn-sm bg-info text-white mt-n3">+ Añadir productos</button>
 
                         {/* total */}
-                        <div className="text-end">
-                          <strong>
-                            Total: ${calcularTotalVenta(id).toFixed(2)}
-                          </strong>
+                        <div className="text-end text-dark">
+                         
+                            Total: COP {calcularTotalVenta(id).toFixed(2)}
+                          
                         </div>
 
                       </div>
@@ -1240,7 +1240,8 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
             </div>   
             {/*  */}
           </div>
-                      <Footer/>
+
+          <Footer/>
           
         </div>
 

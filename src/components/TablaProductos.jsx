@@ -111,7 +111,7 @@ const VentaTable = () => {
                     
                   </div>
                   <div className="text-dark text-center border-bottom pb-1 border-gray mb-2"> 
-                    ${producto.sale_price} / {producto.unit}
+                  <span className="text-muted">COP </span>{producto.sale_price} / {producto.unit}
                   </div>
                   
                   <div className="col m-0 mb-2 text-center">
