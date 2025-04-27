@@ -39,3 +39,20 @@ export const paymentDebts = async (debt_id, amount) => {
   
   return fetchData("POST", `/debts/${debt_id}/payments`, paymentData);
 };
+
+
+// Obtener deuda de un usuario
+export const getDebtsById = async (debt_id) =>{
+  return fetchData("GET",`/debts/customers/${debt_id}/info`);
+}
+
+// Obtener deudas pagadas
+export const getPaidDebts = async (paid) => {
+  try {
+    return await fetchData("GET", `/debts/?is_paid=${paid}`);
+  } catch (error) {
+    console.error("Error fetching paid debts:", error);
+    throw error; // Opcional: re-lanzar el error si lo manejas fuera
+  }
+};
+

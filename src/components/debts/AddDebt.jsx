@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaUser, FaSearch, FaPlus, FaMoneyBillWave } from "react-icons/fa";
 import { createDebt } from "../../services/requests/debts";
+import { PiUserListFill } from "react-icons/pi";
 
 const AddDebt = ({ customers, onDebtAdded }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -53,7 +54,7 @@ const AddDebt = ({ customers, onDebtAdded }) => {
   };
 
   return (
-    <div className="card mb-4 shadow-sm">
+    <div className="card w-20 mb-4 shadow-sm">
       <div className="card-body">
         {!showForm ? (
           <button
@@ -151,7 +152,7 @@ const AddDebt = ({ customers, onDebtAdded }) => {
               </button>
               <button
                 type="submit"
-                className="btn btn-primary"
+                className="btn btn-info"
                 disabled={loading || !selectedCustomer || !amount}
               >
                 {loading ? "Guardando..." : "Guardar Deuda"}

@@ -1,4 +1,5 @@
 import DebtCard from "./DebtCard.jsx";
+import UserDebt from "./UserDebt.jsx";
 
 const DebtList = ({
   debtors,
