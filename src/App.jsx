@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import Ventas from "./pages/Ventas";
+import VerFacturaPDF from "./pages/VerFacturaPDF";
 import Productos from "./pages/Productos";
 import Categorias from "./pages/Categorias";
 import FormCategoria from "./pages/FormCategoria";
@@ -29,6 +30,7 @@ function App() {
         <Route path="/productos/editar/:id" element={<FormProducto />} />
 
         <Route path="/ventas" element={<Ventas />} />
+        <Route path="/factura/:id" element={<VerFacturaPDF />} />
 
         <Route path="/deudas" element={<Deudas />} />
         <Route path="/cliente/agregar/:id" element={<FormCliente />} />

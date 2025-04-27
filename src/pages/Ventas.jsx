@@ -20,6 +20,12 @@ import { FaHandHoldingDollar } from "react-icons/fa6";
 import { TbClipboardList } from "react-icons/tb";
 import { FaRegEdit } from "react-icons/fa";
 import Footer from "../components/Footer.jsx";
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import FacturaPDF from '../components/FacturaPDF.jsx';
+import { HiOutlineDocumentArrowDown } from "react-icons/hi2";
+import { PiFileArrowDownLight } from "react-icons/pi";
+import { FaFileDownload } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 
 
 // Helpers de localStorage
@@ -70,11 +76,17 @@ export default function Ventas() {
   // Función para mostrar alerta de éxito
   const showSuccessAlert = (message) => {
     Swal.fire({
+      toast: true,
       icon: "success",
+      position: 'bottom-end', // esquina inferior derecha
       title: "Éxito",
       text: message,
-      timer: 900,
+      timer: 1000,
       showConfirmButton: false,
+      timerProgressBar: true,
+      customClass: {
+        popup: 'small-toast' // clase personalizada para hacerlo más pequeño
+      }
     });
   };
 
@@ -697,7 +709,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                   <div className="tab-pane fade show active">
                     <h4>Pedidos Pendientes</h4>
                     {ordenesPendientes.length === 0 ? (
-                      <div className="alert alert-info">
+                      <div className="alert">
                         No hay órdenes pendientes.
                       </div>
                     ) : (
@@ -803,7 +815,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
 
                     <h4 className="mt-5">Pedidos Completados</h4>
                     {ordenesCompletadas.length === 0 ? (
-                      <div className="alert alert-info">
+                      <div className="alert">
                         No hay órdenes completadas.
                       </div>
                     ) : (
@@ -853,9 +865,20 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                   </td> */}
                                   <td>${total.toFixed(2)}</td>
                                   <td>
-                                    <span className="badge bg-success">
+                                    <span className="badge border border-success text-success">
                                       Completado
                                     </span>
+                                    <PDFDownloadLink 
+                                      document={<FacturaPDF order={orden} />} 
+                                      fileName={`factura_${orden.id}.pdf`}
+                                    >
+                                      {({ blob, url, loading, error }) =>
+                                        <button className="btn ms-2 btn-sm btn-info">
+                                          {loading ? 'Generando...' : ''}<FaFileDownload/>
+                                        </button>
+                                      }
+                                    </PDFDownloadLink>
+
                                   </td>
                                 </tr>
                               );
