@@ -45,7 +45,7 @@ function App() {
 
         {/* <Route path="/users" element={<Users />} /> */}
         <Route path="/reportes" element={<Reportes />} />
-        <Route path="/reporte/:id" element={<VerReporte />} />
+        <Route path="/reportes/detalle/:date" element={<VerReporte />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

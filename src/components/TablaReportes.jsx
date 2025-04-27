@@ -58,7 +58,7 @@ const CategoriaTable = () => {
                   <td>25</td>
                   <td>$ 2'500.600</td>
                   <td>
-                    <Link to={`/reporte/${cat.id}`} className="btn mb-0 bg-info text-sm text-white btn-sm">
+                    <Link to={`/reportes/detalle/2025-04-27`} className="btn mb-0 bg-info text-sm text-white btn-sm">
                     <BsEye/> detalles
                     </Link>
                     
