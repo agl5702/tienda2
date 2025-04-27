@@ -14,7 +14,9 @@ import Swal from "sweetalert2";
 
 import "../components/css/MenuInferior.css";
 import { LuChevronDown } from "react-icons/lu";
-
+import { FaFileInvoiceDollar } from "react-icons/fa";
+import { CiBadgeDollar } from "react-icons/ci";
+import { FaHandHoldingDollar } from "react-icons/fa6";
 
 // Helpers de localStorage
 const saveToStorage = (key, value) => {
@@ -577,6 +579,8 @@ export default function Ventas() {
   // mostrar el dropdown
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  // modal productos
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -853,32 +857,125 @@ export default function Ventas() {
                   (id) =>
                     activeTab === id && (
                       <div key={id} className="tab-pane fade show active">
-                        <div className="d-flex justify-content-between align-items-center mb-3">
-                          <div>
-                            <strong>Cliente:</strong>{" "}
-                            {clientes.find((u) => u.id === orderUsers[id])?.name ||
-                              "Cliente no encontrado"}
-                          </div>
-                          <div>
-                            <button
-                              className="btn btn-info me-2"
-                              onClick={() => actualizarOrden(id)}
+
+                      {/* Modal productos */}
+                      <div className="">
+                        {isOpen && (
+                          <div
+                            className="modal modal-xl fade show d-block"
+                            tabIndex="-1"
+                            role="dialog"
+                            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <div
+                              className="modal-dialog modal-dialog-centered"
+                              role="document"
+                              onClick={(e) => e.stopPropagation()} // Evitar que se cierre al hacer clic dentro
                             >
-                              Guardar Orden
-                            </button>
-                            <button
-                              className="btn btn-outline-danger"
-                              onClick={() => eliminarVenta(id)}
-                            >
-                              Eliminar Venta
-                            </button>
+                              <div className="modal-content">
+                                <div className="modal-header">
+                                  <h5 className="modal-title">Añadir Productos</h5>
+                                  <button
+                                    type="button"
+                                    className="btn-close bg-danger"
+                                    onClick={() => setIsOpen(false)}
+                                    aria-label="Close"
+                                  ></button>
+                                </div>
+                                <div className="modal-body">
+                                  {/* productos */}
+                                  <div className="col-12">
+                                    <input
+                                      type="text"
+                                      className="form-control mb-3 border ps-3"
+                                      placeholder="Filtrar productos por nombre..."
+                                      value={filtroProducto}
+                                      onChange={(e) => setFiltroProducto(e.target.value)}
+                                    />
+                                    <div className="row" style={{ maxHeight: "400px", overflowY: "auto" }}>
+                                      {productosFiltrados
+                                        .filter((p) => p.id !== PRODUCTO_A_FILTRAR) // Filtrar producto con ID 1
+                                        .map((p) => (
+                                          <>
+
+                                          <div key={p.id} className="col-6 col-sm-6 col-md-6 col-lg-4 col-xl-3 col-xxl-3 mb-3 px-2">
+                                            <div className="card bg-gray position-relative">
+                                              <span className="bg-success opacity-9 pb-1 col-sm-3 text-white text-center position-absolute" style={{ zIndex: 3, borderRadius: "10px 0px 20px" }}> 20%</span>
+                                              <div className="card-header p-0 position-relative z-index-2" style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}>
+                                                <div className="d-block blur-shadow-image cursor-pointer img-marco ">
+                                                  <img
+                                                    src={p.image_url}
+                                                    width="100%"
+                                                    height="160vh"
+                                                    alt="producto"
+                                                    className="border-bottom img-size img-oferta "
+                                                    style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}/>
+                                                </div>
+                                                <div className="blur opacity-9 col-8 col-sm-6 text-dark text-center position-absolute" style={{ zIndex: 3, borderRadius: "7px 0px 0px", bottom: "1px", right: "1px", height: "20px", fontSize: "15px" }}>
+                                                  stock 96
+                                                </div>
+                                                <div className="colored-shadow" style={{ backgroundImage: `url('${p.image_url}')` }}></div>
+
+                                              </div>
+                                              <div className="px-2 py-0">
+                                                <p className="text-dark text-center nombre mt-1 mb-0">{p.name}</p>
+                                                <div className="row justify-space-between text-center">
+                                                  
+                                                </div>
+                                                <div className="text-dark text-center border-bottom pb-1 border-gray mb-2"> 
+                                                  ${p.sale_price} / {p.unit}
+                                                </div>
+                                                <div className="row m-0 mb-2 text-center">
+                                                  <div className="col-6">
+                                                    <button
+                                                      className="btn btn-sm bg-info text-white"
+                                                      onClick={() =>
+                                                        agregarProductoAVenta(id, p)
+                                                      }> + Añadir</button>
+                                                    
+                                                  </div>
+                                                  <div className="col-6">
+                                                    <button
+                                                      className="btn btn-sm btn-outline-danger"
+                                                      onClick={() =>
+                                                        quitarProductoDeVenta(id, p.id)
+                                                      }> - Quitar</button>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          </>
+                                          
+                                        ))}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="modal-footer">
+                                  <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() => setIsOpen(false)}
+                                  >
+                                    Cerrar
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        )}
+                      </div>
+                        
+
+                        
+                      <div className="">
 
                         <div className="mb-3">
                           <input
                             type="text"
-                            className="form-control mb-2"
+                            className="form-control mb-2 border ps-3"
                             placeholder="Filtrar clientes por nombre..."
                             value={filtroCliente}
                             onChange={(e) => setFiltroCliente(e.target.value)}
@@ -913,66 +1010,15 @@ export default function Ventas() {
                             })}
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-8">
-                            <h5>Productos</h5>
-                            <input
-                              type="text"
-                              className="form-control mb-3"
-                              placeholder="Filtrar productos por nombre..."
-                              value={filtroProducto}
-                              onChange={(e) => setFiltroProducto(e.target.value)}
-                            />
-                            <div className="row">
-                              {productosFiltrados
-                                .filter((p) => p.id !== PRODUCTO_A_FILTRAR) // Filtrar producto con ID 1
-                                .map((p) => (
-                                  <div
-                                    key={p.id}
-                                    className="col-md-3 col-sm-6 mb-3"
-                                  >
-                                    <div className="card">
-                                      {p.image_url && (
-                                        <img
-                                          src={p.image_url}
-                                          className="card-img-top"
-                                          alt={p.name}
-                                          style={{
-                                            height: "120px",
-                                            objectFit: "cover",
-                                          }}
-                                        />
-                                      )}
-                                      <div className="card-body">
-                                        <h6>{p.name}</h6>
-                                        <p>${p.sale_price}</p>
-                                        <div className="d-flex justify-content-between">
-                                          <button
-                                            className="btn btn-info btn-sm"
-                                            onClick={() =>
-                                              agregarProductoAVenta(id, p)
-                                            }
-                                          >
-                                            + Añadir
-                                          </button>
-                                          <button
-                                            className="btn btn-danger btn-sm"
-                                            onClick={() =>
-                                              quitarProductoDeVenta(id, p.id)
-                                            }
-                                          >
-                                            - Quitar
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
 
-                          <div className="col-md-4">
-                            <h5>Detalles de la Venta</h5>
+                        <div>
+                          <strong>Cliente:</strong>{" "}
+                          {clientes.find((u) => u.id === orderUsers[id])?.name ||
+                            "Cliente no encontrado"}
+                        </div>
+
+                          <h5>Detalles de la Venta</h5>
+                          <div className="table-responsive">
                             <table className="table">
                               <thead>
                                 <tr>
@@ -1050,11 +1096,39 @@ export default function Ventas() {
                                   ))}
                               </tbody>
                             </table>
-                            <div className="text-end">
-                              <strong>
-                                Total: ${calcularTotalVenta(id).toFixed(2)}
-                              </strong>
+                          </div>
+                          
+
+                          {/* Botón para abrir el modal */}
+                          <button onClick={() => setIsOpen(true)} className="btn btn-sm bg-info text-white mt-n3">Añadir productos</button>
+
+                          {/* total */}
+                          <div className="text-end">
+                            <strong>
+                              Total: ${calcularTotalVenta(id).toFixed(2)}
+                            </strong>
+                          </div>
+
+                        </div>
+
+                        <div className="bg-white border-top border-2 text-center" style={{ position: "sticky", bottom: "0px" }}>
+                          
+                          <div className="row m-0 py-2">
+                            <div className="col-6">
+                              <button className="btn btn-info me-2 "
+                                onClick={() => actualizarOrden(id)}>
+                                Guardar
+                              </button>
                             </div>
+                            <div className="col-6">
+                              <button
+                                className="btn btn-outline-danger"
+                                onClick={() => eliminarVenta(id)}
+                              >
+                                Eliminar
+                              </button>
+                            </div>
+                            
                           </div>
                         </div>
                       </div>
