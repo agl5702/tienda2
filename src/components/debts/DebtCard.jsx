@@ -9,6 +9,7 @@ import {
   FaCheckCircle,
   FaTimes,
   FaList,
+  FaTrash,
 } from "react-icons/fa";
 import DebtStatusBadge from "./DebtStatusBadge.jsx";
 import {
@@ -16,6 +17,7 @@ import {
   editDebts,
   deleteDebts,
 } from "@/services/requests/debts.js";
+import Swal from "sweetalert2";
 
 const DebtCard = ({
   debtor,
@@ -58,22 +60,54 @@ const DebtCard = ({
       onPaymentSuccess();
       setShowPaymentModal(false);
       setAmount("");
+      Swal.fire({
+        title: "¡Abono registrado!",
+        text: `Se ha registrado un abono de $${amount}`,
+        icon: "success",
+        confirmButtonText: "Aceptar",
+      });
     } catch (err) {
-      setError(err.message || "Error al registrar el abono");
+      Swal.fire({
+        title: "Error",
+        text: err.message || "Error al registrar el abono",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleFullPayment = async () => {
-    setLoading(true);
-    setError(null);
-
     try {
-      await paymentDebts(debtor.id, pendingAmount);
-      onPaymentSuccess();
+      const result = await Swal.fire({
+        title: "¿Pagar todo?",
+        text: `¿Deseas pagar el saldo pendiente de $${pendingAmount.toLocaleString()}?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí, pagar todo",
+        cancelButtonText: "Cancelar",
+      });
+
+      if (result.isConfirmed) {
+        setLoading(true);
+        await paymentDebts(debtor.id, pendingAmount);
+        onPaymentSuccess();
+        setShowDetailsModal(false);
+        Swal.fire({
+          title: "¡Pago completo!",
+          text: `Se ha registrado el pago completo de $${pendingAmount.toLocaleString()}`,
+          icon: "success",
+          confirmButtonText: "Aceptar",
+        });
+      }
     } catch (err) {
-      setError(err.message || "Error al registrar el pago completo");
+      Swal.fire({
+        title: "Error",
+        text: err.message || "Error al registrar el pago completo",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
     } finally {
       setLoading(false);
     }
@@ -84,26 +118,62 @@ const DebtCard = ({
     setError(null);
 
     try {
-      await editDebts(debtor.id, editData);
+      await editDebts(debtor.id, {
+        status: editData.status,
+        total_amount: parseFloat(editData.total_amount),
+      });
       onPaymentSuccess();
       setShowEditModal(false);
+      Swal.fire({
+        title: "¡Deuda actualizada!",
+        text: "Los cambios se han guardado correctamente",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+      });
     } catch (err) {
-      setError(err.message || "Error al editar la deuda");
+      Swal.fire({
+        title: "Error",
+        text: err.message || "Error al editar la deuda",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteDebt = async () => {
-    setLoading(true);
-    setError(null);
-
     try {
-      await deleteDebts(debtor.id);
-      onPaymentSuccess();
-      setShowDeleteModal(false);
+      const result = await Swal.fire({
+        title: "¿Eliminar deuda?",
+        text: `¿Estás seguro de eliminar esta deuda de $${debtor.total_amount.toLocaleString()}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#dc3545",
+      });
+
+      if (result.isConfirmed) {
+        setLoading(true);
+        await deleteDebts(debtor.id);
+        onPaymentSuccess();
+        setShowDeleteModal(false);
+        setShowDetailsModal(false);
+        Swal.fire({
+          title: "¡Eliminada!",
+          text: "La deuda ha sido eliminada",
+          icon: "success",
+          confirmButtonText: "Aceptar",
+        });
+      }
     } catch (err) {
-      setError(err.message || "Error al eliminar la deuda");
+      Swal.fire({
+        title: "Error",
+        text: err.message || "Error al eliminar la deuda",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
     } finally {
       setLoading(false);
     }
@@ -232,84 +302,287 @@ const DebtCard = ({
           {/* Modal de detalles (solo para deudas consolidadas) */}
           {showDetailsModal && isConsolidated && (
             <div
-              className="modal-backdrop"
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(0,0,0,0.5)",
-                zIndex: 1040,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+              className="modal fade show"
+              style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
             >
-              <div
-                className="modal-content bg-white p-4 rounded"
-                style={{
-                  width: "90%",
-                  maxWidth: "800px",
-                  maxHeight: "80vh",
-                  overflowY: "auto",
-                }}
-              >
-                <h5>Detalle de deudas - {customerName}</h5>
-                <p className="mb-3">
-                  Total consolidado: ${debtor.total_amount.toLocaleString()}
-                </p>
+              <div className="modal-dialog modal-xl">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">
+                      Detalle de deudas - {customerName}
+                    </h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => setShowDetailsModal(false)}
+                    ></button>
+                  </div>
+                  <div className="modal-body">
+                    <p className="mb-3">
+                      Total consolidado: ${debtor.total_amount.toLocaleString()}
+                    </p>
 
-                <div className="table-responsive">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Total</th>
-                        <th>Pagado</th>
-                        <th>Pendiente</th>
-                        <th>Estado</th>
-                        <th>Creado</th>
-                        <th>Actualizado</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {debtor.debts.map((debt) => (
-                        <tr key={debt.id}>
-                          <td>{debt.id}</td>
-                          <td>${debt.total_amount.toLocaleString()}</td>
-                          <td>${debt.paid_amount.toLocaleString()}</td>
-                          <td>
-                            $
-                            {(
-                              debt.total_amount - debt.paid_amount
-                            ).toLocaleString()}
-                          </td>
-                          <td>
-                            <DebtStatusBadge status={debt.status} />
-                          </td>
-                          <td>{formatDate(debt.created_at)}</td>
-                          <td>{formatDate(debt.updated_at)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="d-flex justify-content-end mt-3">
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => setShowDetailsModal(false)}
-                  >
-                    Cerrar
-                  </button>
+                    <div className="table-responsive">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Total</th>
+                            <th>Pagado</th>
+                            <th>Pendiente</th>
+                            <th>Estado</th>
+                            <th>Creado</th>
+                            <th>Actualizado</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {debtor.debts.map((debt) => (
+                            <tr key={debt.id}>
+                              <td>{debt.id}</td>
+                              <td>${debt.total_amount.toLocaleString()}</td>
+                              <td>${debt.paid_amount.toLocaleString()}</td>
+                              <td>
+                                $
+                                {(
+                                  debt.total_amount - debt.paid_amount
+                                ).toLocaleString()}
+                              </td>
+                              <td>
+                                <DebtStatusBadge status={debt.status} />
+                              </td>
+                              <td>{formatDate(debt.created_at)}</td>
+                              <td>{formatDate(debt.updated_at)}</td>
+                              <td>
+                                <div className="d-flex gap-2">
+                                  <button
+                                    className="btn btn-sm btn-dark"
+                                    onClick={() => {
+                                      setEditData({
+                                        status: debt.status,
+                                        total_amount: debt.total_amount,
+                                      });
+                                      setShowDetailsModal(false);
+                                      setShowEditModal(true);
+                                    }}
+                                  >
+                                    <FaEdit />
+                                  </button>
+                                  {debt.status === "PENDING" && (
+                                    <button
+                                      className="btn btn-sm btn-success"
+                                      onClick={() => {
+                                        setShowDetailsModal(false);
+                                        handleFullPayment();
+                                      }}
+                                    >
+                                      <FaCheckCircle />
+                                    </button>
+                                  )}
+                                  <button
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => {
+                                      setShowDetailsModal(false);
+                                      handleDeleteDebt();
+                                    }}
+                                  >
+                                    <FaTrash />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-info"
+                      onClick={() => setShowDetailsModal(false)}
+                    >
+                      Cerrar
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Modales existentes (pago, edición, eliminación) */}
-          {/* ... (mantén los modales existentes igual) ... */}
+          {/* Modal de pago */}
+          {showPaymentModal && (
+            <div
+              className="modal fade show"
+              style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+            >
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Registrar abono</h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => {
+                        setShowPaymentModal(false);
+                        setError(null);
+                      }}
+                    ></button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="mb-3">
+                      <label className="form-label">Monto a abonar</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        placeholder={`Máximo $${pendingAmount.toLocaleString()}`}
+                      />
+                    </div>
+
+                    {error && <div className="alert alert-danger">{error}</div>}
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setShowPaymentModal(false)}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-info"
+                      onClick={handlePayment}
+                      disabled={loading}
+                    >
+                      {loading ? "Procesando..." : "Registrar abono"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Modal de edición */}
+          {showEditModal && (
+            <div
+              className="modal fade show"
+              style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+            >
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Editar deuda</h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => {
+                        setShowEditModal(false);
+                        setError(null);
+                      }}
+                    ></button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="mb-3">
+                      <label className="form-label">Estado</label>
+                      <select
+                        className="form-select"
+                        value={editData.status}
+                        onChange={(e) =>
+                          setEditData({ ...editData, status: e.target.value })
+                        }
+                      >
+                        <option value="PENDING">Pendiente</option>
+                        <option value="PAID">Pagado</option>
+                        <option value="COMPLETED">Completado</option>
+                      </select>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Monto total</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={editData.total_amount}
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            total_amount: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    {error && <div className="alert alert-danger">{error}</div>}
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setShowEditModal(false)}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-info"
+                      onClick={handleEditDebt}
+                      disabled={loading}
+                    >
+                      {loading ? "Procesando..." : "Guardar cambios"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Modal de eliminación */}
+          {showDeleteModal && (
+            <div
+              className="modal fade show"
+              style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+            >
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Eliminar deuda</h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => setShowDeleteModal(false)}
+                    ></button>
+                  </div>
+                  <div className="modal-body">
+                    <p>
+                      ¿Estás seguro de eliminar esta deuda de {customerName} por
+                      ${debtor.total_amount.toLocaleString()}?
+                    </p>
+                    {error && <div className="alert alert-danger">{error}</div>}
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setShowDeleteModal(false)}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger"
+                      onClick={handleDeleteDebt}
+                      disabled={loading}
+                    >
+                      {loading ? "Procesando..." : "Eliminar"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
