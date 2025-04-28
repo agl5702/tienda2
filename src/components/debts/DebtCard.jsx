@@ -37,13 +37,26 @@ const DebtCard = ({
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const pendingAmount = debtor.total_amount - debtor.paid_amount;
+  const [currentDebt, setCurrentDebt] = useState(null);
+
+  // Calcula el monto pendiente según si es consolidado o no
+  const pendingAmount =
+    isConsolidated && currentDebt
+      ? currentDebt.total_amount - currentDebt.paid_amount
+      : debtor.total_amount - debtor.paid_amount;
+
+  // Calcula el número de deudas pendientes
+  const pendingDebtsCount = isConsolidated
+    ? debtor.debts.filter((debt) => debt.status === "PENDING").length
+    : 0;
 
   const handlePayment = async () => {
     if (!amount || amount <= 0) {
       setError("Ingrese un monto válido");
       return;
     }
+
+    const debtId = isConsolidated && currentDebt ? currentDebt.id : debtor.id;
 
     if (amount > pendingAmount) {
       setError(
@@ -56,7 +69,7 @@ const DebtCard = ({
     setError(null);
 
     try {
-      await paymentDebts(debtor.id, amount);
+      await paymentDebts(debtId, amount);
       onPaymentSuccess();
       setShowPaymentModal(false);
       setAmount("");
@@ -75,10 +88,13 @@ const DebtCard = ({
       });
     } finally {
       setLoading(false);
+      setCurrentDebt(null);
     }
   };
 
   const handleFullPayment = async () => {
+    const debtId = isConsolidated && currentDebt ? currentDebt.id : debtor.id;
+
     try {
       const result = await Swal.fire({
         title: "¿Pagar todo?",
@@ -91,7 +107,7 @@ const DebtCard = ({
 
       if (result.isConfirmed) {
         setLoading(true);
-        await paymentDebts(debtor.id, pendingAmount);
+        await paymentDebts(debtId, pendingAmount);
         onPaymentSuccess();
         setShowDetailsModal(false);
         Swal.fire({
@@ -110,6 +126,7 @@ const DebtCard = ({
       });
     } finally {
       setLoading(false);
+      setCurrentDebt(null);
     }
   };
 
@@ -117,8 +134,10 @@ const DebtCard = ({
     setLoading(true);
     setError(null);
 
+    const debtId = isConsolidated && currentDebt ? currentDebt.id : debtor.id;
+
     try {
-      await editDebts(debtor.id, {
+      await editDebts(debtId, {
         status: editData.status,
         total_amount: parseFloat(editData.total_amount),
       });
@@ -139,14 +158,21 @@ const DebtCard = ({
       });
     } finally {
       setLoading(false);
+      setCurrentDebt(null);
     }
   };
 
   const handleDeleteDebt = async () => {
+    const debtId = isConsolidated && currentDebt ? currentDebt.id : debtor.id;
+    const amountToDelete =
+      isConsolidated && currentDebt
+        ? currentDebt.total_amount
+        : debtor.total_amount;
+
     try {
       const result = await Swal.fire({
         title: "¿Eliminar deuda?",
-        text: `¿Estás seguro de eliminar esta deuda de $${debtor.total_amount.toLocaleString()}?`,
+        text: `¿Estás seguro de eliminar esta deuda de $${amountToDelete.toLocaleString()}?`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sí, eliminar",
@@ -156,7 +182,7 @@ const DebtCard = ({
 
       if (result.isConfirmed) {
         setLoading(true);
-        await deleteDebts(debtor.id);
+        await deleteDebts(debtId);
         onPaymentSuccess();
         setShowDeleteModal(false);
         setShowDetailsModal(false);
@@ -176,6 +202,7 @@ const DebtCard = ({
       });
     } finally {
       setLoading(false);
+      setCurrentDebt(null);
     }
   };
 
@@ -191,10 +218,12 @@ const DebtCard = ({
             <div>
               <h5 className="card-title mb-0">{customerName}</h5>
               <DebtStatusBadge status={debtor.status} />
-              {isConsolidated && (
+              {isConsolidated && pendingDebtsCount > 0 && (
                 <span className="badge bg-secondary ms-2">
-                  {debtor.debtsCount}{" "}
-                  {debtor.debtsCount === 1 ? "deuda" : "deudas"}
+                  {pendingDebtsCount}{" "}
+                  {pendingDebtsCount === 1
+                    ? "deuda pendiente"
+                    : "deudas pendientes"}
                 </span>
               )}
             </div>
@@ -237,9 +266,15 @@ const DebtCard = ({
               <FaCalendarAlt className="me-1" />
               {isConsolidated ? (
                 <>
-                  {debtor.debtsCount}{" "}
-                  {debtor.debtsCount === 1 ? "deuda" : "deudas"}
-                  <br />
+                  {pendingDebtsCount > 0 && (
+                    <>
+                      {pendingDebtsCount}{" "}
+                      {pendingDebtsCount === 1
+                        ? "deuda pendiente"
+                        : "deudas pendientes"}
+                      <br />
+                    </>
+                  )}
                   Última actualización: {formatDate(debtor.updated_at)}
                 </>
               ) : (
@@ -358,6 +393,7 @@ const DebtCard = ({
                                   <button
                                     className="btn btn-sm btn-dark"
                                     onClick={() => {
+                                      setCurrentDebt(debt);
                                       setEditData({
                                         status: debt.status,
                                         total_amount: debt.total_amount,
@@ -372,18 +408,20 @@ const DebtCard = ({
                                     <button
                                       className="btn btn-sm btn-success"
                                       onClick={() => {
+                                        setCurrentDebt(debt);
                                         setShowDetailsModal(false);
-                                        handleFullPayment();
+                                        setShowPaymentModal(true);
                                       }}
                                     >
-                                      <FaCheckCircle />
+                                      <FaPlusCircle />
                                     </button>
                                   )}
                                   <button
                                     className="btn btn-sm btn-danger"
                                     onClick={() => {
+                                      setCurrentDebt(debt);
                                       setShowDetailsModal(false);
-                                      handleDeleteDebt();
+                                      setShowDeleteModal(true);
                                     }}
                                   >
                                     <FaTrash />
@@ -426,6 +464,7 @@ const DebtCard = ({
                       onClick={() => {
                         setShowPaymentModal(false);
                         setError(null);
+                        setCurrentDebt(null);
                       }}
                     ></button>
                   </div>
@@ -447,7 +486,10 @@ const DebtCard = ({
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => setShowPaymentModal(false)}
+                      onClick={() => {
+                        setShowPaymentModal(false);
+                        setCurrentDebt(null);
+                      }}
                     >
                       Cancelar
                     </button>
@@ -481,6 +523,7 @@ const DebtCard = ({
                       onClick={() => {
                         setShowEditModal(false);
                         setError(null);
+                        setCurrentDebt(null);
                       }}
                     ></button>
                   </div>
@@ -521,7 +564,10 @@ const DebtCard = ({
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => setShowEditModal(false)}
+                      onClick={() => {
+                        setShowEditModal(false);
+                        setCurrentDebt(null);
+                      }}
                     >
                       Cancelar
                     </button>
@@ -552,13 +598,20 @@ const DebtCard = ({
                     <button
                       type="button"
                       className="btn-close"
-                      onClick={() => setShowDeleteModal(false)}
+                      onClick={() => {
+                        setShowDeleteModal(false);
+                        setCurrentDebt(null);
+                      }}
                     ></button>
                   </div>
                   <div className="modal-body">
                     <p>
                       ¿Estás seguro de eliminar esta deuda de {customerName} por
-                      ${debtor.total_amount.toLocaleString()}?
+                      $
+                      {isConsolidated && currentDebt
+                        ? currentDebt.total_amount.toLocaleString()
+                        : debtor.total_amount.toLocaleString()}
+                      ?
                     </p>
                     {error && <div className="alert alert-danger">{error}</div>}
                   </div>
@@ -566,7 +619,10 @@ const DebtCard = ({
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => setShowDeleteModal(false)}
+                      onClick={() => {
+                        setShowDeleteModal(false);
+                        setCurrentDebt(null);
+                      }}
                     >
                       Cancelar
                     </button>
