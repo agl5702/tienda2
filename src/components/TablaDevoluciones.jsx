@@ -3,6 +3,7 @@ import { getAllReturns, deleteReturn } from '../services/requests/returns';
 import { BsPencilSquare, BsTrash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { formatNumber } from "../services/utils/format.js";
 
 const ReturnTable = () => {
   const [returns, setReturns] = useState([]);
@@ -76,7 +77,7 @@ const ReturnTable = () => {
               returnsFiltrados.map((value) => (
                 <tr key={value.id} className=''>
                   <td>{value.return_date}</td>
-                  <td>{value.amount_returned}</td>
+                  <td>{formatNumber(value.amount_returned)}</td>
                   <td>
                     <Link to={`/devolucion/editar/${value.id}`} className="btn mb-0 bg-info text-sm text-white btn-sm">
                     <BsPencilSquare/> Editar

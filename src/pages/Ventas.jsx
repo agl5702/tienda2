@@ -27,6 +27,8 @@ import { PiFileArrowDownLight } from "react-icons/pi";
 import { FaFileDownload } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 
+import { formatQuantity } from "../services/utils/formatQuantity";
+import { formatNumber } from "../services/utils/format.js";
 
 // Helpers de localStorage
 const saveToStorage = (key, value) => {
@@ -81,7 +83,23 @@ export default function Ventas() {
       position: 'bottom-end', // esquina inferior derecha
       title: "Éxito",
       text: message,
-      timer: 1000,
+      timer: 2000,
+      showConfirmButton: false,
+      timerProgressBar: true,
+      customClass: {
+        popup: 'small-toast' // clase personalizada para hacerlo más pequeño
+      }
+    });
+  };
+
+  const showSuccessAlertCorto = (message) => {
+    Swal.fire({
+      toast: true,
+      icon: "success",
+      position: 'bottom-end', // esquina inferior derecha
+      title: "Éxito",
+      text: message,
+      timer: 800,
       showConfirmButton: false,
       timerProgressBar: true,
       customClass: {
@@ -196,7 +214,7 @@ const guardarNuevosValores = () => {
 
   setEditandoItem(null);
   setNuevoValores({ precio: "", cantidad: "" });
-  showSuccessAlert("Valores actualizados correctamente");
+  showSuccessAlertCorto("Valores actualizados correctamente");
 };
 
 // Función para iniciar la edición
@@ -772,7 +790,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                         ))}
                                       </ul>
                                     </td> */}
-                                    <td>${total.toFixed(2)}</td>
+                                    <td>$ {formatNumber(total)}</td>
                                     <td>
                                       <span className="badge border border-warning text-warning">
                                         Pendiente
@@ -863,7 +881,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                       ))}
                                     </ul>
                                   </td> */}
-                                  <td>${total.toFixed(2)}</td>
+                                  <td>$ {formatNumber(total)}</td>
                                   <td>
                                     <span className="badge border border-success text-success">
                                       Completado
@@ -964,7 +982,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                                   
                                                 </div>
                                                 <div className="text-dark text-center border-bottom pb-1 border-gray mb-2"> 
-                                                  <span className="text-muted">COP </span>{p.sale_price} / {p.unit}
+                                                  $ {formatNumber(p.sale_price)} / {p.unit}
                                                 </div>
                                                 <div className="row m-0 mb-2 text-center">
                                                   <div className="col-6">
@@ -972,7 +990,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                                       className="btn btn-sm bg-info text-white"
                                                       onClick={() =>
                                                         agregarProductoAVenta(id, p)
-                                                      }> + Añadir</button>
+                                                      }> Añadir</button>
                                                     
                                                   </div>
                                                   <div className="col-6">
@@ -980,7 +998,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                                       className="btn btn-sm btn-outline-danger"
                                                       onClick={() =>
                                                         quitarProductoDeVenta(id, p.id)
-                                                      }> - Quitar</button>
+                                                      }>Restar</button>
                                                   </div>
                                                 </div>
                                               </div>
@@ -1167,7 +1185,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                           placeholder="Precio"
                                         />
                                       ) : (
-                                        `COP ${i.price_unit}`
+                                        `$ ${formatNumber(i.price_unit)}`
                                       )}
                                     </td>
                                     <td>
@@ -1180,11 +1198,11 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                           placeholder="Cantidad"
                                         />
                                       ) : (
-                                        i.quantity
+                                         <td>{formatQuantity(i.quantity)}</td>
                                       )}
                                     </td>
                                     <td>
-                                      COP {(i.price_unit * i.quantity).toFixed(2)}
+                                      $ { formatNumber(i.price_unit * i.quantity)}
                                     </td>
                                     <td>
                                       <div className="d-flex">
@@ -1240,8 +1258,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
 
                         {/* total */}
                         <div className="text-end text-dark">
-                         
-                            Total: COP {calcularTotalVenta(id).toFixed(2)}
+                          <h5 className="mt-3">Total ${formatNumber(calcularTotalVenta(id))}</h5>
                           
                         </div>
 

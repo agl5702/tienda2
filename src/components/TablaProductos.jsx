@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getAllProducts, deleteProduct } from "../services/requests/products";
 import { BsPencilSquare, BsTrash } from "react-icons/bs";
 import Swal from "sweetalert2";
+import { formatNumber } from "../services/utils/format.js";
 
 const VentaTable = () => {
   const [productos, setProductos] = useState([]);
@@ -103,7 +104,7 @@ const VentaTable = () => {
                   className="card-header p-0 position-relative z-index-2"
                   style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}
                 >
-                  <div className="d-block blur-shadow-image cursor-pointer img-marco ">
+                  <div className="d-block blur-shadow-image img-marco ">
                     <img
                       src={producto.image_url}
                       width="100%"
@@ -137,8 +138,7 @@ const VentaTable = () => {
                   </p>
                   <div className="row justify-space-between text-center"></div>
                   <div className="text-dark text-center border-bottom pb-1 border-gray mb-2">
-                    <span className="text-muted">COP </span>
-                    {producto.sale_price} / {producto.unit}
+                    $ {formatNumber(producto.sale_price)} / {producto.unit}
                   </div>
 
                   <div className="col m-0 mb-2 text-center">

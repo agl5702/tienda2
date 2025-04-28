@@ -39,13 +39,13 @@ export const formatCurrency = (value, decimals = 0) => {
     return new Date(date).toLocaleDateString('es-CO', options);
   };
   
-  /**
+  /** 💸💸💸💸
    * Formatea un número con separadores de miles
    * @param {number} value - Valor a formatear
    * @param {number} decimals - Decimales a mostrar
    * @returns {string} Número formateado
    */
-  export const formatNumber = (value, decimals = 0) => {
+  export const formatNumber = (value, decimals = 2) => {
     if (isNaN(value)) return '0';
     
     return new Intl.NumberFormat('es-CO', {
