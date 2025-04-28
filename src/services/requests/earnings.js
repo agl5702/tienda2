@@ -1,4 +1,3 @@
-// earnings.js
 import { fetchData } from "@/services/api.js";
 
 // Obtener las ganancias por día
@@ -11,13 +10,10 @@ export const getMetricsByDay = async (day) => {
   return fetchData("GET", `/sales/day/metrics?day=${day}`);
 };
 
-// Obtener reporte por rango de fechas (para la tabla resumen)
+// Obtener reporte por rango de fechas
 export const getReportByDateRange = async (startDate, endDate) => {
   return fetchData("GET", `/sales/range/earnings?start_date=${startDate}&end_date=${endDate}`);
 };
-
-
-// Función para transformar los datos de la API al formato que espera el componente
 
 // Obtener reporte detallado por día
 export const getDailyReport = async (day) => {
@@ -35,6 +31,14 @@ export const getDashboardData = async (day) => {
   };
 };
 
+// Función auxiliar para calcular ventas totales
+const calculateTotalSales = (productsData) => {
+  return Object.values(productsData || {}).reduce(
+    (sum, product) => sum + (product.quantity_sold * product.real_unit_price || 0),
+    0
+  );
+};
+
 // Función para transformar los datos del dashboard
 export const transformDashboardData = (apiData) => {
   if (!apiData || !apiData.earnings || !apiData.metrics) return null;
@@ -49,6 +53,7 @@ export const transformDashboardData = (apiData) => {
   return {
     date,
     metrics: {
+      total_sales: calculateTotalSales(dailyData.earnings_by_product),
       total_profit: dailyData.total_profit_day || 0,
       total_losses: dailyData.total_losses_day || 0,
       net_profit: dailyData.net_profit_day || 0,
@@ -65,8 +70,6 @@ export const transformDashboardData = (apiData) => {
   };
 };
 
-
-
 // Función para transformar los datos de la API
 export const transformApiData = (apiData, isDaily = false) => {
   if (!apiData) return null;
@@ -78,7 +81,7 @@ export const transformApiData = (apiData, isDaily = false) => {
     
     return {
       metrics: {
-        total_sales: (dailyData.total_profit_day || 0) + (dailyData.total_returns_day || 0),
+        total_sales: calculateTotalSales(dailyData.earnings_by_product),
         total_profit: dailyData.total_profit_day || 0,
         total_losses: dailyData.total_losses_day || 0,
         total_returns: dailyData.total_returns_day || 0,
@@ -95,7 +98,7 @@ export const transformApiData = (apiData, isDaily = false) => {
 
   // Transformación para reporte por rango
   const metrics = {
-    total_sales: (apiData.summary.total_profit_period || 0) + (apiData.summary.total_returns_period || 0),
+    total_sales: calculateTotalSales(apiData.summary.earnings_by_product),
     total_profit: apiData.summary.total_profit_period || 0,
     total_losses: apiData.summary.total_losses_period || 0,
     total_returns: apiData.summary.total_returns_period || 0,
