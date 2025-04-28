@@ -24,6 +24,49 @@ export const getDailyReport = async (day) => {
   return fetchData("GET", `/sales/day/earnings?day=${day}`);
 };
 
+// Obtener reporte del dashboard por día
+export const getDashboardData = async (day) => {
+  const earningsResponse = await fetchData("GET", `/sales/day/earnings?day=${day}`);
+  const metricsResponse = await fetchData("GET", `/sales/day/metrics?day=${day}`);
+  
+  return {
+    earnings: earningsResponse,
+    metrics: metricsResponse
+  };
+};
+
+// Función para transformar los datos del dashboard
+export const transformDashboardData = (apiData) => {
+  if (!apiData || !apiData.earnings || !apiData.metrics) return null;
+  
+  const earningsData = apiData.earnings;
+  const metricsData = apiData.metrics;
+
+  // Extraer datos del día
+  const date = Object.keys(earningsData.daily_breakdown || {})[0] || '';
+  const dailyData = earningsData.daily_breakdown?.[date] || {};
+
+  return {
+    date,
+    metrics: {
+      total_profit: dailyData.total_profit_day || 0,
+      total_losses: dailyData.total_losses_day || 0,
+      net_profit: dailyData.net_profit_day || 0,
+      sales_by_hour: metricsData.sales_by_hour || {},
+      sales_by_category: metricsData.sales_by_category || {},
+      sales_by_customer: metricsData.sales_by_customer || {},
+      profit_margin_products: metricsData.profit_margin_products || [],
+      total_products_sold: Object.values(dailyData.earnings_by_product || {})
+        .reduce((sum, product) => sum + (product.quantity_sold || 0), 0),
+    },
+    earnings: {
+      earnings_by_product: dailyData.earnings_by_product || {}
+    }
+  };
+};
+
+
+
 // Función para transformar los datos de la API
 export const transformApiData = (apiData, isDaily = false) => {
   if (!apiData) return null;

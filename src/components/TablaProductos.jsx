@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getAllProducts, deleteProduct } from '../services/requests/products';
-import { BsPencilSquare, BsTrash } from 'react-icons/bs';
-import Swal from 'sweetalert2';
-
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getAllProducts, deleteProduct } from "../services/requests/products";
+import { BsPencilSquare, BsTrash } from "react-icons/bs";
+import Swal from "sweetalert2";
 
 const VentaTable = () => {
   const [productos, setProductos] = useState([]);
-  const [busqueda, setBusqueda] = useState('');
+  const [busqueda, setBusqueda] = useState("");
 
   const fetchProductos = async () => {
     try {
       const data = await getAllProducts();
-      const filtrados = data.filter(c => c.name && c.name.trim() !== '');
+      const filtrados = data.filter((c) => c.name && c.name.trim() !== "");
       setProductos(filtrados);
     } catch (error) {
-      console.error('Error al obtener productos:', error);
+      console.error("Error al obtener productos:", error);
     }
   };
 
@@ -25,22 +24,26 @@ const VentaTable = () => {
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
-      title: '¿Eliminar este producto?',
+      title: "¿Eliminar este producto?",
       text: "Esta acción no se puede deshacer",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
     });
 
     if (result.isConfirmed) {
       try {
         await deleteProduct(id);
         fetchProductos();
-        Swal.fire('Eliminado', 'El producto fue eliminado correctamente', 'success');
+        Swal.fire(
+          "Eliminado",
+          "El producto fue eliminado correctamente",
+          "success"
+        );
       } catch (error) {
-        console.error('Error al eliminar producto:', error);
-        Swal.fire('Error', 'Hubo un problema al eliminar el producto', 'error');
+        console.error("Error al eliminar producto:", error);
+        Swal.fire("Error", "Hubo un problema al eliminar el producto", "error");
       }
     }
   };
@@ -51,15 +54,16 @@ const VentaTable = () => {
 
   const calcularPrecioVenta = (producto) => {
     if (producto.purchase_price && producto.profit_percentage !== undefined) {
-      return (producto.purchase_price * (1 + producto.profit_percentage / 100)).toFixed(2);
+      return (
+        producto.purchase_price *
+        (1 + producto.profit_percentage / 100)
+      ).toFixed(2);
     }
-    return '0.00';
+    return "0.00";
   };
 
-  
-
   // Filtrado dinámico por nombre (puedes ampliar a categoría si quieres)
-  const productosFiltrados = productos.filter(producto =>
+  const productosFiltrados = productos.filter((producto) =>
     producto.name.toLowerCase().includes(busqueda.toLowerCase())
   );
 
@@ -74,13 +78,13 @@ const VentaTable = () => {
           onChange={(e) => setBusqueda(e.target.value)}
         />
         {busqueda && (
-        <button
-          onClick={limpiarInput}
-          className="bg-danger btn btn-sm text-white ms-1"
-        >
-          X
-        </button>
-      )}
+          <button
+            onClick={limpiarInput}
+            className="bg-danger btn btn-sm text-white ms-1"
+          >
+            X
+          </button>
+        )}
       </div>
 
       <div className="row m-0 mt-4">
@@ -88,8 +92,17 @@ const VentaTable = () => {
           productosFiltrados.map((producto) => (
             <div className="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 col-xxl-2 mb-3 px-2">
               <div className="card bg-gray position-relative">
-                <span className="bg-success opacity-9 pb-1 col-sm-3 text-white text-center position-absolute" style={{ zIndex: 3, borderRadius: "10px 0px 20px" }}> 20%</span>
-                <div className="card-header p-0 position-relative z-index-2" style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}>
+                <span
+                  className="bg-success opacity-9 pb-1 col-sm-3 text-white text-center position-absolute"
+                  style={{ zIndex: 3, borderRadius: "10px 0px 20px" }}
+                >
+                  {" "}
+                  {producto.profit_percentage}%
+                </span>
+                <div
+                  className="card-header p-0 position-relative z-index-2"
+                  style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}
+                >
                   <div className="d-block blur-shadow-image cursor-pointer img-marco ">
                     <img
                       src={producto.image_url}
@@ -97,30 +110,58 @@ const VentaTable = () => {
                       height="170vh"
                       alt="producto"
                       className="border-bottom img-size img-oferta "
-                      style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}/>
+                      style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}
+                    />
                   </div>
-                  <div className="blur opacity-9 col-8 col-sm-6 text-dark text-center position-absolute" style={{ zIndex: 3, borderRadius: "7px 0px 0px", bottom: "1px", right: "1px", height: "20px", fontSize: "15px" }}>
-                    {producto.category?.name || 'Sin categoría'}
+                  <div
+                    className="blur opacity-9 col-8 col-sm-6 text-dark text-center position-absolute"
+                    style={{
+                      zIndex: 3,
+                      borderRadius: "7px 0px 0px",
+                      bottom: "1px",
+                      right: "1px",
+                      height: "20px",
+                      fontSize: "15px",
+                    }}
+                  >
+                    {producto.category?.name || "Sin categoría"}
                   </div>
-                  <div className="colored-shadow" style={{ backgroundImage: `url('${producto.image_url}')` }}></div>
-
+                  <div
+                    className="colored-shadow"
+                    style={{ backgroundImage: `url('${producto.image_url}')` }}
+                  ></div>
                 </div>
                 <div className="px-2 py-0">
-                  <p className="text-dark text-center nombre mt-1 mb-0">{producto.name}</p>
-                  <div className="row justify-space-between text-center">
-                    
+                  <p className="text-dark text-center nombre mt-1 mb-0">
+                    {producto.name}
+                  </p>
+                  <div className="row justify-space-between text-center"></div>
+                  <div className="text-dark text-center border-bottom pb-1 border-gray mb-2">
+                    <span className="text-muted">COP </span>
+                    {producto.sale_price} / {producto.unit}
                   </div>
-                  <div className="text-dark text-center border-bottom pb-1 border-gray mb-2"> 
-                  <span className="text-muted">COP </span>{producto.sale_price} / {producto.unit}
-                  </div>
-                  
+
                   <div className="col m-0 mb-2 text-center">
-                    <Link to={`/productos/editar/${producto.id}`} className="btn mb-0 bg-info text-sm text-white btn-sm">
-                    <BsPencilSquare/> <span className='d-none d-sm-inline d-md-none d-xl-inline d-xxl-none'> Editar</span>
+                    <Link
+                      to={`/productos/editar/${producto.id}`}
+                      className="btn mb-0 bg-info text-sm text-white btn-sm"
+                    >
+                      <BsPencilSquare />{" "}
+                      <span className="d-none d-sm-inline d-md-none d-xl-inline d-xxl-none">
+                        {" "}
+                        Editar
+                      </span>
                     </Link>
-                      
-                    <button onClick={() => handleDelete(producto.id)} className="btn mb-0 btn-dark text-sm btn-sm ms-2">
-                    <BsTrash /> <span className='d-none d-sm-inline d-md-none d-xl-inline d-xxl-none'> Eliminar</span>
+
+                    <button
+                      onClick={() => handleDelete(producto.id)}
+                      className="btn mb-0 btn-dark text-sm btn-sm ms-2"
+                    >
+                      <BsTrash />{" "}
+                      <span className="d-none d-sm-inline d-md-none d-xl-inline d-xxl-none">
+                        {" "}
+                        Eliminar
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -132,8 +173,6 @@ const VentaTable = () => {
             <div className="col text-center">No hay productos.</div>
           </div>
         )}
-        
-
       </div>
 
       {/* <div className="table-responsive">
@@ -191,7 +230,6 @@ const VentaTable = () => {
         </table>
       </div> */}
     </div>
-    
   );
 };
 

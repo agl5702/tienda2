@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { BarChart, LineChart, PieChart } from "@mui/x-charts";
 import { Card, Typography } from "@mui/material";
 import {
-  getEarningsByDay,
-  getMetricsByDay,
+  getDashboardData,
+  transformDashboardData,
 } from "../services/requests/earnings";
 
-// Paleta de colores moderna
 const COLOR_PALETTE = {
   profit: "#4caf50",
   loss: "#f44336",
@@ -23,49 +22,66 @@ const SalesDashboard = () => {
     return now.toISOString().split("T")[0];
   });
 
-  const [earnings, setEarnings] = useState(null);
-  const [metrics, setMetrics] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchAll = async () => {
+    const fetchData = async () => {
       setLoading(true);
+      setError(null);
       try {
-        const [e, m] = await Promise.all([
-          getEarningsByDay(day),
-          getMetricsByDay(day),
-        ]);
-        setEarnings(e);
-        setMetrics(m);
+        const apiResponse = await getDashboardData(day);
+        const transformedData = transformDashboardData(apiResponse);
+
+        if (!transformedData) {
+          throw new Error("Formato de datos incorrecto");
+        }
+
+        setDashboardData(transformedData);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Error al cargar los datos del dashboard");
       } finally {
         setLoading(false);
       }
     };
-    fetchAll();
+    fetchData();
   }, [day]);
 
-  if (loading || !earnings || !metrics) {
+  if (loading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "64vh",
-        }}
-      >
+      <div style={styles.loadingContainer}>
         <Typography variant="h6">Cargando datos para {day}...</Typography>
       </div>
     );
   }
 
-  // Datos transformados
-  const totalProfit = Math.max(earnings.total_profit_day, 0);
-  const totalLoss = Math.max(earnings.total_losses, 0);
-  const netProfit = totalProfit - totalLoss;
+  if (error) {
+    return (
+      <div style={styles.loadingContainer}>
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
+      </div>
+    );
+  }
+
+  if (!dashboardData) {
+    return (
+      <div style={styles.loadingContainer}>
+        <Typography variant="h6">
+          No hay datos disponibles para {day}
+        </Typography>
+      </div>
+    );
+  }
+
+  // Datos transformados para las gráficas
+  const { metrics } = dashboardData;
+  const totalProfit = Math.max(metrics.total_profit, 0);
+  const totalLoss = Math.max(metrics.total_losses, 0);
+  const netProfit = metrics.net_profit;
 
   const profitLossData = [
     {
@@ -77,7 +93,7 @@ const SalesDashboard = () => {
     { id: 1, value: totalLoss, label: "Pérdidas", color: COLOR_PALETTE.loss },
   ];
 
-  const hourlyData = Object.entries(metrics.sales_by_hour).map(
+  const hourlyData = Object.entries(metrics.sales_by_hour || {}).map(
     ([h, s], index) => ({
       id: index,
       hour: `${h}:00`,
@@ -85,70 +101,50 @@ const SalesDashboard = () => {
     })
   );
 
-  const categoryData = Object.entries(metrics.sales_by_category)
+  const categoryData = Object.entries(metrics.sales_by_category || {})
     .map(([n, s], index) => ({ id: index, name: n, value: s }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 5);
 
-  const customerData = Object.entries(metrics.sales_by_customer)
+  const customerData = Object.entries(metrics.sales_by_customer || {})
     .map(([n, s], index) => ({ id: index, name: n, sales: s }))
     .sort((a, b) => b.sales - a.sales)
     .slice(0, 6);
 
-  const marginData = metrics.profit_margin_products
-    .map((p, index) => ({ id: index, name: p.product_name, margin: p.margin }))
+  const marginData = (metrics.profit_margin_products || [])
+    .map((p, index) => ({
+      id: index,
+      name: p.product_name || `Producto ${index}`,
+      margin: p.margin || 0,
+    }))
     .sort((a, b) => b.margin - a.margin)
     .slice(0, 5);
 
   return (
-    <div style={{ padding: "16px", maxWidth: "1200px", margin: "0 auto" }}>
+    <div style={styles.container}>
       {/* Encabezado */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "24px",
-        }}
-      >
+      <div style={styles.header}>
         <Typography variant="h4" component="h1" style={{ fontWeight: "bold" }}>
           Dashboard de Ventas
         </Typography>
-        <Typography
-          variant="body1"
-          style={{
-            backgroundColor: COLOR_PALETTE.primary,
-            color: "white",
-            padding: "4px 12px",
-            borderRadius: "16px",
-          }}
-        >
-          {day}
-        </Typography>
+        <Typography style={styles.dateBadge}>{dashboardData.date}</Typography>
       </div>
 
       {/* Resumen rápido */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "16px",
-          marginBottom: "24px",
-        }}
-      >
-        <Card style={{ padding: "16px" }}>
+      <div style={styles.summaryGrid}>
+        <Card style={styles.summaryCard}>
           <Typography variant="subtitle1">Ganancias Totales</Typography>
           <Typography variant="h5" style={{ color: COLOR_PALETTE.profit }}>
             ${totalProfit.toLocaleString()}
           </Typography>
         </Card>
-        <Card style={{ padding: "16px" }}>
+        <Card style={styles.summaryCard}>
           <Typography variant="subtitle1">Pérdidas Totales</Typography>
           <Typography variant="h5" style={{ color: COLOR_PALETTE.loss }}>
             ${totalLoss.toLocaleString()}
           </Typography>
         </Card>
-        <Card style={{ padding: "16px" }}>
+        <Card style={styles.summaryCard}>
           <Typography variant="subtitle1">Beneficio Neto</Typography>
           <Typography
             variant="h5"
@@ -162,17 +158,9 @@ const SalesDashboard = () => {
       </div>
 
       {/* Gráficas principales */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
-          gap: "16px",
-          marginBottom: "24px",
-        }}
-      >
-        {/* Gráfico de ganancias/pérdidas */}
-        <Card style={{ padding: "16px", height: "320px" }}>
-          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+      <div style={styles.chartsGrid}>
+        <Card style={styles.chartCard}>
+          <Typography variant="h6" style={styles.chartTitle}>
             Distribución Ganancias vs Pérdidas
           </Typography>
           <PieChart
@@ -190,9 +178,8 @@ const SalesDashboard = () => {
           />
         </Card>
 
-        {/* Ventas por hora */}
-        <Card style={{ padding: "16px", height: "320px" }}>
-          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+        <Card style={styles.chartCard}>
+          <Typography variant="h6" style={styles.chartTitle}>
             Ventas por Hora
           </Typography>
           <LineChart
@@ -218,17 +205,9 @@ const SalesDashboard = () => {
       </div>
 
       {/* Segunda fila de gráficas */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
-          gap: "16px",
-          marginBottom: "24px",
-        }}
-      >
-        {/* Ventas por categoría */}
-        <Card style={{ padding: "16px", height: "320px" }}>
-          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+      <div style={styles.chartsGrid}>
+        <Card style={styles.chartCard}>
+          <Typography variant="h6" style={styles.chartTitle}>
             Top 5 Categorías
           </Typography>
           <BarChart
@@ -249,9 +228,8 @@ const SalesDashboard = () => {
           />
         </Card>
 
-        {/* Margen de beneficio */}
-        <Card style={{ padding: "16px", height: "320px" }}>
-          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+        <Card style={styles.chartCard}>
+          <Typography variant="h6" style={styles.chartTitle}>
             Top 5 Productos por Margen
           </Typography>
           <LineChart
@@ -276,8 +254,8 @@ const SalesDashboard = () => {
 
       {/* Gráfica de clientes */}
       <div style={{ marginBottom: "24px" }}>
-        <Card style={{ padding: "16px", height: "320px" }}>
-          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+        <Card style={styles.chartCard}>
+          <Typography variant="h6" style={styles.chartTitle}>
             Top 6 Clientes
           </Typography>
           <BarChart
@@ -300,6 +278,55 @@ const SalesDashboard = () => {
       </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    padding: "16px",
+    maxWidth: "1200px",
+    margin: "0 auto",
+  },
+  loadingContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "64vh",
+  },
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "24px",
+  },
+  dateBadge: {
+    backgroundColor: "#1890ff",
+    color: "white",
+    padding: "4px 12px",
+    borderRadius: "16px",
+  },
+  summaryGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gap: "16px",
+    marginBottom: "24px",
+  },
+  summaryCard: {
+    padding: "16px",
+  },
+  chartsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+    gap: "16px",
+    marginBottom: "24px",
+  },
+  chartCard: {
+    padding: "16px",
+    height: "320px",
+  },
+  chartTitle: {
+    marginBottom: "16px",
+  },
 };
 
 export default SalesDashboard;
