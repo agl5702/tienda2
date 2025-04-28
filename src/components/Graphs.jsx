@@ -1,35 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  RadialBarChart,
-  RadialBar,
-  Legend,
-  CartesianGrid,
-} from "recharts";
+import { BarChart, LineChart, PieChart } from "@mui/x-charts";
+import { Card, Typography } from "@mui/material";
 import {
   getEarningsByDay,
   getMetricsByDay,
 } from "../services/requests/earnings";
-import { Card, Spin, Statistic, Tag } from "antd";
-import {
-  DollarOutlined,
-  ShoppingOutlined,
-  UserOutlined,
-  PieChartOutlined,
-  BarChartOutlined,
-} from "@ant-design/icons";
 
 // Paleta de colores moderna
 const COLOR_PALETTE = {
@@ -60,8 +35,6 @@ const SalesDashboard = () => {
           getEarningsByDay(day),
           getMetricsByDay(day),
         ]);
-        console.log("Datos de earnings:", e);
-        console.log("Datos de metrics:", m);
         setEarnings(e);
         setMetrics(m);
       } catch (error) {
@@ -75,9 +48,16 @@ const SalesDashboard = () => {
 
   if (loading || !earnings || !metrics) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 space-y-4">
-        <Spin size="large" />
-        <p className="text-gray-500">Cargando datos para {day}...</p>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "64vh",
+        }}
+      >
+        <Typography variant="h6">Cargando datos para {day}...</Typography>
       </div>
     );
   }
@@ -88,292 +68,234 @@ const SalesDashboard = () => {
   const netProfit = totalProfit - totalLoss;
 
   const profitLossData = [
-    { name: "Ganancias", value: totalProfit, color: COLOR_PALETTE.profit },
-    { name: "Pérdidas", value: totalLoss, color: COLOR_PALETTE.loss },
+    {
+      id: 0,
+      value: totalProfit,
+      label: "Ganancias",
+      color: COLOR_PALETTE.profit,
+    },
+    { id: 1, value: totalLoss, label: "Pérdidas", color: COLOR_PALETTE.loss },
   ];
 
-  const hourlyData = Object.entries(metrics.sales_by_hour).map(([h, s]) => ({
-    hour: `${h}:00`,
-    sales: s,
-  }));
+  const hourlyData = Object.entries(metrics.sales_by_hour).map(
+    ([h, s], index) => ({
+      id: index,
+      hour: `${h}:00`,
+      sales: s,
+    })
+  );
 
   const categoryData = Object.entries(metrics.sales_by_category)
-    .map(([n, s]) => ({ name: n, value: s }))
+    .map(([n, s], index) => ({ id: index, name: n, value: s }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 5);
 
   const customerData = Object.entries(metrics.sales_by_customer)
-    .map(([n, s]) => ({ name: n, sales: s }))
+    .map(([n, s], index) => ({ id: index, name: n, sales: s }))
     .sort((a, b) => b.sales - a.sales)
     .slice(0, 6);
 
   const marginData = metrics.profit_margin_products
-    .map((p) => ({ name: p.product_name, margin: p.margin }))
+    .map((p, index) => ({ id: index, name: p.product_name, margin: p.margin }))
     .sort((a, b) => b.margin - a.margin)
     .slice(0, 5);
 
-  // Componentes personalizados
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-3 shadow-md rounded border border-gray-200">
-          <p className="font-semibold">{label}</p>
-          {payload.map((entry, index) => (
-            <p key={index} style={{ color: entry.color }}>
-              {entry.name}:{" "}
-              <span className="font-medium">
-                ${entry.value.toLocaleString()}
-              </span>
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
-
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
+    <div style={{ padding: "16px", maxWidth: "1200px", margin: "0 auto" }}>
+      {/* Encabezado */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+        }}
+      >
+        <Typography variant="h4" component="h1" style={{ fontWeight: "bold" }}>
           Dashboard de Ventas
-        </h1>
-        <Tag color="blue" className="text-lg px-3 py-1">
+        </Typography>
+        <Typography
+          variant="body1"
+          style={{
+            backgroundColor: COLOR_PALETTE.primary,
+            color: "white",
+            padding: "4px 12px",
+            borderRadius: "16px",
+          }}
+        >
           {day}
-        </Tag>
+        </Typography>
       </div>
 
       {/* Resumen rápido */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <Statistic
-            title="Ganancias Totales"
-            value={totalProfit}
-            prefix={<DollarOutlined />}
-            valueStyle={{ color: COLOR_PALETTE.profit }}
-            suffix="$"
-          />
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "16px",
+          marginBottom: "24px",
+        }}
+      >
+        <Card style={{ padding: "16px" }}>
+          <Typography variant="subtitle1">Ganancias Totales</Typography>
+          <Typography variant="h5" style={{ color: COLOR_PALETTE.profit }}>
+            ${totalProfit.toLocaleString()}
+          </Typography>
         </Card>
-        <Card>
-          <Statistic
-            title="Pérdidas Totales"
-            value={totalLoss}
-            prefix={<DollarOutlined />}
-            valueStyle={{ color: COLOR_PALETTE.loss }}
-            suffix="$"
-          />
+        <Card style={{ padding: "16px" }}>
+          <Typography variant="subtitle1">Pérdidas Totales</Typography>
+          <Typography variant="h5" style={{ color: COLOR_PALETTE.loss }}>
+            ${totalLoss.toLocaleString()}
+          </Typography>
         </Card>
-        <Card>
-          <Statistic
-            title="Beneficio Neto"
-            value={netProfit}
-            prefix={<DollarOutlined />}
-            valueStyle={{
+        <Card style={{ padding: "16px" }}>
+          <Typography variant="subtitle1">Beneficio Neto</Typography>
+          <Typography
+            variant="h5"
+            style={{
               color: netProfit >= 0 ? COLOR_PALETTE.profit : COLOR_PALETTE.loss,
             }}
-            suffix="$"
-          />
+          >
+            ${netProfit.toLocaleString()}
+          </Typography>
         </Card>
       </div>
 
-      {/* Sección principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      {/* Gráficas principales */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+          gap: "16px",
+          marginBottom: "24px",
+        }}
+      >
         {/* Gráfico de ganancias/pérdidas */}
-        <Card
-          title="Distribución Ganancias vs Pérdidas"
-          extra={<PieChartOutlined className="text-blue-500" />}
-          className="shadow-sm"
-        >
-          <div style={{ width: "100%", height: 300 }}>
-            {" "}
-            {/* Cambiado de 400 a 300 */}
-            <ResponsiveContainer width="100%" height="100%">
-              <RadialBarChart
-                innerRadius="30%" /* Ajustado de 20% a 30% */
-                outerRadius="90%" /* Ajustado de 80% a 90% */
-                data={profitLossData}
-                startAngle={180}
-                endAngle={-180}
-              >
-                <RadialBar
-                  minAngle={15}
-                  label={{
-                    position: "insideStart",
-                    fill: "#fff",
-                    fontSize: 10,
-                  }} /* Añadido fontSize */
-                  background
-                  clockWise
-                  dataKey="value"
-                >
-                  {profitLossData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </RadialBar>
-                <Legend
-                  iconSize={10}
-                  layout="horizontal" /* Cambiado de vertical a horizontal */
-                  verticalAlign="bottom" /* Añadido para mejor posicionamiento */
-                />
-                <Tooltip content={<CustomTooltip />} />
-              </RadialBarChart>
-            </ResponsiveContainer>
-          </div>
+        <Card style={{ padding: "16px", height: "320px" }}>
+          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+            Distribución Ganancias vs Pérdidas
+          </Typography>
+          <PieChart
+            series={[
+              {
+                data: profitLossData,
+                innerRadius: 40,
+                outerRadius: 80,
+                paddingAngle: 2,
+                cornerRadius: 4,
+              },
+            ]}
+            width={400}
+            height={250}
+          />
         </Card>
 
         {/* Ventas por hora */}
-        <Card
-          title="Ventas por Hora"
-          extra={<BarChartOutlined className="text-purple-500" />}
-          className="shadow-sm"
-        >
-          <div style={{ width: "100%", height: 300 }}>
-            {" "}
-            {/* Cambiado de 400 a 300 */}
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={hourlyData}
-                margin={{
-                  top: 10,
-                  right: 20,
-                  left: 0,
-                  bottom: 0,
-                }} /* Margen derecho reducido */
-              >
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="hour" fontSize={12} /> /* Añadido fontSize */
-                <YAxis fontSize={12} /> /* Añadido fontSize */
-                <Tooltip content={<CustomTooltip />} />
-                <Area
-                  type="monotone"
-                  dataKey="sales"
-                  stroke={COLOR_PALETTE.primary}
-                  fill={COLOR_PALETTE.primary}
-                  fillOpacity={0.2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+        <Card style={{ padding: "16px", height: "320px" }}>
+          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+            Ventas por Hora
+          </Typography>
+          <LineChart
+            xAxis={[
+              {
+                data: hourlyData.map((item) => item.hour),
+                scaleType: "band",
+                label: "Hora",
+              },
+            ]}
+            series={[
+              {
+                data: hourlyData.map((item) => item.sales),
+                color: COLOR_PALETTE.primary,
+                area: true,
+                showMark: false,
+              },
+            ]}
+            width={400}
+            height={250}
+          />
         </Card>
       </div>
 
-      {/* Segunda fila */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      {/* Segunda fila de gráficas */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+          gap: "16px",
+          marginBottom: "24px",
+        }}
+      >
         {/* Ventas por categoría */}
-        <Card
-          title="Top 5 Categorías"
-          extra={<ShoppingOutlined className="text-green-500" />}
-          className="shadow-sm"
-        >
-          <div style={{ width: "100%", height: 300 }}>
-            {" "}
-            {/* Cambiado de 400 a 300 */}
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={categoryData}
-                margin={{
-                  top: 10,
-                  right: 20,
-                  left: 0,
-                  bottom: 0,
-                }} /* Margen derecho reducido */
-              >
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="name" fontSize={12} /> /* Añadido fontSize */
-                <YAxis fontSize={12} /> /* Añadido fontSize */
-                <Tooltip content={<CustomTooltip />} />
-                <Bar
-                  dataKey="value"
-                  name="Ventas"
-                  fill={COLOR_PALETTE.secondary}
-                  radius={[4, 4, 0, 0]}
-                  animationDuration={1500}
-                >
-                  {categoryData.map((_, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLOR_PALETTE.secondary}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <Card style={{ padding: "16px", height: "320px" }}>
+          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+            Top 5 Categorías
+          </Typography>
+          <BarChart
+            xAxis={[
+              {
+                data: categoryData.map((item) => item.name),
+                scaleType: "band",
+              },
+            ]}
+            series={[
+              {
+                data: categoryData.map((item) => item.value),
+                color: COLOR_PALETTE.secondary,
+              },
+            ]}
+            width={400}
+            height={250}
+          />
         </Card>
 
         {/* Margen de beneficio */}
-        <Card
-          title="Top 5 Productos por Margen"
-          extra={<PieChartOutlined className="text-orange-500" />}
-          className="shadow-sm"
-        >
-          <div style={{ width: "100%", height: 300 }}>
-            {" "}
-            {/* Cambiado de 400 a 300 */}
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={marginData}
-                margin={{
-                  top: 10,
-                  right: 20,
-                  left: 0,
-                  bottom: 0,
-                }} /* Margen derecho reducido */
-              >
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="name" fontSize={12} /> /* Añadido fontSize */
-                <YAxis fontSize={12} /> /* Añadido fontSize */
-                <Tooltip content={<CustomTooltip />} />
-                <Line
-                  type="monotone"
-                  dataKey="margin"
-                  stroke={COLOR_PALETTE.accent}
-                  strokeWidth={2}
-                  dot={{ r: 3 }} /* Reducido de 4 a 3 */
-                  activeDot={{ r: 4 }} /* Reducido de 6 a 4 */
-                  animationDuration={1500}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+        <Card style={{ padding: "16px", height: "320px" }}>
+          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+            Top 5 Productos por Margen
+          </Typography>
+          <LineChart
+            xAxis={[
+              {
+                data: marginData.map((item) => item.name),
+                scaleType: "band",
+              },
+            ]}
+            series={[
+              {
+                data: marginData.map((item) => item.margin),
+                color: COLOR_PALETTE.accent,
+                showMark: true,
+              },
+            ]}
+            width={400}
+            height={250}
+          />
         </Card>
       </div>
 
-      {/* Tercera fila */}
-      <div className="grid grid-cols-1 gap-6">
-        {/* Mejores clientes */}
-        <Card
-          title="Top 6 Clientes"
-          extra={<UserOutlined className="text-cyan-500" />}
-          className="shadow-sm"
-        >
-          <div style={{ width: "100%", height: 300 }}>
-            {" "}
-            {/* Cambiado de 400 a 300 */}
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={customerData}
-                margin={{
-                  top: 10,
-                  right: 20,
-                  left: 0,
-                  bottom: 0,
-                }} /* Margen derecho reducido */
-              >
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="name" fontSize={12} /> /* Añadido fontSize */
-                <YAxis fontSize={12} /> /* Añadido fontSize */
-                <Tooltip content={<CustomTooltip />} />
-                <Bar
-                  dataKey="sales"
-                  name="Ventas"
-                  fill={COLOR_PALETTE.neutral}
-                  radius={[4, 4, 0, 0]}
-                  animationDuration={1500}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+      {/* Gráfica de clientes */}
+      <div style={{ marginBottom: "24px" }}>
+        <Card style={{ padding: "16px", height: "320px" }}>
+          <Typography variant="h6" style={{ marginBottom: "16px" }}>
+            Top 6 Clientes
+          </Typography>
+          <BarChart
+            xAxis={[
+              {
+                data: customerData.map((item) => item.name),
+                scaleType: "band",
+              },
+            ]}
+            series={[
+              {
+                data: customerData.map((item) => item.sales),
+                color: COLOR_PALETTE.neutral,
+              },
+            ]}
+            width={800}
+            height={250}
+          />
         </Card>
       </div>
     </div>
