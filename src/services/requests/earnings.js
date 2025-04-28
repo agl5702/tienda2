@@ -39,6 +39,14 @@ const calculateTotalSales = (productsData) => {
   );
 };
 
+// Función para calcular ventas totales por rango (suma de todos los días)
+const calculateRangeTotalSales = (dailyBreakdown) => {
+  return Object.values(dailyBreakdown || {}).reduce(
+    (sum, dayData) => sum + calculateTotalSales(dayData.earnings_by_product),
+    0
+  );
+};
+
 // Función para transformar los datos del dashboard
 export const transformDashboardData = (apiData) => {
   if (!apiData || !apiData.earnings || !apiData.metrics) return null;
@@ -98,7 +106,7 @@ export const transformApiData = (apiData, isDaily = false) => {
 
   // Transformación para reporte por rango
   const metrics = {
-    total_sales: calculateTotalSales(apiData.summary.earnings_by_product),
+    total_sales: calculateRangeTotalSales(apiData.daily_breakdown), // Corregido: usa todos los días
     total_profit: apiData.summary.total_profit_period || 0,
     total_losses: apiData.summary.total_losses_period || 0,
     total_returns: apiData.summary.total_returns_period || 0,
