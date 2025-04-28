@@ -84,7 +84,7 @@ function Deudas() {
       <Sidebar />
       <div className="col p-4" style={{ minHeight: "100vh" }}>
         <DebtHeader stats={stats} />
-        <div className="d-flex justify-content-center">
+        <div className="d-flex flex-wrap justify-content-center gap-1">
           <AddDebt customers={customers} onDebtAdded={handleDataUpdate} />
           <UserDebt customers={customers} onUserSelected={handleUserSelected} />
           <PendingDebt customers={customers} />

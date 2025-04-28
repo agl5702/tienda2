@@ -54,7 +54,7 @@ const AddDebt = ({ customers, onDebtAdded }) => {
   };
 
   return (
-    <div className="card w-20 mb-4 shadow-sm">
+    <div className="card mb-4 shadow-sm" style={{ minWidth: '250px', maxWidth: '100%', flex: '1 1 auto' }}>
       <div className="card-body">
         {!showForm ? (
           <button

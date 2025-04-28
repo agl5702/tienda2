@@ -35,7 +35,11 @@ export default function PendingDebt({ customers }) {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div className="card w-20 mb-4 mx-2 shadow-sm">
+    <div
+      className="card mb-4 shadow-sm"
+      style={{ minWidth: "250px", maxWidth: "100%", flex: "1 1 auto" }}
+    >
+      {" "}
       <div className="card-body ">
         <button
           className="btn btn-secondary w-100 d-flex align-items-center justify-content-center"
@@ -60,7 +64,6 @@ export default function PendingDebt({ customers }) {
           )}
         </button>
       </div>
-
       {showModal && (
         <div
           className="modal"

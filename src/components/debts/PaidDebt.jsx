@@ -36,7 +36,11 @@ export default function PaidDebt({ customers = [] }) {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div className="card w-20 mb-4 mx-2 shadow-sm">
+    <div
+      className="card mb-4 shadow-sm"
+      style={{ minWidth: "250px", maxWidth: "100%", flex: "1 1 auto" }}
+    >
+      {" "}
       <div className="card-body">
         <button
           className="btn btn-success w-100 d-flex align-items-center justify-content-center"
@@ -61,7 +65,6 @@ export default function PaidDebt({ customers = [] }) {
           )}
         </button>
       </div>
-
       {/* Modal para mostrar deudas pagadas */}
       {showModal && (
         <div
