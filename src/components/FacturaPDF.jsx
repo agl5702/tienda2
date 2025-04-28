@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
   businessInfo: {
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 4,
   },
   infoContainer: {
     flexDirection: 'row',
@@ -160,6 +160,9 @@ const FacturaPDF = ({ order }) => {
           </Text>
           <Text style={styles.businessInfo}>
             Whatsapp: 3005092939
+          </Text>
+          <Text style={styles.businessInfo}>
+          jhscristoenmi@gmail.com
           </Text>
         </View>
 
