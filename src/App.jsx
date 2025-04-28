@@ -13,6 +13,7 @@ import Clientes from "./pages/Clientes";
 import Devoluciones from "./pages/Devoluciones";
 import FormDevolucion from "./pages/FormDevolucion";
 import Reportes from "./pages/Reportes";
+import DetalleDia from "./pages/DetalleDia";
 
 import VerReporte from './pages/VerReporte';
 
@@ -46,6 +47,7 @@ function App() {
         {/* <Route path="/users" element={<Users />} /> */}
         <Route path="/reportes" element={<Reportes />} />
         <Route path="/reportes/detalle/:date" element={<VerReporte />} />
+        <Route path="/reportes/dia/:date" element={<DetalleDia />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

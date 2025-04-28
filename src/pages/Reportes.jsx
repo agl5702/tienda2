@@ -6,6 +6,7 @@ import { FaBoxOpen, FaUsers, FaDollarSign, FaShoppingCart } from "react-icons/fa
 import DownloadButton from "../components/DownloadButton.jsx";
 import TablaReportes from "../components/TablaReportes.jsx";
 import Footer from "../components/Footer.jsx";
+import VerReporteRango from "../components/VerReporteRango.jsx";
 
 export default function Reportes() {
   // Obtener la fecha actual y formatearla
@@ -31,6 +32,11 @@ export default function Reportes() {
 
             <div className="card p-4">
               <TablaReportes/>
+            </div>
+
+            <div className="card p-4 mt-3">
+            <VerReporteRango/>
+              
             </div>
             <Footer/>
             
