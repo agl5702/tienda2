@@ -16,64 +16,74 @@ export const getReportByDateRange = async (startDate, endDate) => {
   return fetchData("GET", `/sales/range/earnings?start_date=${startDate}&end_date=${endDate}`);
 };
 
+
+// Función para transformar los datos de la API al formato que espera el componente
+
 // Obtener reporte detallado por día
 export const getDailyReport = async (day) => {
   return fetchData("GET", `/sales/day/earnings?day=${day}`);
 };
 
-// Función para transformar los datos de la API al formato que espera el componente
+// Función para transformar los datos de la API
 export const transformApiData = (apiData, isDaily = false) => {
   if (!apiData) return null;
   
   if (isDaily) {
-    // Transformación para reporte diario
+    // Obtener el primer día del breakdown (para reporte diario)
+    const date = Object.keys(apiData.daily_breakdown || {})[0] || '';
+    const dailyData = apiData.daily_breakdown?.[date] || {};
+    
     return {
       metrics: {
-        total_sales: apiData.total_profit_day + apiData.total_returns_day,
-        total_profit: apiData.total_profit_day,
-        total_losses: apiData.total_losses_day,
-        total_returns: apiData.total_returns_day,
-        net_profit: apiData.net_profit_day,
-        total_products_sold: Object.values(apiData.earnings_by_product)
-          .reduce((sum, product) => sum + product.quantity_sold, 0),
+        total_sales: (dailyData.total_profit_day || 0) + (dailyData.total_returns_day || 0),
+        total_profit: dailyData.total_profit_day || 0,
+        total_losses: dailyData.total_losses_day || 0,
+        total_returns: dailyData.total_returns_day || 0,
+        net_profit: dailyData.net_profit_day || 0,
+        total_products_sold: Object.values(dailyData.earnings_by_product || {})
+          .reduce((sum, product) => sum + (product.quantity_sold || 0), 0),
       },
       earnings: {
-        earnings_by_product: apiData.earnings_by_product,
-        date: apiData.date || Object.keys(apiData)[0] // Para compatibilidad
+        earnings_by_product: dailyData.earnings_by_product || {},
+        date: date
       }
     };
   }
 
-  // Transformación para reporte por rango (igual que antes)
+  // Transformación para reporte por rango
   const metrics = {
-    total_sales: apiData.summary.total_profit_period + apiData.summary.total_returns_period,
-    total_profit: apiData.summary.total_profit_period,
-    total_losses: apiData.summary.total_losses_period,
-    total_returns: apiData.summary.total_returns_period,
-    net_profit: apiData.summary.net_profit_after_returns,
-    total_products_sold: Object.values(apiData.summary.earnings_by_product)
-      .reduce((sum, product) => sum + product.quantity_sold, 0),
-    days_with_sales: apiData.summary.days_with_sales,
-    average_profit_per_day: apiData.summary.total_profit_period / apiData.summary.days_with_sales,
-    average_loss_per_day: apiData.summary.total_losses_period / apiData.summary.days_with_sales,
+    total_sales: (apiData.summary.total_profit_period || 0) + (apiData.summary.total_returns_period || 0),
+    total_profit: apiData.summary.total_profit_period || 0,
+    total_losses: apiData.summary.total_losses_period || 0,
+    total_returns: apiData.summary.total_returns_period || 0,
+    net_profit: apiData.summary.net_profit_after_returns || 0,
+    total_products_sold: Object.values(apiData.summary.earnings_by_product || {})
+      .reduce((sum, product) => sum + (product.quantity_sold || 0), 0),
+    days_with_sales: apiData.summary.days_with_sales || 0,
+    average_profit_per_day: apiData.summary.days_with_sales 
+      ? (apiData.summary.total_profit_period || 0) / apiData.summary.days_with_sales 
+      : 0,
+    average_loss_per_day: apiData.summary.days_with_sales 
+      ? (apiData.summary.total_losses_period || 0) / apiData.summary.days_with_sales 
+      : 0,
   };
 
-  const dailyData = Object.entries(apiData.daily_breakdown).map(([date, data]) => ({
+  const dailyData = Object.entries(apiData.daily_breakdown || {}).map(([date, data]) => ({
     date,
-    ganancias: data.total_profit_day,
-    perdidas: data.total_losses_day,
-    devoluciones: data.total_returns_day,
-    neto: data.net_profit_day
+    ganancias: data.total_profit_day || 0,
+    perdidas: data.total_losses_day || 0,
+    devoluciones: data.total_returns_day || 0,
+    neto: data.net_profit_day || 0
   }));
 
   return {
     metrics,
     earnings: {
-      earnings_by_product: apiData.summary.earnings_by_product,
-      daily_earnings: apiData.daily_breakdown,
+      earnings_by_product: apiData.summary.earnings_by_product || {},
+      daily_earnings: apiData.daily_breakdown || {},
       daily_data: dailyData,
-      start_date: apiData.summary.start_date,
-      end_date: apiData.summary.end_date
+      start_date: apiData.summary?.start_date || '',
+      end_date: apiData.summary?.end_date || ''
     }
   };
 };
