@@ -9,225 +9,372 @@ import {
   PieChart,
   Pie,
   Cell,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  RadialBarChart,
+  RadialBar,
+  Legend,
+  CartesianGrid,
 } from "recharts";
 import {
   getEarningsByDay,
   getMetricsByDay,
 } from "../services/requests/earnings";
+import { Card, Spin, Statistic, Tag } from "antd";
+import {
+  DollarOutlined,
+  ShoppingOutlined,
+  UserOutlined,
+  PieChartOutlined,
+  BarChartOutlined,
+} from "@ant-design/icons";
+
+// Paleta de colores moderna
+const COLOR_PALETTE = {
+  profit: "#4caf50",
+  loss: "#f44336",
+  primary: "#1890ff",
+  secondary: "#722ed1",
+  accent: "#13c2c2",
+  neutral: "#fa8c16",
+};
 
 const SalesDashboard = () => {
-  // Ajustamos la fecha para que esté 5 horas atrás
   const [day, setDay] = useState(() => {
     const now = new Date();
-    now.setHours(now.getHours() - 5); // Restar 5 horas
-    const adjustedDate = now.toISOString().split("T")[0]; // Formato YYYY-MM-DD
-    return adjustedDate;
+    now.setHours(now.getHours() - 5);
+    return now.toISOString().split("T")[0];
   });
 
   const [earnings, setEarnings] = useState(null);
   const [metrics, setMetrics] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchAll = async () => {
-      const [e, m] = await Promise.all([
-        getEarningsByDay(day),
-        getMetricsByDay(day),
-      ]);
-      setEarnings(e);
-      setMetrics(m);
+      setLoading(true);
+      try {
+        const [e, m] = await Promise.all([
+          getEarningsByDay(day),
+          getMetricsByDay(day),
+        ]);
+        console.log("Datos de earnings:", e);
+        console.log("Datos de metrics:", m);
+        setEarnings(e);
+        setMetrics(m);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchAll();
   }, [day]);
 
-  if (!earnings || !metrics) {
+  if (loading || !earnings || !metrics) {
     return (
-      <div className="text-center text-lg text-gray-600">
-        Cargando datos para {day}...
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
+        <Spin size="large" />
+        <p className="text-gray-500">Cargando datos para {day}...</p>
       </div>
     );
   }
 
-  // Earnings pie & bar data
-  const total =
-    Math.max(earnings.total_profit_day, 0) + Math.max(earnings.total_losses, 0);
-  const profitLoss = [
-    {
-      name: "Ganancias",
-      value: Math.max(earnings.total_profit_day, 0),
-      percent: total > 0 ? Math.max(earnings.total_profit_day, 0) / total : 0,
-    },
-    {
-      name: "Pérdidas",
-      value: Math.max(earnings.total_losses, 0),
-      percent: total > 0 ? Math.max(earnings.total_losses, 0) / total : 0,
-    },
+  // Datos transformados
+  const totalProfit = Math.max(earnings.total_profit_day, 0);
+  const totalLoss = Math.max(earnings.total_losses, 0);
+  const netProfit = totalProfit - totalLoss;
+
+  const profitLossData = [
+    { name: "Ganancias", value: totalProfit, color: COLOR_PALETTE.profit },
+    { name: "Pérdidas", value: totalLoss, color: COLOR_PALETTE.loss },
   ];
-  const E_COLORS = ["#52C41A", "#FF4D4F"];
 
-  // Metrics data transforms
-  const {
-    sales_by_hour,
-    sales_by_category,
-    sales_by_customer,
-    avg_purchase_per_customer,
-    profit_margin_products,
-  } = metrics;
+  const hourlyData = Object.entries(metrics.sales_by_hour).map(([h, s]) => ({
+    hour: `${h}:00`,
+    sales: s,
+  }));
 
-  const hourlyData = Object.entries(sales_by_hour).map(([h, s]) => ({
-    hour: h,
-    sales: s,
-  }));
-  const categoryData = Object.entries(sales_by_category).map(([n, s]) => ({
-    name: n,
-    sales: s,
-  }));
-  const customerData = Object.entries(sales_by_customer).map(([n, s]) => ({
-    name: n,
-    sales: s,
-  }));
-  const avgData = Object.entries(avg_purchase_per_customer).map(([n, v]) => ({
-    name: n,
-    avg: v,
-  }));
-  const marginData = profit_margin_products.map((p) => ({
-    name: p.product_name,
-    margin: p.margin,
-  }));
-  const M_COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#0088FE"];
+  const categoryData = Object.entries(metrics.sales_by_category)
+    .map(([n, s]) => ({ name: n, value: s }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5);
+
+  const customerData = Object.entries(metrics.sales_by_customer)
+    .map(([n, s]) => ({ name: n, sales: s }))
+    .sort((a, b) => b.sales - a.sales)
+    .slice(0, 6);
+
+  const marginData = metrics.profit_margin_products
+    .map((p) => ({ name: p.product_name, margin: p.margin }))
+    .sort((a, b) => b.margin - a.margin)
+    .slice(0, 5);
+
+  // Componentes personalizados
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 shadow-md rounded border border-gray-200">
+          <p className="font-semibold">{label}</p>
+          {payload.map((entry, index) => (
+            <p key={index} style={{ color: entry.color }}>
+              {entry.name}:{" "}
+              <span className="font-medium">
+                ${entry.value.toLocaleString()}
+              </span>
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div className="">
-      <h3 className="text-3xl font-bold text-center">
-        Dashboard de Ventas {day}
-      </h3>
-
-      {/* Earnings */}
-      <div className="row m-0">
-        <div className="col-12 col-md-6 p-2">
-          <div className="card p-2">
-            <h4 className="text-center text-muted ">
-              Ganancias vs Pérdidas (Pie)
-            </h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={profitLoss}
-                  dataKey="percent"
-                  nameKey="name"
-                  innerRadius={40}
-                  outerRadius={80}
-                  label={({ name, percent }) =>
-                    `${name}: ${(percent * 100).toFixed(0)}%`
-                  }
-                >
-                  {profitLoss.map((_, i) => (
-                    <Cell key={i} fill={E_COLORS[i]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(_, name, props) => [
-                    `${(props.payload.percent * 100).toFixed(0)}%`,
-                    name,
-                  ]}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        <div className="col-12 col-md-6 p-2">
-          <div className="card p-2">
-            <h4 className="text-center text-muted ">
-              Ganancias y Pérdidas (Barras)
-            </h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={profitLoss}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip formatter={(value, name) => [`$${value}`, name]} />
-                <Bar dataKey="value" fill={E_COLORS[0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Dashboard de Ventas
+        </h1>
+        <Tag color="blue" className="text-lg px-3 py-1">
+          {day}
+        </Tag>
       </div>
 
-      {/* Metrics */}
-      <div className="row m-0">
-        <div className="col-12 col-md-6 p-2">
-          <div className="card p-2">
-            <h4 className="text-center text-muted ">Ventas por Hora</h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={hourlyData}>
-                <XAxis dataKey="hour" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="sales" fill={M_COLORS[0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        <div className="col-12 col-md-6 p-2">
-          <div className="card p-2">
-            <h4 className="text-center text-muted ">Ventas por Categoría</h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  dataKey="sales"
-                  nameKey="name"
-                  outerRadius={80}
-                  label
+      {/* Resumen rápido */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Card>
+          <Statistic
+            title="Ganancias Totales"
+            value={totalProfit}
+            prefix={<DollarOutlined />}
+            valueStyle={{ color: COLOR_PALETTE.profit }}
+            suffix="$"
+          />
+        </Card>
+        <Card>
+          <Statistic
+            title="Pérdidas Totales"
+            value={totalLoss}
+            prefix={<DollarOutlined />}
+            valueStyle={{ color: COLOR_PALETTE.loss }}
+            suffix="$"
+          />
+        </Card>
+        <Card>
+          <Statistic
+            title="Beneficio Neto"
+            value={netProfit}
+            prefix={<DollarOutlined />}
+            valueStyle={{
+              color: netProfit >= 0 ? COLOR_PALETTE.profit : COLOR_PALETTE.loss,
+            }}
+            suffix="$"
+          />
+        </Card>
+      </div>
+
+      {/* Sección principal */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Gráfico de ganancias/pérdidas */}
+        <Card
+          title="Distribución Ganancias vs Pérdidas"
+          extra={<PieChartOutlined className="text-blue-500" />}
+          className="shadow-sm"
+        >
+          <div style={{ width: "100%", height: 300 }}>
+            {" "}
+            {/* Cambiado de 400 a 300 */}
+            <ResponsiveContainer width="100%" height="100%">
+              <RadialBarChart
+                innerRadius="30%" /* Ajustado de 20% a 30% */
+                outerRadius="90%" /* Ajustado de 80% a 90% */
+                data={profitLossData}
+                startAngle={180}
+                endAngle={-180}
+              >
+                <RadialBar
+                  minAngle={15}
+                  label={{
+                    position: "insideStart",
+                    fill: "#fff",
+                    fontSize: 10,
+                  }} /* Añadido fontSize */
+                  background
+                  clockWise
+                  dataKey="value"
                 >
-                  {categoryData.map((_, i) => (
-                    <Cell key={i} fill={M_COLORS[i % M_COLORS.length]} />
+                  {profitLossData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
+                </RadialBar>
+                <Legend
+                  iconSize={10}
+                  layout="horizontal" /* Cambiado de vertical a horizontal */
+                  verticalAlign="bottom" /* Añadido para mejor posicionamiento */
+                />
+                <Tooltip content={<CustomTooltip />} />
+              </RadialBarChart>
             </ResponsiveContainer>
           </div>
-        </div>
-        <div className="col-12 col-md-6 p-2">
-          <div className="card p-2">
-            <h4 className="text-center text-muted ">Ventas por Cliente</h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={customerData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="sales" fill={M_COLORS[1]} />
+        </Card>
+
+        {/* Ventas por hora */}
+        <Card
+          title="Ventas por Hora"
+          extra={<BarChartOutlined className="text-purple-500" />}
+          className="shadow-sm"
+        >
+          <div style={{ width: "100%", height: 300 }}>
+            {" "}
+            {/* Cambiado de 400 a 300 */}
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={hourlyData}
+                margin={{
+                  top: 10,
+                  right: 20,
+                  left: 0,
+                  bottom: 0,
+                }} /* Margen derecho reducido */
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis dataKey="hour" fontSize={12} /> /* Añadido fontSize */
+                <YAxis fontSize={12} /> /* Añadido fontSize */
+                <Tooltip content={<CustomTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="sales"
+                  stroke={COLOR_PALETTE.primary}
+                  fill={COLOR_PALETTE.primary}
+                  fillOpacity={0.2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+      </div>
+
+      {/* Segunda fila */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Ventas por categoría */}
+        <Card
+          title="Top 5 Categorías"
+          extra={<ShoppingOutlined className="text-green-500" />}
+          className="shadow-sm"
+        >
+          <div style={{ width: "100%", height: 300 }}>
+            {" "}
+            {/* Cambiado de 400 a 300 */}
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={categoryData}
+                margin={{
+                  top: 10,
+                  right: 20,
+                  left: 0,
+                  bottom: 0,
+                }} /* Margen derecho reducido */
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis dataKey="name" fontSize={12} /> /* Añadido fontSize */
+                <YAxis fontSize={12} /> /* Añadido fontSize */
+                <Tooltip content={<CustomTooltip />} />
+                <Bar
+                  dataKey="value"
+                  name="Ventas"
+                  fill={COLOR_PALETTE.secondary}
+                  radius={[4, 4, 0, 0]}
+                  animationDuration={1500}
+                >
+                  {categoryData.map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLOR_PALETTE.secondary}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
-        <div className="col-12 col-md-6 p-2">
-          <div className="card p-2">
-            <h4 className="text-center text-muted ">
-              Promedio Compra / Cliente
-            </h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={avgData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="avg" fill={M_COLORS[2]} />
+        </Card>
+
+        {/* Margen de beneficio */}
+        <Card
+          title="Top 5 Productos por Margen"
+          extra={<PieChartOutlined className="text-orange-500" />}
+          className="shadow-sm"
+        >
+          <div style={{ width: "100%", height: 300 }}>
+            {" "}
+            {/* Cambiado de 400 a 300 */}
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={marginData}
+                margin={{
+                  top: 10,
+                  right: 20,
+                  left: 0,
+                  bottom: 0,
+                }} /* Margen derecho reducido */
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis dataKey="name" fontSize={12} /> /* Añadido fontSize */
+                <YAxis fontSize={12} /> /* Añadido fontSize */
+                <Tooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="margin"
+                  stroke={COLOR_PALETTE.accent}
+                  strokeWidth={2}
+                  dot={{ r: 3 }} /* Reducido de 4 a 3 */
+                  activeDot={{ r: 4 }} /* Reducido de 6 a 4 */
+                  animationDuration={1500}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+      </div>
+
+      {/* Tercera fila */}
+      <div className="grid grid-cols-1 gap-6">
+        {/* Mejores clientes */}
+        <Card
+          title="Top 6 Clientes"
+          extra={<UserOutlined className="text-cyan-500" />}
+          className="shadow-sm"
+        >
+          <div style={{ width: "100%", height: 300 }}>
+            {" "}
+            {/* Cambiado de 400 a 300 */}
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={customerData}
+                margin={{
+                  top: 10,
+                  right: 20,
+                  left: 0,
+                  bottom: 0,
+                }} /* Margen derecho reducido */
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis dataKey="name" fontSize={12} /> /* Añadido fontSize */
+                <YAxis fontSize={12} /> /* Añadido fontSize */
+                <Tooltip content={<CustomTooltip />} />
+                <Bar
+                  dataKey="sales"
+                  name="Ventas"
+                  fill={COLOR_PALETTE.neutral}
+                  radius={[4, 4, 0, 0]}
+                  animationDuration={1500}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
-        <div className="col-12 col-md-6 p-2">
-          <div className="card p-2">
-            <h4 className="text-center text-muted ">Margen Beneficio</h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={marginData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="margin" fill={M_COLORS[3]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

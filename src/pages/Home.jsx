@@ -13,7 +13,6 @@ import { getAllOrders } from "@/services/requests/orders";
 import { getAllCustomers } from "@/services/requests/customers";
 import Footer from "../components/Footer.jsx";
 
-
 export default function About() {
   const [salesCount, setSalesCount] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
@@ -102,10 +101,7 @@ export default function About() {
         <Sidebar />
         <div className="col" style={{ minHeight: "100vh" }}>
           <div className="container-fluid">
-            <h3 className="text-dark text-center my-3">
-              Panel de Inicio
-              
-            </h3>
+            <h3 className="text-dark text-center my-3">Panel de Inicio</h3>
 
             <div className="row">
               {/* Ventas Totales */}
@@ -179,8 +175,7 @@ export default function About() {
             </div>
           </div>
 
-          <Footer/>
-
+          <Footer />
         </div>
       </div>
     </>
