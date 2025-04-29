@@ -124,7 +124,7 @@ const SalesDashboard = () => {
     <div style={styles.container}>
       {/* Encabezado */}
       <div style={styles.header}>
-        <Typography variant="h4" component="h1" style={{ fontWeight: "bold" }}>
+        <Typography variant="h5" component="h1" style={{ fontWeight: "bold" }}>
           Dashboard de Ventas
         </Typography>
         <Typography style={styles.dateBadge}>{dashboardData.date}</Typography>
@@ -253,7 +253,7 @@ const SalesDashboard = () => {
       </div>
 
       {/* Gráfica de clientes */}
-      <div style={{ marginBottom: "24px" }}>
+      <div style={{ marginBottom: "16px" }}>
         <Card style={styles.chartCard}>
           <Typography variant="h6" style={styles.chartTitle}>
             Top 6 Clientes
@@ -282,7 +282,7 @@ const SalesDashboard = () => {
 
 const styles = {
   container: {
-    padding: "16px",
+    padding: "0px",
     maxWidth: "1200px",
     margin: "0 auto",
   },
@@ -297,32 +297,39 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "24px",
+    marginBottom: "16px",
   },
   dateBadge: {
-    backgroundColor: "#1890ff",
-    color: "white",
+    backgroundColor: "#fff",
+    color: "#545454",
+    width: "110px",
     padding: "4px 12px",
-    borderRadius: "16px",
+    borderRadius: "6px",
+    border: "0.7px solid #ccc",
   },
   summaryGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
     gap: "16px",
-    marginBottom: "24px",
+    marginBottom: "16px",
   },
   summaryCard: {
     padding: "16px",
+    borderRadius: "12px",
+
+    
   },
   chartsGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
     gap: "16px",
-    marginBottom: "24px",
+    marginBottom: "16px",
+    
   },
   chartCard: {
     padding: "16px",
     height: "320px",
+    borderRadius: "12px",
   },
   chartTitle: {
     marginBottom: "16px",

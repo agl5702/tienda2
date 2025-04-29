@@ -70,8 +70,22 @@ export default function Ventas() {
 
   const [editandoItem, setEditandoItem] = useState(null); // Ahora guardará {ventaId, productId}
   const [nuevoValores, setNuevoValores] = useState({ precio: "", cantidad: "" });
+  const [busqueda, setBusqueda] = useState("");
 
   const navigate = useNavigate();
+
+  const limpiarInput = () => {
+    setBusqueda("");
+  };
+
+  // Filtrado dinámico por nombre (puedes ampliar a otro dato si quieres)
+  const ordenesCompletadasFiltradas = ordenesCompletadas.filter((orden) => {
+    const idCoincide = orden.id.toString().toLowerCase().includes(busqueda.toLowerCase());
+    const nombreClienteCoincide = orden.customer?.name?.toLowerCase().includes(busqueda.toLowerCase());
+    const aliasClienteCoincide = orden.customer?.alias?.toLowerCase().includes(busqueda.toLowerCase());
+    return idCoincide || nombreClienteCoincide || aliasClienteCoincide;
+  });
+
 
   // Constante para el ID del producto a filtrar (precio 0)
   const PRODUCTO_A_FILTRAR = 1;
@@ -377,9 +391,11 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
         const ordenesCompletadasFiltradas = ordenesData.filter(
           (orden) =>
             orden.status === "completed" &&
+          
             orden.customer?.name &&
             orden.customer.name.trim() !== ""
-        );
+        ).sort((a, b) => b.id - a.id); // Orden descendente (ID más alto primero)
+        ;
 
         setProductos(productosData);
         setOrdenesPendientes(ordenesPendientesFiltradas);
@@ -592,6 +608,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
         product_id: producto.id,
         name: producto.name,
         price_unit: producto.sale_price,
+        unit: producto.unit,
         quantity: 1,
         image_url: producto.image_url || null,
       };
@@ -648,7 +665,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
             <MenuMovil />
           </div>
           <div
-            className="col-11 d-flex justify-content-center align-items-center"
+            className="col-12 d-flex justify-content-center align-items-center"
             style={{ height: "100vh" }}
           >
             <div className="spinner-border text-info" role="status">
@@ -669,7 +686,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
         <MenuMovil />
 
         <div className="col" style={{ minHeight: "100vh" }}>
-          <div className="container-fluid py-2">
+          <div className="container-fluid zp-2">
             {/*  */}
             <div className="col-12">
               <div className="d-flex justify-content-between align-items-center">
@@ -726,7 +743,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
               
               
 
-              <div className="tab-content card border border-1 border-dark p-3" style={{ marginTop: "-1px" }}>
+              <div className="tab-content card border border-1 border-dark p-2" style={{ marginTop: "-1px" }}>
 
                 {/* Pedidos Pendientes */}
                 {activeTab === "pedidos" && (
@@ -837,8 +854,27 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                       
                     )}
 
+                    
+
                     <h4 className="mt-5">Pedidos Completados</h4>
-                    {ordenesCompletadas.length === 0 ? (
+                    <div className="d-flex my-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                      <input
+                        type="text"
+                        className="form-control border border-2 ps-3"
+                        placeholder="🔍 Buscar Venta por # o por cliente..."
+                        value={busqueda}
+                        onChange={(e) => setBusqueda(e.target.value)}
+                      />
+                      {busqueda && (
+                        <button
+                          onClick={limpiarInput}
+                          className="bg-danger btn btn-sm text-white ms-1"
+                        >
+                          X
+                        </button>
+                      )}
+                    </div>
+                    {ordenesCompletadasFiltradas.length === 0 ? (
                       <div className="alert">
                         No hay órdenes completadas.
                       </div>
@@ -856,9 +892,10 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                             </tr>
                           </thead>
                           <tbody>
-                            {ordenesCompletadas.map((orden) => {
-                              // Filtrar el producto 1 para no mostrarlo
-                              const itemsFiltrados = orden.items.filter(
+                            {ordenesCompletadasFiltradas.map((orden) => {
+                              // Verificar que orden.items existe
+                              const items = orden.items || [];
+                              const itemsFiltrados = items.filter(
                                 (item) => item.product_id !== PRODUCTO_A_FILTRAR
                               );
                               const total = itemsFiltrados.reduce(
@@ -874,19 +911,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                       "Cliente no especificado"}
                                   </td>
                                   <td>{orden.customer?.alias || "-"}</td>
-                                  {/* <td>
-                                    <ul className="list-unstyled">
-                                      {itemsFiltrados.map((item) => (
-                                        <li key={item.product_id}>
-                                          {item.quantity} x{" "}
-                                          {productos.find(
-                                            (p) => p.id === item.product_id
-                                          )?.name || `Producto ${item.product_id}`}
-                                          (${item.price_unit})
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </td> */}
+                                  
                                   <td>$ {formatNumber(total)}</td>
                                   <td>
                                     <span className="badge border border-success text-success">
@@ -898,7 +923,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                     >
                                       {({ blob, url, loading, error }) =>
                                         <button className="btn ms-2 btn-sm btn-info">
-                                          {loading ? '...' : ''}<FaFileDownload/>
+                                          <FaFileDownload/>
                                         </button>
                                       }
                                     </PDFDownloadLink>
@@ -1195,7 +1220,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                           placeholder="Precio"
                                         />
                                       ) : (
-                                        `$ ${formatNumber(i.price_unit)}`
+                                        `$ ${formatNumber(i.price_unit)} /${i.unit}`
                                       )}
                                     </td>
                                     <td>
@@ -1274,7 +1299,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
 
                       </div>
 
-                      <div className="bg-white col-12 border-top border-2 pt-2 text-center" style={{ position: "sticky", bottom: "0px" }}>
+                      <div className="bg-white col-12 border-top border-2 py-2 text-center" style={{ position: "sticky", bottom: "0px" }}>
                         <button className="btn btn-info me-2 mb-n2" onClick={() => actualizarOrden(id)}>
                           Guardar
                         </button>
