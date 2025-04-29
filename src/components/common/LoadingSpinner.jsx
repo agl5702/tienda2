@@ -2,7 +2,7 @@ import Sidebar from "../Sidebar";
 
 Sidebar;
 const LoadingSpinner = () => (
-  <div className="m-0" style={{ paddingLeft: "4.5rem" }}>
+  <div className="m-0 padding-menu">
     <Sidebar />
     <div className="col p-4" style={{ minHeight: "100vh" }}>
       <div className="d-flex justify-content-center align-items-center h-100">

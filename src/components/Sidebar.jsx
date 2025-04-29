@@ -12,6 +12,8 @@ import { MdFullscreen } from "react-icons/md";
 import Visor from "./Visor.jsx";
 import { useState } from "react";
 
+import ModalLateral from "./ModalLateral.jsx";
+
 const Sidebar = () => {
   const location = useLocation();
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -38,7 +40,9 @@ const Sidebar = () => {
   const isReportesActive = location.pathname.startsWith('/reportes') || location.pathname.startsWith('/reporte/');
 
   return (
-    <div id="sidebar" className="d-flex flex-column" style={{ backgroundColor: "#1b1b1b" }}>
+    <>
+    <ModalLateral/>
+    <div id="sidebar" className=" flex-column" style={{ backgroundColor: "#1b1b1b" }}>
       <NavLink to="/" className="border-bottom text-center mt-2 mb-1 pb-1">
         <img src="/logo3.png" alt="imglogo" style={{ width: "30px" }} />
         <span className="text-white">OCloud</span>
@@ -157,6 +161,8 @@ const Sidebar = () => {
         <p className="pt-2 text-white text-menu">Cierre</p>
       </NavLink>
     </div>
+    </>
+    
   );
 };
 

@@ -14,7 +14,7 @@ import Devoluciones from "./pages/Devoluciones";
 import FormDevolucion from "./pages/FormDevolucion";
 import Reportes from "./pages/Reportes";
 import DetalleDia from "./pages/DetalleDia";
-
+import ModalLateral from "./components/ModalLateral";
 import VerReporte from './pages/VerReporte';
 
 function App() {
@@ -49,7 +49,7 @@ function App() {
         <Route path="/reportes/detalle/:date" element={<VerReporte />} />
         <Route path="/reportes/dia/:date" element={<DetalleDia />} />
 
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<ModalLateral />} />
       </Routes>
     </BrowserRouter>
   );

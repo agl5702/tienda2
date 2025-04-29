@@ -43,7 +43,7 @@ const FormCategoria = () => {
 
   return (
     <>
-    <div className="m-0" style={{ paddingLeft: "4.5rem" }}>
+    <div className="m-0 padding-menu">
 
 <Sidebar />
 

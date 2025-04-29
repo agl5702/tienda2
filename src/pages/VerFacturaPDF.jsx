@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getOrderById } from '../services/requests/orders';
 import { PDFViewer } from '@react-pdf/renderer';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import FacturaPDF from '../components/FacturaPDF.jsx';
 import { FaFileDownload } from "react-icons/fa";
+import Sidebar from '../components/Sidebar.jsx';
+import { BsArrowLeft, BsCalendar, BsFilter } from 'react-icons/bs';
+import { NavLink, useLocation } from "react-router-dom";
+
 
 // Wrapper como componente de clase
 class PDFViewerWrapper extends React.Component {
@@ -20,7 +24,7 @@ class PDFViewerWrapper extends React.Component {
         height="100%"
         style={{ 
           border: 'none',
-          minHeight: 'calc(100vh - 60px)'
+          minHeight: 'calc(98.3vh - 60px)'
         }}
       >
         {this.props.children}
@@ -29,11 +33,14 @@ class PDFViewerWrapper extends React.Component {
   }
 }
 
+
 const VerFacturaPDF = () => {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -89,36 +96,40 @@ const VerFacturaPDF = () => {
   };
 
   return (
-    <div className="container-fluid p-0 vh-100">
-      <div className="d-flex justify-content-between align-items-center p-3 bg-light shadow-sm">
-        <h4 className="mb-0">Factura #{order.id}</h4>
-        <div>
-          <button 
-            onClick={handleDownload}
-            className="btn btn-primary btn-sm"
-          >
-            <i className="bi bi-download me-2"></i>Descargar PDF
-          </button>
 
-          <PDFDownloadLink 
-            document={<FacturaPDF order={order} />} 
-            fileName={`factura_${order.id}.pdf`}
-          >
-            {({ blob, url, loading, error }) =>
-              <button className="btn ms-2 btn-sm btn-info">
-                {loading ? 'Generando...' : ''}<FaFileDownload/>
-              </button>
-            }
-          </PDFDownloadLink>
+    <div className="m-0 padding-menu">
+      <Sidebar />
+      <div className="col" style={{ backgroundColor: "#282828" }}>
+        <div className="container-fluid p-0 vh-100">
+          <div className="d-flex justify-content-between align-items-center p-3 shadow-sm" style={{ backgroundColor: "#1b1b1b" }}>
+          <NavLink to="/ventas" className="btn btn-sm bg-white text-dark me-2">
+              <BsArrowLeft/> Volver
+            </NavLink>
+            <h4 className="mb-0 text-white">Factura #{order.id}</h4>
+            <div>
+
+              <PDFDownloadLink 
+                document={<FacturaPDF order={order} />} 
+                fileName={`factura_${order.id}.pdf`}
+              >
+                {({ blob, url, loading, error }) =>
+                  <button className="btn btn-sm btn-info">
+                    {loading ? 'Generando...' : ''}<FaFileDownload className='mt-n1 me-2'/>Descargar Factura
+                  </button>
+                }
+              </PDFDownloadLink>
+            </div>
+          </div>
+          
+          <div className="pdf-viewer-container">
+            <PDFViewerWrapper>
+              <FacturaPDF order={order} />
+            </PDFViewerWrapper>
+          </div>
         </div>
       </div>
-      
-      <div className="pdf-viewer-container">
-        <PDFViewerWrapper>
-          <FacturaPDF order={order} />
-        </PDFViewerWrapper>
-      </div>
     </div>
+
   );
 };
 

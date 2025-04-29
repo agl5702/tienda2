@@ -94,10 +94,7 @@ export default function About() {
 
   return (
     <>
-      <div
-        className="m-0"
-        style={{ paddingLeft: "4.5rem", minHeight: "100vh" }}
-      >
+      <div className="m-0 padding-menu">
         <Sidebar />
         <div className="col" style={{ minHeight: "100vh" }}>
           <div className="container-fluid">

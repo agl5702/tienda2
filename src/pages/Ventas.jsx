@@ -661,7 +661,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
   return (
     <>
 
-      <div className="m-0" style={{ paddingLeft: "4.5rem" }}>
+      <div className="m-0 padding-menu">
 
         <Sidebar />
 
@@ -892,7 +892,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                     >
                                       {({ blob, url, loading, error }) =>
                                         <button className="btn ms-2 btn-sm btn-info">
-                                          {loading ? 'Generando...' : ''}<FaFileDownload/>
+                                          {loading ? '...' : ''}<FaFileDownload/>
                                         </button>
                                       }
                                     </PDFDownloadLink>

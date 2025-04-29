@@ -93,6 +93,19 @@
     outline: 1px solid rgba(255, 0, 0, 0.3);
   }
 
+  /* padding del menu lateral */
+
+  .padding-menu{
+    padding-left: 4.5rem;
+  }
+
+  @media screen and (max-width: 992px) {
+    .padding-menu{
+      padding-left: 0px;
+    }
+  }
+  /* fin padding del menu lateral */
+  
   
   body {
     margin: 0;
