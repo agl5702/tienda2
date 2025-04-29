@@ -16,6 +16,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Sidebar from "../components/Sidebar.jsx";
+import MenuMovil from "../components/MenuMovil.jsx";
 
 const VerReporte = () => {
   const { date } = useParams();
@@ -112,6 +113,7 @@ const VerReporte = () => {
   return (
     <div className="m-0 padding-menu">
       <Sidebar />
+        <MenuMovil />
       <div className="col" style={{ minHeight: "100vh" }}>
         <div className="container-fluid py-4">
           <div className="card">

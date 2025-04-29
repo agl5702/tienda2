@@ -1,0 +1,74 @@
+.desplaceY{
+  overflow: auto;
+}
+.ventana2{
+  min-width: 70px;
+  cursor: pointer;
+}
+.ventana-fija{
+  position: sticky;
+  left: 0;
+  z-index: 9999;
+}
+
+.texto-menu{
+  font-size: 0.6rem;
+}
+.selector2 {
+    width: 50%;
+    height: 4px;
+    border-radius: 20px;
+    background-color: #00bfff;
+    position: absolute;
+    left: 15px;
+    bottom: -4px;
+    transform: scale(0);
+    animation: growAnimation2 600ms forwards;
+  }
+  
+  @keyframes growAnimation2 {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes borderLoading2 {
+    0% {
+      border-color: transparent;
+    }
+    20% {
+      border-color: #00bfff;
+    }
+  }
+  
+  .no-selector2 {
+    display: none;
+  }
+  
+  .card-menu2 {
+    position: relative;
+    color: white;
+    border-radius: 0.30rem;
+    text-align: center;
+  }
+  
+  .card-menu2:hover {
+    transition: color 100ms ease-out 100ms;
+    background: #2d2d2d;
+  }
+  
+  .card-select2 {
+    background-color: #2d2d2d;
+    border: 1px solid transparent;
+    animation: borderLoading2 2s linear forwards;
+  }
+  
+
+  .material-symbols-outlined {
+    color: white;
+  }
+  
+ 

@@ -1,10 +1,5 @@
 /* Estilos del botón */
 .menu-button {
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
   position: fixed;
@@ -17,7 +12,7 @@
 .side-menu {
   position: fixed;
   top: 0;
-  left: -300px;
+  left: -200px;
   height: 100vh;
   background-color: #fff;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);

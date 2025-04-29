@@ -11,6 +11,7 @@ import { createSale } from "../services/requests/sales";
 import { getAllCustomers } from "../services/requests/customers";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import MenuMovil from "../components/MenuMovil.jsx";
 
 import "../components/css/MenuInferior.css";
 import { LuChevronDown } from "react-icons/lu";
@@ -644,6 +645,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
         <div className="row">
           <div className="col-1">
             <Sidebar />
+            <MenuMovil />
           </div>
           <div
             className="col-11 d-flex justify-content-center align-items-center"
@@ -664,6 +666,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
       <div className="m-0 padding-menu">
 
         <Sidebar />
+        <MenuMovil />
 
         <div className="col" style={{ minHeight: "100vh" }}>
           <div className="container-fluid py-2">
@@ -721,8 +724,11 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
               {/* /ventanas */}
 
               
+              
 
               <div className="tab-content card border border-1 border-dark p-3" style={{ marginTop: "-1px" }}>
+
+                {/* Pedidos Pendientes */}
                 {activeTab === "pedidos" && (
                   <div className="tab-pane fade show active">
                     <h4>Pedidos Pendientes</h4>
@@ -897,7 +903,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                       }
                                     </PDFDownloadLink>
 
-                                    <Link to={`/factura/${orden.id}`} className="badge border ms-2 border-info text-info">
+                                    <Link to={`/factura/${orden.id}`} className="badge d-none d-md-inline border ms-2 border-info text-info">
                                     <FaEye/> ver
                                     </Link>
 

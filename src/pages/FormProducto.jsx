@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { createProduct, getProductById, updateProduct } from '../services/requests/products';
 import { getAllCategories } from '../services/requests/categories';
 import Sidebar from "../components/Sidebar.jsx";
+import MenuMovil from "../components/MenuMovil.jsx";
 import Swal from 'sweetalert2';
 
 
@@ -143,6 +144,7 @@ const FormProducto = () => {
   return (
     <div className="m-0 padding-menu">
       <Sidebar />
+        <MenuMovil />
       <div className="col p-2" style={{ minHeight: "100vh" }}>
         <div className="card p-3">
           <h2>{esEdicion ? 'Editar Producto' : 'Nuevo Producto'}</h2>

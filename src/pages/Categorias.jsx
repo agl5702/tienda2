@@ -1,8 +1,9 @@
 import TablaCategorias from "../components/TablaCategorias.jsx"
-import Sidebar from "../components/Sidebar.jsx";
 import { Link } from 'react-router-dom';
 import React from 'react';
 import Footer from "../components/Footer.jsx";
+import Sidebar from "../components/Sidebar.jsx";
+import MenuMovil from "../components/MenuMovil.jsx";
 
 export default function Categorias() {
   return (
@@ -11,7 +12,7 @@ export default function Categorias() {
       <div className="m-0 padding-menu">
 
         <Sidebar />
-
+        <MenuMovil />
         <div className="col p-2" style={{ minHeight: "100vh" }}>
             <div className="card p-2">
               <div className="row m-0">
@@ -26,6 +27,8 @@ export default function Categorias() {
             <Footer/>
 
         </div>
+
+        
         
       </div>
       

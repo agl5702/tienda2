@@ -88,10 +88,10 @@ const VentaTable = () => {
         )}
       </div>
 
-      <div className="row m-0 mt-4">
+      <div className="row m-0 mt-4 p-0">
         {productosFiltrados.length > 0 ? (
           productosFiltrados.map((producto) => (
-            <div className="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 col-xxl-2 mb-3 px-2">
+            <div className="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2 col-xxl-2 mb-2 px-1">
               <div className="card bg-gray position-relative">
                 <span
                   className="bg-success opacity-9 pb-1 col-sm-3 text-white text-center position-absolute"
@@ -147,10 +147,7 @@ const VentaTable = () => {
                       className="btn mb-0 bg-info text-sm text-white btn-sm"
                     >
                       <BsPencilSquare />{" "}
-                      <span className="d-none d-sm-inline d-md-none d-xl-inline d-xxl-none">
-                        {" "}
-                        Editar
-                      </span>
+                
                     </Link>
 
                     <button
@@ -158,10 +155,7 @@ const VentaTable = () => {
                       className="btn mb-0 btn-dark text-sm btn-sm ms-2"
                     >
                       <BsTrash />{" "}
-                      <span className="d-none d-sm-inline d-md-none d-xl-inline d-xxl-none">
-                        {" "}
-                        Eliminar
-                      </span>
+                   
                     </button>
                   </div>
                 </div>

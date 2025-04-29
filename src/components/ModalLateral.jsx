@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../components/css/SideModal.css';
-
+import { IoMenu } from "react-icons/io5";
 // imporaciones sidebar
 import "./css/SidebarLateral.css";
 import { NavLink, useLocation } from "react-router-dom";
@@ -68,8 +68,8 @@ const SideMenu = () => {
   
   return (
     <div>
-      <button onClick={toggleMenu} className={`menu-button ${isOpen ? 'd-none' : ''}`}>
-        {isOpen ? 'Cerrar' : 'Menú'}
+      <button onClick={toggleMenu} className={`menu-button btn px-3 ${isOpen ? 'd-none' : ''}`} style={{ backgroundColor: "#1b1b1b" }}>
+        {isOpen ? 'X' : <IoMenu size={30} color="white" className="simbolo-icon" />}
       </button>
 
       <div 

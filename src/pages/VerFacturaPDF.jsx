@@ -99,6 +99,7 @@ const VerFacturaPDF = () => {
 
     <div className="m-0 padding-menu">
       <Sidebar />
+        <MenuMovil />
       <div className="col" style={{ backgroundColor: "#282828" }}>
         <div className="container-fluid p-0 vh-100">
           <div className="d-flex justify-content-between align-items-center p-3 shadow-sm" style={{ backgroundColor: "#1b1b1b" }}>

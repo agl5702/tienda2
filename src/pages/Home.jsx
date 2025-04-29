@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar.jsx";
+import MenuMovil from "../components/MenuMovil.jsx";
 import SalesDashboard from "../components/Graphs.jsx";
 import {
   FaBoxOpen,
@@ -96,6 +97,7 @@ export default function About() {
     <>
       <div className="m-0 padding-menu">
         <Sidebar />
+        <MenuMovil />
         <div className="col" style={{ minHeight: "100vh" }}>
           <div className="container-fluid">
             <h3 className="text-dark text-center my-3">Panel de Inicio</h3>

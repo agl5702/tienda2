@@ -1,5 +1,6 @@
 import Nav from "../components/Nav.jsx";
 import Sidebar from "../components/Sidebar.jsx";
+import MenuMovil from "../components/MenuMovil.jsx";
 import TablaReportes from "../components/TablaReportes.jsx";
 import Footer from "../components/Footer.jsx";
 import VerReporteRango from "../components/VerReporteRango.jsx";
@@ -18,6 +19,7 @@ export default function Reportes() {
     <>
       <div className="m-0 padding-menu">
         <Sidebar />
+        <MenuMovil />
 
         <div className="col" style={{ minHeight: "100vh" }}>
           <div className="container-fluid py-4">

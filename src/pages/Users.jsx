@@ -1,5 +1,6 @@
 import Nav from "../components/Nav.jsx";
 import Sidebar from "../components/Sidebar.jsx";
+import MenuMovil from "../components/MenuMovil.jsx";
 import { FaBoxOpen, FaUsers, FaDollarSign, FaShoppingCart } from "react-icons/fa";
 
 
@@ -10,6 +11,7 @@ export default function Users() {
       <div className="m-0 padding-menu">
 
         <Sidebar />
+        <MenuMovil />
 
         <div className="col" style={{ minHeight: "100vh" }}>
         <div className="container-fluid py-4">

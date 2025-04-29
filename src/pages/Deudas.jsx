@@ -14,6 +14,7 @@ import DebtList from "../components/debts/DebtList.jsx";
 import AddDebt from "../components/debts/AddDebt.jsx";
 import LoadingSpinner from "../components/common/LoadingSpinner.jsx";
 import ErrorMessage from "../components/common/ErrorMessage.jsx";
+import MenuMovil from "../components/MenuMovil.jsx";
 
 function Deudas() {
   const [debtors, setDebtors] = useState([]);
@@ -82,6 +83,7 @@ function Deudas() {
   return (
     <div className="m-0 padding-menu">
       <Sidebar />
+      <MenuMovil />
       <div className="col p-4" style={{ minHeight: "100vh" }}>
         <DebtHeader stats={stats} />
         <div className="d-flex flex-wrap justify-content-center gap-1">

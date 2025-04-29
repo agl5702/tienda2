@@ -137,8 +137,8 @@ const Sidebar = () => {
       </div>
 
        {/* Botón de pantalla completa */}
-       <div className="my-1 p-1 text-center card-menu mx-2 mt-auto">
-        <button onClick={toggleFullscreen} className="btn btn-sm border m-0 ms-n1">
+       <div className="my-1 p-1 text-center card-menu mx-2">
+        <button onClick={toggleFullscreen} className="btn btn-sm border m-0 px-2 ms-n1">
           <MdFullscreen size={20} color="white" className="simbolo-icon" />
         </button>
       </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createOneReturn, getReturnById, updateReturn } from '../services/requests/returns.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from "../components/Sidebar.jsx";
+import MenuMovil from "../components/MenuMovil.jsx";
 
 
 
@@ -47,6 +48,7 @@ const FormReturns = () => {
     <div className="m-0 padding-menu">
 
 <Sidebar />
+        <MenuMovil />
 
 <div className="col p-2" style={{ minHeight: "100vh" }}>
     <div className="card p-2">
