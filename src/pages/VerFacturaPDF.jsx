@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getOrderById } from '../services/requests/orders';
 import { PDFViewer } from '@react-pdf/renderer';
-import FacturaPDF from '../components/FacturaPDF';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import FacturaPDF from '../components/FacturaPDF.jsx';
+import { FaFileDownload } from "react-icons/fa";
 
 // Wrapper como componente de clase
 class PDFViewerWrapper extends React.Component {
@@ -97,6 +99,17 @@ const VerFacturaPDF = () => {
           >
             <i className="bi bi-download me-2"></i>Descargar PDF
           </button>
+
+          <PDFDownloadLink 
+            document={<FacturaPDF order={order} />} 
+            fileName={`factura_${order.id}.pdf`}
+          >
+            {({ blob, url, loading, error }) =>
+              <button className="btn ms-2 btn-sm btn-info">
+                {loading ? 'Generando...' : ''}<FaFileDownload/>
+              </button>
+            }
+          </PDFDownloadLink>
         </div>
       </div>
       

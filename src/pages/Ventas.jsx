@@ -24,7 +24,7 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import FacturaPDF from '../components/FacturaPDF.jsx';
 import { HiOutlineDocumentArrowDown } from "react-icons/hi2";
 import { PiFileArrowDownLight } from "react-icons/pi";
-import { FaFileDownload } from "react-icons/fa";
+import { FaFileDownload, FaEye } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 
 import { formatQuantity } from "../services/utils/formatQuantity";
@@ -896,6 +896,10 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                         </button>
                                       }
                                     </PDFDownloadLink>
+
+                                    <Link to={`/factura/${orden.id}`} className="badge border ms-2 border-info text-info">
+                                    <FaEye/> ver
+                                    </Link>
 
                                   </td>
                                 </tr>
