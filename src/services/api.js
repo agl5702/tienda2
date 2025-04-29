@@ -25,7 +25,10 @@ export const fetchData = async (method, endpoint, data = null, token = null) => 
       headers, // Pasa los headers personalizados en cada petición
     });
 
-    return response.data;
+    return {
+      status: response.status,
+      data: response.data,
+    };
   } catch (error) {
     console.error("Error en la petición:", error);
     throw error.response?.data || { message: "Error desconocido", error };
