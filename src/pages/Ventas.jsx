@@ -128,7 +128,15 @@ export default function Ventas() {
     Swal.fire({
       icon: "error",
       title: "Error",
+      toast: true,
+      position: 'bottom-end', // esquina inferior derecha
       text: message,
+      timer: 2000,
+      showConfirmButton: false,
+      timerProgressBar: true,
+      customClass: {
+        popup: 'small-toast' // clase personalizada para hacerlo más pequeño
+      }
     });
   };
 
