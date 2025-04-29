@@ -1,5 +1,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
+import { formatQuantity } from "../services/utils/formatQuantity";
+
 
 
 // Estilos para el PDF
@@ -210,7 +212,7 @@ const FacturaPDF = ({ order }) => {
           {order.items.map((item, index) => (
             <View key={index} style={styles.tableRow}>
               <View style={[styles.tableCol, styles.colCant]}>
-                <Text>{item.quantity}</Text>
+                <Text>{formatQuantity(item.quantity)}</Text>
               </View>
               <View style={[styles.tableCol, styles.colDesc]}>
                 <Text>{item.product?.name || 'Producto sin nombre'}</Text>
