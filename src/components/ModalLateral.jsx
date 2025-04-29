@@ -81,7 +81,7 @@ const SideMenu = () => {
           {/* Sidebar */}
           
           <div className="sidebar d-flex flex-column" style={{ backgroundColor: "#1b1b1b" }}>
-            <NavLink to="/" className="border-bottom text-center mt-2 mb-1 pb-1">
+            <NavLink to="/" className="border-bottom text-center mt-2 mb-1 pb-1 position-sticky" style={{ backgroundColor: "#1b1b1b", zIndex: 1000, top: "0px" }}>  
               <img src="/logo3.png" alt="imglogo" style={{ width: "30px" }} />
               <span className="text-white">OCloud</span>
             </NavLink>
@@ -194,7 +194,7 @@ const SideMenu = () => {
 
             <hr className="text-white bg-white mx-2 my-0" />
 
-            <NavLink to="/cierre" className={({ isActive }) => `my-1 p-1 text-center py-1 card-menu mx-2 ${isActive ? 'active-link' : 'bg-info'}`}>
+            <NavLink to="/cierre" className={({ isActive }) => `my-1 p-1 text-center py-1 card-menu mx-2 position-sticky ${isActive ? 'active-link' : 'bg-info'}`} style={{ backgroundColor: "#1b1b1b", bottom: "0px" }}>
               <RiShutDownLine className="simbolo-icon" />
               <p className="pt-2 text-white text-menu">Cierre</p>
             </NavLink>

@@ -2,7 +2,7 @@
  .sidebar {
     width: 4.5rem;
     height: 100vh; /* Altura completa de la ventana */
- 
+    overflow: auto;
     z-index: 999;
     border-right: 1px solid #2d2d2d;
     background-color: darkblue;

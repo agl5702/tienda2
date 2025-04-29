@@ -5,6 +5,7 @@ import { BsArrowLeft } from 'react-icons/bs';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { formatCurrency } from '../services/utils/format';
 import Sidebar from '../components/Sidebar.jsx';
+import MenuMovil from '../components/MenuMovil.jsx';
 
 const DetalleDia = () => {
   const { date } = useParams();
