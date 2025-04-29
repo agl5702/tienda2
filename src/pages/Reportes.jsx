@@ -1,14 +1,5 @@
 import Nav from "../components/Nav.jsx";
 import Sidebar from "../components/Sidebar.jsx";
-import PdfReportDay from "../components/PdfReportDay.jsx";
-import PdfReportDian from "../components/PdfReportDian.jsx";
-import {
-  FaBoxOpen,
-  FaUsers,
-  FaDollarSign,
-  FaShoppingCart,
-} from "react-icons/fa";
-import DownloadButton from "../components/DownloadButton.jsx";
 import TablaReportes from "../components/TablaReportes.jsx";
 import Footer from "../components/Footer.jsx";
 import VerReporteRango from "../components/VerReporteRango.jsx";
