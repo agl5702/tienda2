@@ -25,7 +25,7 @@ export default function Login() {
       console.log("Login exitoso:", response);
 
       // Guardar token en localStorage o donde prefieras
-      localStorage.setItem("token", response.data.access_token);
+      localStorage.setItem("token", response.access_token);
 
       // Redirigir o hacer algo más
       window.location.href = "/"; // ajustá la ruta a tu necesidad

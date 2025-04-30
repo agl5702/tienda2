@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import logo from "../assets/logo3.png";
-import { passwordRecovery } from "@/services/auth/password_recovery";
+import { passwordRecovery } from "../services/auth/password_recovery";
 
 export default function PasswordRecovery() {
   const [email, setEmail] = useState("");
@@ -16,25 +16,24 @@ export default function PasswordRecovery() {
     setMessage("");
 
     try {
-      const response = await passwordRecovery({ email });
+      // Asumimos que si la petición no lanza error, fue exitosa
+      await passwordRecovery({ email });
 
-      if (response.status === 202) {
-        setMessage(
-          "📬 Se ha enviado un correo con instrucciones para restablecer tu contraseña. ¡Revisa tu bandeja de entrada!"
-        );
-      } else {
-        throw new Error("Algo salió mal");
-      }
+      setMessage(
+        "📬 Se ha enviado un correo con instrucciones para restablecer tu contraseña. ¡Revisa tu bandeja de entrada!"
+      );
     } catch (err) {
       console.error("Error en recuperación:", err);
       setError(
-        "No pudimos enviar el correo. Verifica que el email sea correcto o inténtalo más tarde."
+        err.message ||
+          "No pudimos enviar el correo. Verifica que el email sea correcto o inténtalo más tarde."
       );
     } finally {
       setLoading(false);
     }
   };
 
+  // El resto del componente permanece igual
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       {/* Sidebar oculto */}

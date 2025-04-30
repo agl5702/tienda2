@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://tienda-online.site"; // Cambia esto por la URL de tu API
+const API_URL = "http://localhost:8000"; // Cambia esto por la URL de tu API
 
 const api = axios.create({
   baseURL: API_URL,
@@ -25,10 +25,9 @@ export const fetchData = async (method, endpoint, data = null, token = null) => 
       headers, // Pasa los headers personalizados en cada petición
     });
 
-    return {
-      status: response.status,
-      data: response.data,
-    };
+
+    return response.data
+
   } catch (error) {
     console.error("Error en la petición:", error);
     throw error.response?.data || { message: "Error desconocido", error };
