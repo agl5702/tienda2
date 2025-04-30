@@ -212,7 +212,7 @@ const FacturaPDF = ({ order }) => {
           {order.items.map((item, index) => (
             <View key={index} style={styles.tableRow}>
               <View style={[styles.tableCol, styles.colCant]}>
-                <Text>{formatQuantity(item.quantity)}</Text>
+                <Text>{formatQuantity(item.quantity)} {item.product.unit}</Text>
               </View>
               <View style={[styles.tableCol, styles.colDesc]}>
                 <Text>{item.product?.name || 'Producto sin nombre'}</Text>

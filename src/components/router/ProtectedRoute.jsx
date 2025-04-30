@@ -20,7 +20,7 @@ const ProtectedRoute = () => {
     checkAuth();
   }, []);
 
-  if (isAuthenticated === null) return <div>Cargando autenticación...</div>;
+  if (isAuthenticated === null) return null; // O un loader, dependiendo de tu preferencia
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
