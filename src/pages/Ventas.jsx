@@ -21,12 +21,12 @@ import { FaHandHoldingDollar } from "react-icons/fa6";
 import { TbClipboardList } from "react-icons/tb";
 import { FaRegEdit } from "react-icons/fa";
 import Footer from "../components/Footer.jsx";
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import FacturaPDF from '../components/FacturaPDF.jsx';
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import FacturaPDF from "../components/FacturaPDF.jsx";
 import { HiOutlineDocumentArrowDown } from "react-icons/hi2";
 import { PiFileArrowDownLight } from "react-icons/pi";
 import { FaFileDownload, FaEye } from "react-icons/fa";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 import { formatQuantity } from "../services/utils/formatQuantity";
 import { formatNumber } from "../services/utils/format.js";
@@ -69,7 +69,10 @@ export default function Ventas() {
   const [filtroProducto, setFiltroProducto] = useState("");
 
   const [editandoItem, setEditandoItem] = useState(null); // Ahora guardará {ventaId, productId}
-  const [nuevoValores, setNuevoValores] = useState({ precio: "", cantidad: "" });
+  const [nuevoValores, setNuevoValores] = useState({
+    precio: "",
+    cantidad: "",
+  });
   const [busqueda, setBusqueda] = useState("");
 
   const navigate = useNavigate();
@@ -80,30 +83,36 @@ export default function Ventas() {
 
   // Filtrado dinámico por nombre (puedes ampliar a otro dato si quieres)
   const ordenesCompletadasFiltradas = ordenesCompletadas.filter((orden) => {
-    const idCoincide = orden.id.toString().toLowerCase().includes(busqueda.toLowerCase());
-    const nombreClienteCoincide = orden.customer?.name?.toLowerCase().includes(busqueda.toLowerCase());
-    const aliasClienteCoincide = orden.customer?.alias?.toLowerCase().includes(busqueda.toLowerCase());
+    const idCoincide = orden.id
+      .toString()
+      .toLowerCase()
+      .includes(busqueda.toLowerCase());
+    const nombreClienteCoincide = orden.customer?.name
+      ?.toLowerCase()
+      .includes(busqueda.toLowerCase());
+    const aliasClienteCoincide = orden.customer?.alias
+      ?.toLowerCase()
+      .includes(busqueda.toLowerCase());
     return idCoincide || nombreClienteCoincide || aliasClienteCoincide;
   });
 
-
   // Constante para el ID del producto a filtrar (precio 0)
-  const PRODUCTO_A_FILTRAR = 1;
+  const PRODUCTO_A_FILTRAR = 20;
 
   // Función para mostrar alerta de éxito
   const showSuccessAlert = (message) => {
     Swal.fire({
       toast: true,
       icon: "success",
-      position: 'bottom-end', // esquina inferior derecha
+      position: "bottom-end", // esquina inferior derecha
       title: "Éxito",
       text: message,
       timer: 2000,
       showConfirmButton: false,
       timerProgressBar: true,
       customClass: {
-        popup: 'small-toast' // clase personalizada para hacerlo más pequeño
-      }
+        popup: "small-toast", // clase personalizada para hacerlo más pequeño
+      },
     });
   };
 
@@ -111,15 +120,15 @@ export default function Ventas() {
     Swal.fire({
       toast: true,
       icon: "success",
-      position: 'bottom-end', // esquina inferior derecha
+      position: "bottom-end", // esquina inferior derecha
       title: "Éxito",
       text: message,
       timer: 800,
       showConfirmButton: false,
       timerProgressBar: true,
       customClass: {
-        popup: 'small-toast' // clase personalizada para hacerlo más pequeño
-      }
+        popup: "small-toast", // clase personalizada para hacerlo más pequeño
+      },
     });
   };
 
@@ -129,14 +138,14 @@ export default function Ventas() {
       icon: "error",
       title: "Error",
       toast: true,
-      position: 'bottom-end', // esquina inferior derecha
+      position: "bottom-end", // esquina inferior derecha
       text: message,
       timer: 2000,
       showConfirmButton: false,
       timerProgressBar: true,
       customClass: {
-        popup: 'small-toast' // clase personalizada para hacerlo más pequeño
-      }
+        popup: "small-toast", // clase personalizada para hacerlo más pequeño
+      },
     });
   };
 
@@ -202,52 +211,52 @@ export default function Ventas() {
   };
 
   // Función para guardar los nuevos valores
-const guardarNuevosValores = () => {
-  if (!editandoItem || !nuevoValores.precio || !nuevoValores.cantidad) {
-    showErrorAlert("Por favor complete todos los campos");
-    return;
-  }
+  const guardarNuevosValores = () => {
+    if (!editandoItem || !nuevoValores.precio || !nuevoValores.cantidad) {
+      showErrorAlert("Por favor complete todos los campos");
+      return;
+    }
 
-  const precioNumerico = parseFloat(nuevoValores.precio);
-  const cantidadNumerica = parseFloat(nuevoValores.cantidad);
+    const precioNumerico = parseFloat(nuevoValores.precio);
+    const cantidadNumerica = parseFloat(nuevoValores.cantidad);
 
-  if (isNaN(precioNumerico) || isNaN(cantidadNumerica)) {
-    showErrorAlert("Por favor ingrese valores válidos");
-    return;
-  }
+    if (isNaN(precioNumerico) || isNaN(cantidadNumerica)) {
+      showErrorAlert("Por favor ingrese valores válidos");
+      return;
+    }
 
-  if (precioNumerico <= 0 || cantidadNumerica <= 0) {
-    showErrorAlert("El precio y la cantidad deben ser mayores que cero");
-    return;
-  }
+    if (precioNumerico <= 0 || cantidadNumerica <= 0) {
+      showErrorAlert("El precio y la cantidad deben ser mayores que cero");
+      return;
+    }
 
-  setDetalleVentas((prev) => {
-    const items = prev[editandoItem.ventaId] || [];
-    const nuevosItems = items.map((item) =>
-      item.product_id === editandoItem.productId
-        ? { 
-            ...item, 
-            price_unit: precioNumerico,
-            quantity: cantidadNumerica
-          }
-        : item
-    );
-    return { ...prev, [editandoItem.ventaId]: nuevosItems };
-  });
+    setDetalleVentas((prev) => {
+      const items = prev[editandoItem.ventaId] || [];
+      const nuevosItems = items.map((item) =>
+        item.product_id === editandoItem.productId
+          ? {
+              ...item,
+              price_unit: precioNumerico,
+              quantity: cantidadNumerica,
+            }
+          : item
+      );
+      return { ...prev, [editandoItem.ventaId]: nuevosItems };
+    });
 
-  setEditandoItem(null);
-  setNuevoValores({ precio: "", cantidad: "" });
-  showSuccessAlertCorto("Valores actualizados correctamente");
-};
+    setEditandoItem(null);
+    setNuevoValores({ precio: "", cantidad: "" });
+    showSuccessAlertCorto("Valores actualizados correctamente");
+  };
 
-// Función para iniciar la edición
-const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
-  setEditandoItem({ ventaId, productId });
-  setNuevoValores({ 
-    precio: precioActual.toString(),
-    cantidad: cantidadActual.toString()
-  });
-};
+  // Función para iniciar la edición
+  const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
+    setEditandoItem({ ventaId, productId });
+    setNuevoValores({
+      precio: precioActual.toString(),
+      cantidad: cantidadActual.toString(),
+    });
+  };
   // Función para completar una orden
   const completarOrden = async (ordenId) => {
     try {
@@ -396,15 +405,14 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
         );
 
         // Filtrar órdenes completadas
-        const ordenesCompletadasFiltradas = ordenesData.filter(
-          (orden) =>
-            orden.status === "completed" &&
-          
-            orden.customer?.name &&
-            orden.customer.name.trim() !== ""
-        ).sort((a, b) => b.id - a.id); // Orden descendente (ID más alto primero)
-        ;
-
+        const ordenesCompletadasFiltradas = ordenesData
+          .filter(
+            (orden) =>
+              orden.status === "completed" &&
+              orden.customer?.name &&
+              orden.customer.name.trim() !== ""
+          )
+          .sort((a, b) => b.id - a.id); // Orden descendente (ID más alto primero)
         setProductos(productosData);
         setOrdenesPendientes(ordenesPendientesFiltradas);
         setOrdenesCompletadas(ordenesCompletadasFiltradas);
@@ -646,7 +654,6 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
     producto.name.toLowerCase().includes(filtroProducto.toLowerCase())
   );
 
-
   // mostrar el dropdown
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -687,9 +694,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
 
   return (
     <>
-
       <div className="m-0 padding-menu">
-
         <Sidebar />
         <MenuMovil />
 
@@ -699,68 +704,118 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
             <div className="col-12">
               <div className="d-flex justify-content-between align-items-center">
                 <h3 className="my-auto">Gestión de Ventas</h3>
-                <button className="btn bg-info btn-sm text-white pt-2" onClick={crearVenta}>
+                <button
+                  className="btn bg-info btn-sm text-white pt-2"
+                  onClick={crearVenta}
+                >
                   + Nueva Venta
                 </button>
               </div>
 
-
               {/* ventanas */}
               <div className="d-flex mt-1">
-
                 {/* Dropdown para seleccionar ventas abiertas */}
-                <div className="my-auto mb-2" style={{ position: "relative", display: "inline-block" }} ref={ref}>
-                  <div className={`list me-1 mb-n1 border bg-gradient-dark text-white ms-1 px-2 py-1`}>
-                    <div className=""> 
-                      <LuChevronDown onClick={() => setOpen(!open)}  size={20} className="" />
+                <div
+                  className="my-auto mb-2"
+                  style={{ position: "relative", display: "inline-block" }}
+                  ref={ref}
+                >
+                  <div
+                    className={`list me-1 mb-n1 border bg-gradient-dark text-white ms-1 px-2 py-1`}
+                  >
+                    <div className="">
+                      <LuChevronDown
+                        onClick={() => setOpen(!open)}
+                        size={20}
+                        className=""
+                      />
                     </div>
                   </div>
                   {open && (
-                    <div className="ventana-list bg-gradient-dark border border-1 border-dark card" style={{ position: "absolute", top: "122%", left: 0, zIndex: 1000, borderRadius: "10px",}}>
+                    <div
+                      className="ventana-list bg-gradient-dark border border-1 border-dark card"
+                      style={{
+                        position: "absolute",
+                        top: "122%",
+                        left: 0,
+                        zIndex: 1000,
+                        borderRadius: "10px",
+                      }}
+                    >
                       {ventas.map((id) => (
-                      <div className={`col-auto text-center my-auto py-1 px-2 ${activeTab === id ? "bg-white text-dark" : "text-white"}`} style={{borderRadius: "10px"}} key={id}>
-                        <div className="py-1" onClick={() => setActiveTab(id)}>
-                          {id.replace("venta-", "Venta #")}
+                        <div
+                          className={`col-auto text-center my-auto py-1 px-2 ${
+                            activeTab === id
+                              ? "bg-white text-dark"
+                              : "text-white"
+                          }`}
+                          style={{ borderRadius: "10px" }}
+                          key={id}
+                        >
+                          <div
+                            className="py-1"
+                            onClick={() => setActiveTab(id)}
+                          >
+                            {id.replace("venta-", "Venta #")}
+                          </div>
                         </div>
-                      </div>
                       ))}
                     </div>
                   )}
                 </div>
-                {/* /Dropdown */} 
+                {/* /Dropdown */}
 
                 <div className="d-flex table-responsive">
-
-                <div className={`col-auto ventana my-auto px-3 ${activeTab === "pedidos" ? "active-ventana" : "border text-dark"}`}>
-                      
-                      <div className="py-2" onClick={() => setActiveTab("pedidos")}><TbClipboardList className="mt-n1"/> Pedidos</div>
-                </div>
-
-                {ventas.map((id) => (
-                  <div className={`col-auto ventana my-auto px-3 ${activeTab === id ? "active-ventana" : "border text-dark"}`} key={id}>
-                    <div className="py-2" onClick={() => setActiveTab(id)}>
-                      {id.replace("venta-", "Venta #")}
-                      <button type="button" className={`ms-4 me-n2 btn-close border border-radius-2xl p-1 bg-danger ${activeTab === id ? "" : "d-none"}`} style={{ fontSize: "0.5rem" }} onClick={(e) => handleCloseTab(id, e)} aria-label="Cerrar"/>
+                  <div
+                    className={`col-auto ventana my-auto px-3 ${
+                      activeTab === "pedidos"
+                        ? "active-ventana"
+                        : "border text-dark"
+                    }`}
+                  >
+                    <div
+                      className="py-2"
+                      onClick={() => setActiveTab("pedidos")}
+                    >
+                      <TbClipboardList className="mt-n1" /> Pedidos
                     </div>
                   </div>
-                ))}
-              </div>
+
+                  {ventas.map((id) => (
+                    <div
+                      className={`col-auto ventana my-auto px-3 ${
+                        activeTab === id ? "active-ventana" : "border text-dark"
+                      }`}
+                      key={id}
+                    >
+                      <div className="py-2" onClick={() => setActiveTab(id)}>
+                        {id.replace("venta-", "Venta #")}
+                        <button
+                          type="button"
+                          className={`ms-4 me-n2 btn-close border border-radius-2xl p-1 bg-danger ${
+                            activeTab === id ? "" : "d-none"
+                          }`}
+                          style={{ fontSize: "0.5rem" }}
+                          onClick={(e) => handleCloseTab(id, e)}
+                          aria-label="Cerrar"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
               {/* /ventanas */}
 
-              
-              
-
-              <div className="tab-content card border border-1 border-dark p-2" style={{ marginTop: "-1px" }}>
-
+              <div
+                className="tab-content card border border-1 border-dark p-2"
+                style={{ marginTop: "-1px" }}
+              >
                 {/* Pedidos Pendientes */}
                 {activeTab === "pedidos" && (
                   <div className="tab-pane fade show active">
                     <h4>Pedidos Pendientes</h4>
                     {ordenesPendientes.length === 0 ? (
-                      <div className="alert">
-                        No hay órdenes pendientes.
-                      </div>
+                      <div className="alert">No hay órdenes pendientes.</div>
                     ) : (
                       <div className="table-responsive">
                         <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
@@ -780,7 +835,8 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                               .filter((orden) => {
                                 // Filtrar órdenes con total mayor a 0
                                 const itemsFiltrados = orden.items.filter(
-                                  (item) => item.product_id !== PRODUCTO_A_FILTRAR
+                                  (item) =>
+                                    item.product_id !== PRODUCTO_A_FILTRAR
                                 );
                                 const total = itemsFiltrados.reduce(
                                   (sum, item) =>
@@ -792,7 +848,8 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                               .map((orden) => {
                                 // Filtrar el producto 1 para no mostrarlo
                                 const itemsFiltrados = orden.items.filter(
-                                  (item) => item.product_id !== PRODUCTO_A_FILTRAR
+                                  (item) =>
+                                    item.product_id !== PRODUCTO_A_FILTRAR
                                 );
                                 const total = itemsFiltrados.reduce(
                                   (sum, item) =>
@@ -831,7 +888,9 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                       <div className="">
                                         <button
                                           className="btn btn-success btn-sm"
-                                          onClick={() => completarOrden(orden.id)}
+                                          onClick={() =>
+                                            completarOrden(orden.id)
+                                          }
                                         >
                                           Completar
                                         </button>
@@ -859,10 +918,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                           </tbody>
                         </table>
                       </div>
-                      
                     )}
-
-                    
 
                     <h4 className="mt-5">Pedidos Completados</h4>
                     <div className="d-flex my-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
@@ -883,9 +939,7 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                       )}
                     </div>
                     {ordenesCompletadasFiltradas.length === 0 ? (
-                      <div className="alert">
-                        No hay órdenes completadas.
-                      </div>
+                      <div className="alert">No hay órdenes completadas.</div>
                     ) : (
                       <div className="table-responsive">
                         <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
@@ -907,7 +961,8 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                 (item) => item.product_id !== PRODUCTO_A_FILTRAR
                               );
                               const total = itemsFiltrados.reduce(
-                                (sum, item) => sum + item.price_unit * item.quantity,
+                                (sum, item) =>
+                                  sum + item.price_unit * item.quantity,
                                 0
                               );
 
@@ -919,27 +974,29 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                                       "Cliente no especificado"}
                                   </td>
                                   <td>{orden.customer?.alias || "-"}</td>
-                                  
+
                                   <td>$ {formatNumber(total)}</td>
                                   <td>
                                     <span className="badge border border-success text-success">
                                       Completado
                                     </span>
-                                    <PDFDownloadLink 
-                                      document={<FacturaPDF order={orden} />} 
+                                    <PDFDownloadLink
+                                      document={<FacturaPDF order={orden} />}
                                       fileName={`factura_${orden.id}.pdf`}
                                     >
-                                      {({ blob, url, loading, error }) =>
+                                      {({ blob, url, loading, error }) => (
                                         <button className="btn ms-2 btn-sm btn-info">
-                                          <FaFileDownload/>
+                                          <FaFileDownload />
                                         </button>
-                                      }
+                                      )}
                                     </PDFDownloadLink>
 
-                                    <Link to={`/factura/${orden.id}`} className="badge d-none d-md-inline border ms-2 border-info text-info">
-                                    <FaEye/> ver
+                                    <Link
+                                      to={`/factura/${orden.id}`}
+                                      className="badge d-none d-md-inline border ms-2 border-info text-info"
+                                    >
+                                      <FaEye /> ver
                                     </Link>
-
                                   </td>
                                 </tr>
                               );
@@ -947,7 +1004,6 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                           </tbody>
                         </table>
                       </div>
-                      
                     )}
                   </div>
                 )}
@@ -958,378 +1014,517 @@ const editarItem = (ventaId, productId, precioActual, cantidadActual) => {
                   (id) =>
                     activeTab === id && (
                       <div key={id} className="tab-pane fade show active">
-
-                      {/* Modal productos */}
-                      <div className="">
-                        {isOpen && (
-                          <div
-                            className="modal modal-xl fade show d-block"
-                            tabIndex="-1"
-                            role="dialog"
-                            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-                            onClick={() => setIsOpen(false)}
-                          >
+                        {/* Modal productos */}
+                        <div className="">
+                          {isOpen && (
                             <div
-                              className="modal-dialog modal-dialog-centered"
-                              role="document"
-                              onClick={(e) => e.stopPropagation()} // Evitar que se cierre al hacer clic dentro
+                              className="modal modal-xl fade show d-block"
+                              tabIndex="-1"
+                              role="dialog"
+                              style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                              onClick={() => setIsOpen(false)}
                             >
-                              <div className="modal-content">
-                                <div className="modal-header">
-                                  <h5 className="modal-title">Añadir Productos</h5>
-                                  <button
-                                    type="button"
-                                    className="btn-close bg-danger"
-                                    onClick={() => setIsOpen(false)}
-                                    aria-label="Close"
-                                  ></button>
-                                </div>
-                                <div className="modal-body">
-                                  {/* productos */}
-                                  <div className="col-12">
-                                    <input
-                                      type="text"
-                                      className="form-control mb-3 border ps-3"
-                                      placeholder="Filtrar productos por nombre..."
-                                      value={filtroProducto}
-                                      onChange={(e) => setFiltroProducto(e.target.value)}
-                                    />
-                                    <div className="row" style={{ maxHeight: "400px", overflowY: "auto" }}>
-                                      {productosFiltrados
-                                        .filter((p) => p.id !== PRODUCTO_A_FILTRAR) // Filtrar producto con ID 1
-                                        .map((p) => (
-                                          <>
-
-                                          <div key={p.id} className="col-6 col-sm-6 col-md-6 col-lg-4 col-xl-3 col-xxl-3 mb-3 px-2">
-                                            <div className="card bg-gray position-relative">
-                                              <span className="bg-success opacity-9 pb-1 col-sm-3 text-white text-center position-absolute" style={{ zIndex: 3, borderRadius: "10px 0px 20px" }}> 20%</span>
-                                              <div className="card-header p-0 position-relative z-index-2" style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}>
-                                                <div className="d-block blur-shadow-image cursor-pointer img-marco ">
-                                                  <img
-                                                    src={p.image_url}
-                                                    width="100%"
-                                                    height="160vh"
-                                                    alt="producto"
-                                                    className="border-bottom img-size img-oferta "
-                                                    style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}/>
+                              <div
+                                className="modal-dialog modal-dialog-centered"
+                                role="document"
+                                onClick={(e) => e.stopPropagation()} // Evitar que se cierre al hacer clic dentro
+                              >
+                                <div className="modal-content">
+                                  <div className="modal-header">
+                                    <h5 className="modal-title">
+                                      Añadir Productos
+                                    </h5>
+                                    <button
+                                      type="button"
+                                      className="btn-close bg-danger"
+                                      onClick={() => setIsOpen(false)}
+                                      aria-label="Close"
+                                    ></button>
+                                  </div>
+                                  <div className="modal-body">
+                                    {/* productos */}
+                                    <div className="col-12">
+                                      <input
+                                        type="text"
+                                        className="form-control mb-3 border ps-3"
+                                        placeholder="Filtrar productos por nombre..."
+                                        value={filtroProducto}
+                                        onChange={(e) =>
+                                          setFiltroProducto(e.target.value)
+                                        }
+                                      />
+                                      <div
+                                        className="row"
+                                        style={{
+                                          maxHeight: "400px",
+                                          overflowY: "auto",
+                                        }}
+                                      >
+                                        {productosFiltrados
+                                          .filter(
+                                            (p) => p.id !== PRODUCTO_A_FILTRAR
+                                          ) // Filtrar producto con ID 1
+                                          .map((p) => (
+                                            <>
+                                              <div
+                                                key={p.id}
+                                                className="col-6 col-sm-6 col-md-6 col-lg-4 col-xl-3 col-xxl-3 mb-3 px-2"
+                                              >
+                                                <div className="card bg-gray position-relative">
+                                                  <span
+                                                    className="bg-success opacity-9 pb-1 col-sm-3 text-white text-center position-absolute"
+                                                    style={{
+                                                      zIndex: 3,
+                                                      borderRadius:
+                                                        "10px 0px 20px",
+                                                    }}
+                                                  >
+                                                    {" "}
+                                                    20%
+                                                  </span>
+                                                  <div
+                                                    className="card-header p-0 position-relative z-index-2"
+                                                    style={{
+                                                      borderRadius:
+                                                        "0.75rem 0.75rem 0px 0px",
+                                                    }}
+                                                  >
+                                                    <div className="d-block blur-shadow-image cursor-pointer img-marco ">
+                                                      <img
+                                                        src={p.image_url}
+                                                        width="100%"
+                                                        height="160vh"
+                                                        alt="producto"
+                                                        className="border-bottom img-size img-oferta "
+                                                        style={{
+                                                          borderRadius:
+                                                            "0.75rem 0.75rem 0px 0px",
+                                                        }}
+                                                      />
+                                                    </div>
+                                                    <div
+                                                      className="blur opacity-9 col-8 col-sm-6 text-dark text-center position-absolute"
+                                                      style={{
+                                                        zIndex: 3,
+                                                        borderRadius:
+                                                          "7px 0px 0px",
+                                                        bottom: "1px",
+                                                        right: "1px",
+                                                        height: "20px",
+                                                        fontSize: "15px",
+                                                      }}
+                                                    >
+                                                      {p.category.name}
+                                                    </div>
+                                                    <div
+                                                      className="colored-shadow"
+                                                      style={{
+                                                        backgroundImage: `url('${p.image_url}')`,
+                                                      }}
+                                                    ></div>
+                                                  </div>
+                                                  <div className="px-2 py-0">
+                                                    <p className="text-dark text-center nombre mt-1 mb-0">
+                                                      {p.name}
+                                                    </p>
+                                                    <div className="row justify-space-between text-center"></div>
+                                                    <div className="text-dark text-center border-bottom pb-1 border-gray mb-2">
+                                                      ${" "}
+                                                      {formatNumber(
+                                                        p.sale_price
+                                                      )}{" "}
+                                                      / {p.unit}
+                                                    </div>
+                                                    <div className="row m-0 mb-2 text-center">
+                                                      <div className="col-6">
+                                                        <button
+                                                          className="btn btn-sm bg-info text-white"
+                                                          onClick={() =>
+                                                            agregarProductoAVenta(
+                                                              id,
+                                                              p
+                                                            )
+                                                          }
+                                                        >
+                                                          {" "}
+                                                          Añadir
+                                                        </button>
+                                                      </div>
+                                                      <div className="col-6">
+                                                        <button
+                                                          className="btn btn-sm btn-outline-danger"
+                                                          onClick={() =>
+                                                            quitarProductoDeVenta(
+                                                              id,
+                                                              p.id
+                                                            )
+                                                          }
+                                                        >
+                                                          Restar
+                                                        </button>
+                                                      </div>
+                                                    </div>
+                                                  </div>
                                                 </div>
-                                                <div className="blur opacity-9 col-8 col-sm-6 text-dark text-center position-absolute" style={{ zIndex: 3, borderRadius: "7px 0px 0px", bottom: "1px", right: "1px", height: "20px", fontSize: "15px" }}>
-                                                  {p.category.name}
-                                                </div>
-                                                <div className="colored-shadow" style={{ backgroundImage: `url('${p.image_url}')` }}></div>
-
                                               </div>
-                                              <div className="px-2 py-0">
-                                                <p className="text-dark text-center nombre mt-1 mb-0">{p.name}</p>
-                                                <div className="row justify-space-between text-center">
-                                                  
-                                                </div>
-                                                <div className="text-dark text-center border-bottom pb-1 border-gray mb-2"> 
-                                                  $ {formatNumber(p.sale_price)} / {p.unit}
-                                                </div>
-                                                <div className="row m-0 mb-2 text-center">
-                                                  <div className="col-6">
-                                                    <button
-                                                      className="btn btn-sm bg-info text-white"
-                                                      onClick={() =>
-                                                        agregarProductoAVenta(id, p)
-                                                      }> Añadir</button>
-                                                    
-                                                  </div>
-                                                  <div className="col-6">
-                                                    <button
-                                                      className="btn btn-sm btn-outline-danger"
-                                                      onClick={() =>
-                                                        quitarProductoDeVenta(id, p.id)
-                                                      }>Restar</button>
-                                                  </div>
-                                                </div>
+                                            </>
+                                          ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="modal-footer">
+                                    <button
+                                      type="button"
+                                      className="btn btn-secondary"
+                                      onClick={() => setIsOpen(false)}
+                                    >
+                                      Cerrar
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Modal clientes */}
+                        <div className="">
+                          {isOpenCliente && (
+                            <div
+                              className="modal modal-xl fade show d-block"
+                              tabIndex="-1"
+                              role="dialog"
+                              style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                              onClick={() => setIsOpenCliente(false)}
+                            >
+                              <div
+                                className="modal-dialog modal-dialog-centered"
+                                role="document"
+                                onClick={(e) => e.stopPropagation()} // Evitar que se cierre al hacer clic dentro
+                              >
+                                <div className="modal-content">
+                                  {/* Modal Header */}
+                                  <div className="modal-header">
+                                    <h5 className="modal-title">
+                                      Seleccionar cliente
+                                    </h5>
+                                    <button
+                                      type="button"
+                                      className="btn-close bg-danger"
+                                      onClick={() => setIsOpenCliente(false)}
+                                      aria-label="Close"
+                                    ></button>
+                                  </div>
+
+                                  <div className="modal-body">
+                                    {/* productos */}
+                                    <div className="col-12">
+                                      <input
+                                        type="text"
+                                        className="form-control mb-2 border ps-3"
+                                        placeholder="Filtra Clientes por nombre o apodo"
+                                        value={filtroCliente}
+                                        onChange={(e) =>
+                                          setFiltroCliente(e.target.value)
+                                        }
+                                      />
+
+                                      {/* selecionar cliente */}
+                                      <div
+                                        className="row m-0"
+                                        style={{
+                                          maxHeight: "400px",
+                                          overflowY: "auto",
+                                        }}
+                                      >
+                                        {clientesFiltrados.map((cliente) => {
+                                          const isActive =
+                                            orderUsers[id] === cliente.id;
+                                          return (
+                                            <div className="col-auto px-1 py-1">
+                                              <div
+                                                key={cliente.id}
+                                                className={`btn px-3 ${
+                                                  isActive
+                                                    ? "btn-info"
+                                                    : "btn-outline-dark"
+                                                }`}
+                                                onClick={() =>
+                                                  cambiarUsuarioVenta(
+                                                    id,
+                                                    cliente.id
+                                                  )
+                                                }
+                                              >
+                                                {cliente.avatar && (
+                                                  <img
+                                                    src={cliente.avatar}
+                                                    alt={cliente.name}
+                                                    className="rounded-circle me-2"
+                                                    width="30"
+                                                    height="30"
+                                                    style={{
+                                                      objectFit: "cover",
+                                                    }}
+                                                  />
+                                                )}
+                                                <span>{cliente.name}</span>
                                               </div>
                                             </div>
-                                          </div>
-
-                                          </>
-                                          
-                                        ))}
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="modal-footer">
-                                  <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    onClick={() => setIsOpen(false)}
-                                  >
-                                    Cerrar
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Modal clientes */}
-                      <div className="">
-                        {isOpenCliente && (
-                          <div
-                            className="modal modal-xl fade show d-block"
-                            tabIndex="-1"
-                            role="dialog"
-                            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-                            onClick={() => setIsOpenCliente(false)}
-                          >
-                            <div
-                              className="modal-dialog modal-dialog-centered"
-                              role="document"
-                              onClick={(e) => e.stopPropagation()} // Evitar que se cierre al hacer clic dentro
-                            >
-                              <div className="modal-content">
-                                {/* Modal Header */}
-                                <div className="modal-header">
-                                  <h5 className="modal-title">Seleccionar cliente</h5>
-                                  <button
-                                    type="button"
-                                    className="btn-close bg-danger"
-                                    onClick={() => setIsOpenCliente(false)}
-                                    aria-label="Close"
-                                  ></button>
-                                </div>
-
-                                <div className="modal-body">
-                                  {/* productos */}
-                                  <div className="col-12">
-                                    <input
-                                      type="text"
-                                      className="form-control mb-2 border ps-3"
-                                      placeholder="Filtra Clientes por nombre o apodo"
-                                      value={filtroCliente}
-                                      onChange={(e) => setFiltroCliente(e.target.value)}
-                                    />
-
-                                    {/* selecionar cliente */}
-                                    <div className="row m-0" style={{ maxHeight: "400px", overflowY: "auto" }}>
-                                      {clientesFiltrados.map((cliente) => {
-                                        const isActive = orderUsers[id] === cliente.id;
-                                        return (
-                                          <div className="col-auto px-1 py-1">
-                                            <div key={cliente.id}
-                                            className={`btn px-3 ${ isActive ? "btn-info" : "btn-outline-dark"}`}
-                                            onClick={() =>
-                                              cambiarUsuarioVenta(id, cliente.id)
-                                            }
-                                          >
-                                            {cliente.avatar && (
-                                              <img
-                                                src={cliente.avatar}
-                                                alt={cliente.name}
-                                                className="rounded-circle me-2"
-                                                width="30"
-                                                height="30"
-                                                style={{ objectFit: "cover" }}
-                                              />
-                                            )}
-                                            <span>{cliente.name}</span>
-                                          </div>
-                                          </div>
-                                          
-                                        );
-                                      })}
-                                    </div>
-
-                                  </div>
-
-                                </div>
-
-                                <div className="modal-footer">
-                                  <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    onClick={() => setIsOpenCliente(false)}
-                                  >
-                                    Cerrar
-                                  </button>
-                                </div>
-                              </div>
-
-                            </div>
-
-                          </div>
-                        )}
-                      </div>
-                        
-
-                        
-                      <div className="">
-
-                      
-                        <h5 className="">Detalles de la Venta</h5>
-
-
-                        {/* Seleccionar cliente */}
-                        <div className="col-12 d-flex">
-                          <h6 className="mb-0 mt-1 pe-2">Cliente</h6>
-                          <button onClick={() => setIsOpenCliente(true)} className="btn btn-sm bg-info text-white ">Seleccionar otro</button>
-                        </div>
-
-                        {/* mostrar cliente seleccionado */}
-                        
-                        <div className="row">
-                          <div className="col-auto">
-                            <div className="card p-2 border border-dark mt-2">
-                              <div className="row m-0">
-                                <div className="col-auto">
-                                  {clientes.find((u) => u.id === orderUsers[id])?.avatar && (
-                                    <img
-                                      src={clientes.find((u) => u.id === orderUsers[id])?.avatar}
-                                      alt={clientes.find((u) => u.id === orderUsers[id])?.name}
-                                      className="rounded-circle me-2"
-                                      width="30"
-                                      height="30"
-                                      style={{ objectFit: "cover" }}
-                                    />
-                                  )}
-                                </div>
-                                <div className="col-auto my-auto">
-                                  <span className="text-dark">{clientes.find((u) => u.id === orderUsers[id])?.name || "Cliente no encontrado"}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Tabla de pedido */}
-
-                        <h5 className=" mt-3">Productos agregados</h5>
-                        <div className="table-responsive">
-                          <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
-                            <thead className="bg-gradient-dark text-white ">
-                              <tr>
-                                <th>Producto</th>
-                                <th>Precio</th>
-                                <th>Cantidad</th>
-                                <th>Total</th>
-                                <th>Acciones</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {(detalleVentas[id] || [])
-                                .filter((item) => item.product_id !== PRODUCTO_A_FILTRAR)
-                                .map((i) => (
-                                  <tr key={i.product_id}>
-                                    <td>{i.name}</td>
-                                    <td>
-                                      {editandoItem?.ventaId === id && editandoItem?.productId === i.product_id ? (
-                                        <input
-                                          type="number"
-                                          className="form-control form-control-sm border border-warning border-2"
-                                          value={nuevoValores.precio}
-                                          onChange={(e) => setNuevoValores({...nuevoValores, precio: e.target.value})}
-                                          placeholder="Precio"
-                                        />
-                                      ) : (
-                                        `$ ${formatNumber(i.price_unit)} /${i.unit}`
-                                      )}
-                                    </td>
-                                    <td>
-                                      {editandoItem?.ventaId === id && editandoItem?.productId === i.product_id ? (
-                                        <input
-                                          type="number"
-                                          className="form-control form-control-sm border border-warning border-2"
-                                          value={nuevoValores.cantidad}
-                                          onChange={(e) => setNuevoValores({...nuevoValores, cantidad: e.target.value})}
-                                          placeholder="Cantidad"
-                                        />
-                                      ) : (
-                                         <td>{formatQuantity(i.quantity)}</td>
-                                      )}
-                                    </td>
-                                    <td>
-                                      $ { formatNumber(i.price_unit * i.quantity)}
-                                    </td>
-                                    <td>
-                                      <div className="d-flex">
-                                        {editandoItem?.ventaId === id && editandoItem?.productId === i.product_id ? (
-                                          <>
-                                            <button
-                                              className="btn btn-success btn-sm me-1"
-                                              onClick={guardarNuevosValores}
-                                            >
-                                              ✓
-                                            </button>
-                                            <button
-                                              className="btn btn-danger btn-sm me-1"
-                                              onClick={() => {
-                                                setEditandoItem(null);
-                                                setNuevoValores({ precio: "", cantidad: "" });
-                                              }}
-                                            >
-                                              cancelar
-                                            </button>
-                                          </>
-                                        ) : (
-
-                                          <>
-                                          
-                                          <button
-                                            className="btn btn-sm btn-outline-warning me-1"
-                                            onClick={() => editarItem(id, i.product_id, i.price_unit, i.quantity)}
-                                            title="Editar">
-                                            <FaRegEdit/>
-                                          </button>
-                                          
-                                          <button
-                                            className="btn btn-sm btn-outline-danger"
-                                            onClick={() => quitarProductoDeVenta(id, i.product_id)}>
-                                            Quitar
-                                          </button>
-                                          </>
-                                          
-                                        )}
-                                        
+                                          );
+                                        })}
                                       </div>
-                                    </td>
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </table>
+                                    </div>
+                                  </div>
+
+                                  <div className="modal-footer">
+                                    <button
+                                      type="button"
+                                      className="btn btn-secondary"
+                                      onClick={() => setIsOpenCliente(false)}
+                                    >
+                                      Cerrar
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        
 
-                        {/* Botón para abrir el modal */}
-                        <button onClick={() => setIsOpen(true)} className="btn btn-sm bg-info text-white mt-n3">+ Añadir productos</button>
+                        <div className="">
+                          <h5 className="">Detalles de la Venta</h5>
 
-                        {/* total */}
-                        <div className="text-end text-dark">
-                          <h5 className="mt-3">Total ${formatNumber(calcularTotalVenta(id))}</h5>
-                          
+                          {/* Seleccionar cliente */}
+                          <div className="col-12 d-flex">
+                            <h6 className="mb-0 mt-1 pe-2">Cliente</h6>
+                            <button
+                              onClick={() => setIsOpenCliente(true)}
+                              className="btn btn-sm bg-info text-white "
+                            >
+                              Seleccionar otro
+                            </button>
+                          </div>
+
+                          {/* mostrar cliente seleccionado */}
+
+                          <div className="row">
+                            <div className="col-auto">
+                              <div className="card p-2 border border-dark mt-2">
+                                <div className="row m-0">
+                                  <div className="col-auto">
+                                    {clientes.find(
+                                      (u) => u.id === orderUsers[id]
+                                    )?.avatar && (
+                                      <img
+                                        src={
+                                          clientes.find(
+                                            (u) => u.id === orderUsers[id]
+                                          )?.avatar
+                                        }
+                                        alt={
+                                          clientes.find(
+                                            (u) => u.id === orderUsers[id]
+                                          )?.name
+                                        }
+                                        className="rounded-circle me-2"
+                                        width="30"
+                                        height="30"
+                                        style={{ objectFit: "cover" }}
+                                      />
+                                    )}
+                                  </div>
+                                  <div className="col-auto my-auto">
+                                    <span className="text-dark">
+                                      {clientes.find(
+                                        (u) => u.id === orderUsers[id]
+                                      )?.name || "Cliente no encontrado"}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Tabla de pedido */}
+
+                          <h5 className=" mt-3">Productos agregados</h5>
+                          <div className="table-responsive">
+                            <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
+                              <thead className="bg-gradient-dark text-white ">
+                                <tr>
+                                  <th>Producto</th>
+                                  <th>Precio</th>
+                                  <th>Cantidad</th>
+                                  <th>Total</th>
+                                  <th>Acciones</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {(detalleVentas[id] || [])
+                                  .filter(
+                                    (item) =>
+                                      item.product_id !== PRODUCTO_A_FILTRAR
+                                  )
+                                  .map((i) => (
+                                    <tr key={i.product_id}>
+                                      <td>{i.name}</td>
+                                      <td>
+                                        {editandoItem?.ventaId === id &&
+                                        editandoItem?.productId ===
+                                          i.product_id ? (
+                                          <input
+                                            type="number"
+                                            className="form-control form-control-sm border border-warning border-2"
+                                            value={nuevoValores.precio}
+                                            onChange={(e) =>
+                                              setNuevoValores({
+                                                ...nuevoValores,
+                                                precio: e.target.value,
+                                              })
+                                            }
+                                            placeholder="Precio"
+                                          />
+                                        ) : (
+                                          `$ ${formatNumber(i.price_unit)} /${
+                                            i.unit
+                                          }`
+                                        )}
+                                      </td>
+                                      <td>
+                                        {editandoItem?.ventaId === id &&
+                                        editandoItem?.productId ===
+                                          i.product_id ? (
+                                          <input
+                                            type="number"
+                                            className="form-control form-control-sm border border-warning border-2"
+                                            value={nuevoValores.cantidad}
+                                            onChange={(e) =>
+                                              setNuevoValores({
+                                                ...nuevoValores,
+                                                cantidad: e.target.value,
+                                              })
+                                            }
+                                            placeholder="Cantidad"
+                                          />
+                                        ) : (
+                                          <td>{formatQuantity(i.quantity)}</td>
+                                        )}
+                                      </td>
+                                      <td>
+                                        ${" "}
+                                        {formatNumber(
+                                          i.price_unit * i.quantity
+                                        )}
+                                      </td>
+                                      <td>
+                                        <div className="d-flex">
+                                          {editandoItem?.ventaId === id &&
+                                          editandoItem?.productId ===
+                                            i.product_id ? (
+                                            <>
+                                              <button
+                                                className="btn btn-success btn-sm me-1"
+                                                onClick={guardarNuevosValores}
+                                              >
+                                                ✓
+                                              </button>
+                                              <button
+                                                className="btn btn-danger btn-sm me-1"
+                                                onClick={() => {
+                                                  setEditandoItem(null);
+                                                  setNuevoValores({
+                                                    precio: "",
+                                                    cantidad: "",
+                                                  });
+                                                }}
+                                              >
+                                                cancelar
+                                              </button>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <button
+                                                className="btn btn-sm btn-outline-warning me-1"
+                                                onClick={() =>
+                                                  editarItem(
+                                                    id,
+                                                    i.product_id,
+                                                    i.price_unit,
+                                                    i.quantity
+                                                  )
+                                                }
+                                                title="Editar"
+                                              >
+                                                <FaRegEdit />
+                                              </button>
+
+                                              <button
+                                                className="btn btn-sm btn-outline-danger"
+                                                onClick={() =>
+                                                  quitarProductoDeVenta(
+                                                    id,
+                                                    i.product_id
+                                                  )
+                                                }
+                                              >
+                                                Quitar
+                                              </button>
+                                            </>
+                                          )}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {/* Botón para abrir el modal */}
+                          <button
+                            onClick={() => setIsOpen(true)}
+                            className="btn btn-sm bg-info text-white mt-n3"
+                          >
+                            + Añadir productos
+                          </button>
+
+                          {/* total */}
+                          <div className="text-end text-dark">
+                            <h5 className="mt-3">
+                              Total ${formatNumber(calcularTotalVenta(id))}
+                            </h5>
+                          </div>
                         </div>
 
-                      </div>
+                        <div
+                          className="bg-white col-12 border-top border-2 py-2 text-center"
+                          style={{ position: "sticky", bottom: "0px" }}
+                        >
+                          <button
+                            className="btn btn-info me-2 mb-n2"
+                            onClick={() => actualizarOrden(id)}
+                          >
+                            Guardar
+                          </button>
 
-                      <div className="bg-white col-12 border-top border-2 py-2 text-center" style={{ position: "sticky", bottom: "0px" }}>
-                        <button className="btn btn-info me-2 mb-n2" onClick={() => actualizarOrden(id)}>
-                          Guardar
-                        </button>
-
-                        <button className="btn btn-outline-danger mb-n2" onClick={() => eliminarVenta(id)}>
-                          Eliminar
-                        </button>
+                          <button
+                            className="btn btn-outline-danger mb-n2"
+                            onClick={() => eliminarVenta(id)}
+                          >
+                            Eliminar
+                          </button>
+                        </div>
                       </div>
-                    </div>
                     )
                 )}
               </div>
-            </div>   
+            </div>
             {/*  */}
           </div>
 
-          <Footer/>
-          
+          <Footer />
         </div>
-
       </div>
     </>
-    
   );
 }
