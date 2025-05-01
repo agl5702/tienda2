@@ -31,6 +31,8 @@ const FormProducto = () => {
   const [categorias, setCategorias] = useState([]);
   const unidades = ["und", "g", "kg", "ml", "l"];
 
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -178,21 +180,6 @@ const FormProducto = () => {
     }
   };
 
-  const abrirAlerta = () => {
-    Swal.fire({
-      title: "Indicaciones!",
-      html: `
-        <p>Dirigete a la pagina y selecciona la imagen a subir:</p>
-        <img className="w-50" src="/img/guia1.png" alt="guia1">
-        <p>Espera que cargue la imagen y copia la URL que dice "Enlace directo"</p>
-        <img className="w-80" src="/img/guia3.png" alt="guia1">
-        <p>luego vuelve y pega la URL copiada</p>
-        <a className="btn bg-info text-white" href="https://postimages.org/" target="_blank">ir a la pagina</a>
-      `,
-      showConfirmButton: true,
-    });
-  };
-
   if (loading && esEdicion) {
     return (
       <div className="m-0 padding-menu">
@@ -252,7 +239,7 @@ const FormProducto = () => {
               </div>
 
               <div className="col-md-6 d-flex mb-3">
-                <div className="col-auto border border-radius-2xl mb-3 p-2">
+                {/* <div className="col-auto border border-radius-2xl mb-3 p-2">
                   <label className="form-label d-block">¿Declara IVA?</label>
                   <div className="form-check form-switch">
                     <input
@@ -272,7 +259,7 @@ const FormProducto = () => {
                       {producto.state ? "Sí" : "No"}
                     </label>
                   </div>
-                </div>
+                </div> */}
                 <div className="col ps-2">
                   <label>Unidad</label>
                   <select
@@ -360,13 +347,9 @@ const FormProducto = () => {
                     />
                   </div>
                   <div className="col-3 my-auto">
-                    <button
-                      type="button"
-                      onClick={abrirAlerta}
-                      className="btn btn-sm btn-outline-success"
-                      disabled={loading}
-                    >
-                      subir nueva
+                    {/* Botón para abrir el modal */}
+                    <button type="button" className="btn btn-sm btn-outline-success" onClick={() => setIsOpen(true)}>
+                      Subir nueva imagen
                     </button>
                   </div>
                 </div>
@@ -401,6 +384,68 @@ const FormProducto = () => {
               </button>
             </div>
           </form>
+
+          {/* modal */}
+          {isOpen && (
+            <div
+              className="modal modal-lg fade show d-block"
+              tabIndex="-1"
+              role="dialog"
+              style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+              onClick={() => setIsOpen(false)}
+            >
+              <div
+                className="modal-dialog modal-dialog-centered"
+                role="document"
+                onClick={(e) => e.stopPropagation()} // Evitar que se cierre al hacer clic dentro
+              >
+                <div className="modal-content">
+                  {/* Modal Header */}
+                  <div className="modal-header">
+                    <h5 className="modal-title">
+                    Instrucciones para subir imágenes
+                    </h5>
+                    <button
+                      type="button"
+                      className="btn-close bg-danger"
+                      onClick={() => setIsOpen(false)}
+                      aria-label="Close"
+                    ></button>
+                  </div>
+
+                  <div className="modal-body mx-auto text-center">
+                    <p className="text-start">1. Dirígete a <a className="btn btn-sm btn-info" href="https://postimages.org/" target="_blank">postimages.org</a> y selecciona una imagen de tu dispositivo:</p>
+                    <img 
+                      src="/img/guia1.png" 
+                      alt="Paso 1" 
+                      className="guide-image"
+                    />
+
+                    <p className="text-start">2. Espera que cargue la imagen y Copia el <strong>Enlace directo</strong> después de cargar:</p>
+                    <img 
+                      src="/img/guia3.png" 
+                      alt="Paso 2" 
+                      className="guide-image"
+                    />
+
+                    <p className="text-start">3. Pega la URL en el campo de imagen.</p>
+                  
+                  </div>
+
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+     
         </div>
       </div>
     </div>

@@ -67,27 +67,17 @@ const VerReporteRango = () => {
   }
 
   return (
-    <div className="container-fluid py-4">
-      <div className="card">
-        <div className="card-header d-flex justify-content-between align-items-center">
-          <div>
-            <button 
-              onClick={() => navigate(-1)} 
-              className="btn btn-sm btn-outline-primary me-2"
-            >
-              <BsArrowLeft /> Volver
-            </button>
-            <h3 className="d-inline-block mb-0">Reporte por Rango de Fechas</h3>
-          </div>
-        </div>
+    <div className="container-fluid pt-3 px-0">
+      <div className="card mb-4">
 
-        <div className="card-body">
+        <div className="card-body p-4">
+        <h3 className="d-inline-block mb-0">Reporte por Rango de Fechas</h3>
           <form onSubmit={handleSubmit} className="mb-4">
             <div className="row g-3 align-items-end">
-              <div className="col-md-4">
+              <div className="col-6 col-md-4">
                 <label className="form-label">Fecha Inicio</label>
-                <div className="input-group">
-                  <span className="input-group-text">
+                <div className="input-group border ps-3">
+                  <span className="input-group-text pe-3">
                     <BsCalendar />
                   </span>
                   <DatePicker
@@ -102,10 +92,10 @@ const VerReporteRango = () => {
                 </div>
               </div>
               
-              <div className="col-md-4">
+              <div className="col-6 col-md-4">
                 <label className="form-label">Fecha Fin</label>
-                <div className="input-group">
-                  <span className="input-group-text">
+                <div className="input-group border ps-3">
+                  <span className="input-group-text pe-3">
                     <BsCalendar />
                   </span>
                   <DatePicker
@@ -124,7 +114,7 @@ const VerReporteRango = () => {
               <div className="col-md-4">
                 <button 
                   type="submit" 
-                  className="btn btn-primary"
+                  className="btn btn-info"
                   disabled={loading}
                 >
                   {loading ? (
@@ -138,14 +128,18 @@ const VerReporteRango = () => {
             </div>
           </form>
 
-          {error && (
+          
+        </div>
+      </div>
+
+      {error && (
             <div className="alert alert-danger mb-4">{error}</div>
           )}
 
           {reportData && (
             <>
               <div className="row mb-4">
-                <div className="col-md-3 mb-3">
+                <div className="col-12 col-sm-6 col-md-3 mb-3">
                   <div className="card border-success h-100">
                     <div className="card-header bg-success text-white">
                       Ventas Totales
@@ -160,7 +154,7 @@ const VerReporteRango = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-3 mb-3">
+                <div className="col-12 col-sm-6 col-md-3 mb-3">
                   <div className="card border-primary h-100">
                     <div className="card-header bg-primary text-white">
                       Ganancias Totales
@@ -175,7 +169,7 @@ const VerReporteRango = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-3 mb-3">
+                <div className="col-12 col-sm-6 col-md-3 mb-3">
                   <div className="card border-warning h-100">
                     <div className="card-header bg-warning text-white">
                       Devoluciones
@@ -190,7 +184,7 @@ const VerReporteRango = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-md-3 mb-3">
+                <div className="col-12 col-sm-6 col-md-3 mb-3">
                   <div className="card border-info h-100">
                     <div className="card-header bg-info text-white">
                       Productos Vendidos
@@ -208,7 +202,7 @@ const VerReporteRango = () => {
               </div>
 
               {reportData.earnings.daily_data?.length > 0 && (
-                <div className="row mb-4">
+                <div className="row mb-4 mt-n3">
                   <div className="col-12">
                     <div className="card">
                       <div className="card-header">
@@ -243,41 +237,44 @@ const VerReporteRango = () => {
                 </div>
               )}
 
-              <h4 className="mb-3">Detalle por Producto</h4>
-              <div className="table-responsive mb-4">
-                <table className="table table-hover">
-                  <thead className="table-dark">
-                    <tr>
-                      <th>Producto</th>
-                      <th className="text-end">Cantidad</th>
-                      <th className="text-end">Ganancia Unitaria</th>
-                      <th className="text-end">Ganancia Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.values(reportData.earnings.earnings_by_product).map((product, index) => (
-                      <tr key={index}>
-                        <td>{product.product_name}</td>
-                        <td className="text-end">{product.quantity_sold.toFixed(1)}</td>
-                        <td className="text-end">
-                          {formatCurrency(product.total_actual_profit / product.quantity_sold)}
-                        </td>
-                        <td className="text-end text-success fw-bold">
-                          {formatCurrency(product.total_actual_profit)}
-                        </td>
+              <div className="card p-3 mb-4">
+                <h4 className="mb-3">Detalle por Producto</h4>
+                <div className="table-responsive mb-4">
+                  <table className="table table-hover">
+                    <thead className="table-dark">
+                      <tr>
+                        <th>Producto</th>
+                        <th className="text-end">Cantidad</th>
+                        <th className="text-end">Ganancia Unitaria</th>
+                        <th className="text-end">Ganancia Total</th>
                       </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr className="table-active">
-                      <th colSpan="3">Total</th>
-                      <th className="text-end">
-                        {formatCurrency(reportData.metrics.total_profit)}
-                      </th>
-                    </tr>
-                  </tfoot>
-                </table>
+                    </thead>
+                    <tbody>
+                      {Object.values(reportData.earnings.earnings_by_product).map((product, index) => (
+                        <tr key={index}>
+                          <td>{product.product_name}</td>
+                          <td className="text-end">{product.quantity_sold.toFixed(1)}</td>
+                          <td className="text-end">
+                            {formatCurrency(product.total_actual_profit / product.quantity_sold)}
+                          </td>
+                          <td className="text-end text-success fw-bold">
+                            {formatCurrency(product.total_actual_profit)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="table-active">
+                        <th colSpan="3">Total</th>
+                        <th className="text-end">
+                          {formatCurrency(reportData.metrics.total_profit)}
+                        </th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
               </div>
+              
 
               <div className="card">
                 <div className="card-header">
@@ -285,8 +282,8 @@ const VerReporteRango = () => {
                 </div>
                 <div className="card-body">
                   <div className="table-responsive">
-                    <table className="table table-sm">
-                      <thead>
+                    <table className="table table-hover">
+                      <thead className='table-dark'>
                         <tr>
                           <th>Fecha</th>
                           <th className="text-end">Ganancias</th>
@@ -315,8 +312,6 @@ const VerReporteRango = () => {
               </div>
             </>
           )}
-        </div>
-      </div>
     </div>
   );
 };

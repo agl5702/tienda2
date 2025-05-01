@@ -71,27 +71,17 @@ const ResumenDias = () => {
   }
 
   return (
-    <div className="container-fluid py-4">
+    <div className="container-fluid pt-2 px-0">
       <div className="card">
-        <div className="card-header d-flex justify-content-between align-items-center">
-          <div>
-            <button 
-              onClick={() => navigate(-1)} 
-              className="btn btn-sm btn-outline-primary me-2"
-            >
-              <BsArrowLeft /> Volver
-            </button>
-            <h3 className="d-inline-block mb-0">Resumen por Día</h3>
-          </div>
-        </div>
+        <div className="card-body px-2">
+          <h3 className="mt-n3">Resumen por Día</h3>
 
-        <div className="card-body">
           <form onSubmit={handleSubmit} className="mb-4">
             <div className="row g-3 align-items-end">
-              <div className="col-md-4">
+              <div className="col-6 col-md-4">
                 <label className="form-label">Fecha Inicio</label>
-                <div className="input-group">
-                  <span className="input-group-text">
+                <div className="input-group border px-3">
+                  <span className="input-group-text pe-3">
                     <BsCalendar />
                   </span>
                   <DatePicker
@@ -106,10 +96,10 @@ const ResumenDias = () => {
                 </div>
               </div>
               
-              <div className="col-md-4">
+              <div className="col-6 col-md-4">
                 <label className="form-label">Fecha Fin</label>
-                <div className="input-group">
-                  <span className="input-group-text">
+                <div className="input-group border px-3">
+                  <span className="input-group-text pe-3">
                     <BsCalendar />
                   </span>
                   <DatePicker
@@ -128,7 +118,7 @@ const ResumenDias = () => {
               <div className="col-md-4">
                 <button 
                   type="submit" 
-                  className="btn btn-primary"
+                  className="btn btn-info"
                   disabled={loading}
                 >
                   {loading ? (

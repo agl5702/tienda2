@@ -22,14 +22,10 @@ export default function Reportes() {
         <MenuMovil />
 
         <div className="col" style={{ minHeight: "100vh" }}>
-          <div className="container-fluid py-4">
-            <div className="card p-4">
+          <div className="container-fluid">
               <TablaReportes />
-            </div>
 
-            <div className="card p-4 mt-3">
               <VerReporteRango />
-            </div>
             <Footer />
           </div>
         </div>
