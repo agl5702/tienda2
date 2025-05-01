@@ -202,9 +202,6 @@ const VerReporteRango = () => {
                   <h4 className="card-title text-center">
                     {formatCurrency(reportData.metrics.total_returns)}
                   </h4>
-                  <p className="text-muted text-center mb-0">
-                    Neto: {formatCurrency(reportData.metrics.net_profit)}
-                  </p>
                 </div>
               </div>
             </div>
@@ -257,7 +254,6 @@ const VerReporteRango = () => {
                           fill="#4e73df"
                           name="Ganancias"
                         />
-                        <Bar dataKey="neto" fill="#1cc88a" name="Neto" />
                         <Bar
                           dataKey="devoluciones"
                           fill="#e74a3b"
@@ -328,7 +324,6 @@ const VerReporteRango = () => {
                       <th className="text-end">Ventas totales</th>
                       <th className="text-end">Ganancias</th>
                       <th className="text-end">Devoluciones</th>
-                      <th className="text-end">Neto</th>
                       <th className="text-end">Productos Vendidos</th>
                     </tr>
                   </thead>
@@ -347,9 +342,6 @@ const VerReporteRango = () => {
                           </td>
                           <td className="text-end">
                             {formatCurrency(data.total_returns_day)}
-                          </td>
-                          <td className="text-end">
-                            {formatCurrency(data.net_profit_day)}
                           </td>
                           <td className="text-end">
                             {Object.values(data.earnings_by_product)
@@ -380,9 +372,6 @@ const VerReporteRango = () => {
                       </th>
                       <th className="text-end">
                         {formatCurrency(reportData.metrics.total_returns)}
-                      </th>
-                      <th className="text-end">
-                        {formatCurrency(reportData.metrics.net_profit)}
                       </th>
                       <th className="text-end">
                         {reportData.metrics.total_products_sold.toFixed(1)}
