@@ -22,7 +22,7 @@ const FormProducto = () => {
     image_url: "",
     category_id: "",
     unit: "und",
-    purchase_price: 0,
+    purchase_price: "",
     profit_percentage: 0,
     sale_price: 0,
   });
@@ -297,7 +297,7 @@ const FormProducto = () => {
                 <input
                   type="number"
                   step="0.01"
-                  min="0"
+                  min="100"
                   name="purchase_price"
                   value={producto.purchase_price}
                   onChange={handleChange}
