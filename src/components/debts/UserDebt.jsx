@@ -183,10 +183,11 @@ const UserDebt = ({ customers = [], onUserSelected }) => {
                   ) : (
                     <>
                       {/* Listado de deudas */}
+                      {/* Listado de deudas */}
                       <div className="table-responsive">
                         {debts.length > 0 ? (
-                          <table className="table table-striped">
-                            <thead>
+                          <table className="table table-sm table-hover bg-black">
+                            <thead className="ttable bg-gradient-dark text-white">
                               <tr>
                                 <th>Deuda Total</th>
                                 <th>Pagado</th>
@@ -222,6 +223,55 @@ const UserDebt = ({ customers = [], onUserSelected }) => {
                                   <td>{formatDate(debt.last_payment_date)}</td>
                                 </tr>
                               ))}
+                              {/* Fila de totales */}
+                              {debts.length > 0 && (
+                                <tr
+                                  className="fw-bold"
+                                  style={{ backgroundColor: "#f8f9fa" }}
+                                >
+                                  <td>
+                                    $
+                                    {debts
+                                      .reduce(
+                                        (sum, debt) =>
+                                          sum + (debt.total_debt || 0),
+                                        0
+                                      )
+                                      .toLocaleString("es-ES")}
+                                  </td>
+                                  <td>
+                                    $
+                                    {debts
+                                      .reduce(
+                                        (sum, debt) =>
+                                          sum + (debt.total_paid || 0),
+                                        0
+                                      )
+                                      .toLocaleString("es-ES")}
+                                  </td>
+                                  <td
+                                    className={
+                                      debts.reduce(
+                                        (sum, debt) =>
+                                          sum + (debt.pending_amount || 0),
+                                        0
+                                      ) > 0
+                                        ? "text-danger"
+                                        : "text-success"
+                                    }
+                                  >
+                                    $
+                                    {debts
+                                      .reduce(
+                                        (sum, debt) =>
+                                          sum + (debt.pending_amount || 0),
+                                        0
+                                      )
+                                      .toLocaleString("es-ES")}
+                                  </td>
+                                  <td>TOTAL</td>
+                                </tr>
+                              )}
                             </tbody>
                           </table>
                         ) : (

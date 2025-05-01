@@ -86,8 +86,8 @@ export default function PaidDebt({ customers = [] }) {
                   <div className="alert alert-danger">{error}</div>
                 ) : (
                   <div className="table-responsive">
-                    <table className="table table-sm table-hover">
-                      <thead>
+                    <table className="table table-sm table-hover bg-black">
+                      <thead className="table bg-gradient-dark text-white">
                         <tr>
                           <th>Cliente</th>
                           <th>Total</th>
@@ -98,25 +98,56 @@ export default function PaidDebt({ customers = [] }) {
                       </thead>
                       <tbody>
                         {debts.length > 0 ? (
-                          debts.map((debt) => (
-                            <tr key={debt.id}>
-                              <td>{getCustomerName(debt.customer_id)}</td>
-                              <td>${debt.total_amount.toLocaleString()}</td>
-                              <td>${debt.paid_amount.toLocaleString()}</td>
+                          <>
+                            {debts.map((debt) => (
+                              <tr key={debt.id}>
+                                <td>{getCustomerName(debt.customer_id)}</td>
+                                <td>${debt.total_amount.toLocaleString()}</td>
+                                <td>${debt.paid_amount.toLocaleString()}</td>
+                                <td>
+                                  <span className="badge bg-success">
+                                    {debt.status}
+                                  </span>
+                                </td>
+                                <td>
+                                  {debt.updated_at
+                                    ? new Date(
+                                        debt.updated_at
+                                      ).toLocaleDateString()
+                                    : "N/A"}
+                                </td>
+                              </tr>
+                            ))}
+                            {/* Fila de totales */}
+                            <tr
+                              className="fw-bold"
+                              style={{ backgroundColor: "#f8f9fa" }}
+                            >
+                              <td>TOTAL</td>
                               <td>
-                                <span className="badge bg-success">
-                                  {debt.status}
-                                </span>
+                                $
+                                {debts
+                                  .reduce(
+                                    (sum, debt) =>
+                                      sum + (debt.total_amount || 0),
+                                    0
+                                  )
+                                  .toLocaleString()}
                               </td>
                               <td>
-                                {debt.updated_at
-                                  ? new Date(
-                                      debt.updated_at
-                                    ).toLocaleDateString()
-                                  : "N/A"}
+                                $
+                                {debts
+                                  .reduce(
+                                    (sum, debt) =>
+                                      sum + (debt.paid_amount || 0),
+                                    0
+                                  )
+                                  .toLocaleString()}
                               </td>
+                              <td></td>
+                              <td></td>
                             </tr>
-                          ))
+                          </>
                         ) : (
                           <tr>
                             <td colSpan="5" className="text-center">
