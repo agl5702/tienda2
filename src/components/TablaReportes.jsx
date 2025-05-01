@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getReportByDateRange, transformApiData } from '../services/requests/earnings';
-import { BsArrowLeft, BsCalendar, BsFilter, BsEye } from 'react-icons/bs';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { formatCurrency } from '../services/utils/format';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getReportByDateRange,
+  transformApiData,
+} from "../services/requests/earnings";
+import { BsArrowLeft, BsCalendar, BsFilter, BsEye } from "react-icons/bs";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { formatCurrency } from "../services/utils/format";
 
 const ResumenDias = () => {
   const [startDate, setStartDate] = useState(() => {
@@ -17,30 +20,42 @@ const ResumenDias = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
- 
+
   const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
+  };
+  // Añade esta función dentro del componente
+  const calculateDailySales = (productsData) => {
+    if (!productsData) return 0;
+    return Object.values(productsData).reduce(
+      (sum, product) =>
+        sum + product.quantity_sold * (product.real_unit_price || 0),
+      0
+    );
   };
 
   const fetchResumenData = async () => {
     if (startDate > endDate) {
-      setError('La fecha de inicio no puede ser mayor a la fecha final');
+      setError("La fecha de inicio no puede ser mayor a la fecha final");
       return;
     }
 
     try {
       setLoading(true);
       setError(null);
-      
+
       const formattedStart = formatDate(startDate);
       const formattedEnd = formatDate(endDate);
-      
-      const apiResponse = await getReportByDateRange(formattedStart, formattedEnd);
+
+      const apiResponse = await getReportByDateRange(
+        formattedStart,
+        formattedEnd
+      );
       const transformedData = transformApiData(apiResponse);
       setResumenData(transformedData);
     } catch (error) {
-      console.error('Error fetching report:', error);
-      setError('Error al cargar el reporte. Por favor intenta nuevamente.');
+      console.error("Error fetching report:", error);
+      setError("Error al cargar el reporte. Por favor intenta nuevamente.");
     } finally {
       setLoading(false);
     }
@@ -95,7 +110,7 @@ const ResumenDias = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="col-6 col-md-4">
                 <label className="form-label">Fecha Fin</label>
                 <div className="input-group border px-3">
@@ -114,15 +129,19 @@ const ResumenDias = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="col-md-4">
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="btn btn-info"
                   disabled={loading}
                 >
                   {loading ? (
-                    <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                    <span
+                      className="spinner-border spinner-border-sm me-1"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
                   ) : (
                     <BsFilter className="me-1" />
                   )}
@@ -132,9 +151,7 @@ const ResumenDias = () => {
             </div>
           </form>
 
-          {error && (
-            <div className="alert alert-danger mb-4">{error}</div>
-          )}
+          {error && <div className="alert alert-danger mb-4">{error}</div>}
 
           {resumenData && (
             <div className="table-responsive">
@@ -151,36 +168,59 @@ const ResumenDias = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(resumenData.earnings.daily_earnings).map(([fecha, datos]) => (
-                    <tr key={fecha}>
-                      <td>{fecha}</td>
-                      <td className="text-end">{formatCurrency(datos.total_profit_day + datos.total_returns_day)}</td>
-                      <td className="text-end text-success">{formatCurrency(datos.total_profit_day)}</td>
-                      <td className="text-end text-danger">{formatCurrency(datos.total_returns_day)}</td>
-                      <td className="text-end text-primary fw-bold">{formatCurrency(datos.net_profit_day)}</td>
-                      <td className="text-end">
-                        {Object.values(datos.earnings_by_product)
-                          .reduce((sum, p) => sum + p.quantity_sold, 0).toFixed(1)}
-                      </td>
-                      <td className="text-end">
-                        <button 
-                          onClick={() => verDetalleDia(fecha)}
-                          className="btn btn-sm btn-outline-primary"
-                        >
-                          <BsEye /> Ver
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {Object.entries(resumenData.earnings.daily_earnings).map(
+                    ([fecha, datos]) => (
+                      <tr key={fecha}>
+                        <td>{fecha}</td>
+                        <td className="text-end">
+                          {formatCurrency(
+                            calculateDailySales(datos.earnings_by_product)
+                          )}
+                        </td>
+                        <td className="text-end text-success">
+                          {formatCurrency(datos.total_profit_day)}
+                        </td>
+                        <td className="text-end text-danger">
+                          {formatCurrency(datos.total_returns_day)}
+                        </td>
+                        <td className="text-end text-primary fw-bold">
+                          {formatCurrency(datos.net_profit_day)}
+                        </td>
+                        <td className="text-end">
+                          {Object.values(datos.earnings_by_product)
+                            .reduce((sum, p) => sum + p.quantity_sold, 0)
+                            .toFixed(1)}
+                        </td>
+                        <td className="text-end">
+                          <button
+                            onClick={() => verDetalleDia(fecha)}
+                            className="btn btn-sm btn-outline-primary"
+                          >
+                            <BsEye /> Ver
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  )}
                 </tbody>
                 <tfoot className="table-active">
                   <tr>
                     <th>TOTAL</th>
-                    <th className="text-end">{formatCurrency(resumenData.metrics.total_sales)}</th>
-                    <th className="text-end text-success">{formatCurrency(resumenData.metrics.total_profit)}</th>
-                    <th className="text-end text-danger">{formatCurrency(resumenData.metrics.total_returns)}</th>
-                    <th className="text-end text-primary fw-bold">{formatCurrency(resumenData.metrics.net_profit)}</th>
-                    <th className="text-end">{resumenData.metrics.total_products_sold.toFixed(1)}</th>
+                    <th className="text-end">
+                      {formatCurrency(resumenData.metrics.total_sales)}
+                    </th>
+                    <th className="text-end text-success">
+                      {formatCurrency(resumenData.metrics.total_profit)}
+                    </th>
+                    <th className="text-end text-danger">
+                      {formatCurrency(resumenData.metrics.total_returns)}
+                    </th>
+                    <th className="text-end text-primary fw-bold">
+                      {formatCurrency(resumenData.metrics.net_profit)}
+                    </th>
+                    <th className="text-end">
+                      {resumenData.metrics.total_products_sold.toFixed(1)}
+                    </th>
                     <th></th>
                   </tr>
                 </tfoot>
