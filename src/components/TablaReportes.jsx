@@ -24,7 +24,7 @@ const ResumenDias = () => {
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
   };
-  // Añade esta función dentro del componente
+
   const calculateDailySales = (productsData) => {
     if (!productsData) return 0;
     return Object.values(productsData).reduce(
@@ -162,7 +162,6 @@ const ResumenDias = () => {
                     <th className="text-end">Ventas</th>
                     <th className="text-end">Ganancias</th>
                     <th className="text-end">Devoluciones</th>
-                    <th className="text-end">Neto</th>
                     <th className="text-end">Productos</th>
                     <th className="text-end">Acciones</th>
                   </tr>
@@ -182,9 +181,6 @@ const ResumenDias = () => {
                         </td>
                         <td className="text-end text-danger">
                           {formatCurrency(datos.total_returns_day)}
-                        </td>
-                        <td className="text-end text-primary fw-bold">
-                          {formatCurrency(datos.net_profit_day)}
                         </td>
                         <td className="text-end">
                           {Object.values(datos.earnings_by_product)
@@ -214,9 +210,6 @@ const ResumenDias = () => {
                     </th>
                     <th className="text-end text-danger">
                       {formatCurrency(resumenData.metrics.total_returns)}
-                    </th>
-                    <th className="text-end text-primary fw-bold">
-                      {formatCurrency(resumenData.metrics.net_profit)}
                     </th>
                     <th className="text-end">
                       {resumenData.metrics.total_products_sold.toFixed(1)}

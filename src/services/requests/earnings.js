@@ -182,7 +182,7 @@ export const transformApiData = (apiData, isDaily = false) => {
     ganancias: data.total_profit_day || 0,
     perdidas: data.total_losses_day || 0,
     devoluciones: data.total_returns_day || 0,
-    neto: data.net_profit_day || 0
+    neto: data.net_profit_after_returns || 0
   }));
 
   return {
