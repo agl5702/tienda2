@@ -9,17 +9,14 @@ import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 const VentaTable = () => {
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-
-  // Estados para la paginación
-    const [paginaActual, setPaginaActual] = useState(1);
-    const [itemsPorPagina] = useState(12); // Cantidad de items por página
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [itemsPorPagina] = useState(12);
 
   const fetchProductos = async () => {
     try {
       const data = await getAllProducts();
       const filtrados = data.filter((c) => c.name && c.name.trim() !== "");
       setProductos(filtrados);
-      // Resetear a página 1 cuando cambian los datos
       setPaginaActual(1);
     } catch (error) {
       console.error("Error al obtener productos:", error);
@@ -60,17 +57,7 @@ const VentaTable = () => {
     setBusqueda("");
   };
 
-  const calcularPrecioVenta = (producto) => {
-    if (producto.purchase_price && producto.profit_percentage !== undefined) {
-      return (
-        producto.purchase_price *
-        (1 + producto.profit_percentage / 100)
-      ).toFixed(2);
-    }
-    return "0.00";
-  };
-
-  // Filtrado dinámico por nombre (puedes ampliar a categoría si quieres)
+  // Filtrado dinámico
   const productosFiltrados = productos.filter((producto) =>
     producto.name.toLowerCase().includes(busqueda.toLowerCase())
   );
@@ -78,14 +65,15 @@ const VentaTable = () => {
   // Cálculos para la paginación
   const indiceUltimoItem = paginaActual * itemsPorPagina;
   const indicePrimerItem = indiceUltimoItem - itemsPorPagina;
-  const itemsActuales = productosFiltrados.slice(indicePrimerItem, indiceUltimoItem);
+  const itemsActuales = productosFiltrados.slice(
+    indicePrimerItem,
+    indiceUltimoItem
+  );
   const totalPaginas = Math.ceil(productosFiltrados.length / itemsPorPagina);
 
-  // Función para cambiar de página
   const cambiarPagina = (numeroPagina) => {
     setPaginaActual(numeroPagina);
-    // Opcional: Scroll hacia arriba de la tabla
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -96,11 +84,10 @@ const VentaTable = () => {
           className="form-control border border-2 ps-3"
           placeholder="🔍 Buscar producto por nombre..."
           value={busqueda}
-          onChange={(e) => {setBusqueda(e.target.value);
-            // Resetear a página 1 cuando se busca
+          onChange={(e) => {
+            setBusqueda(e.target.value);
             setPaginaActual(1);
           }}
-          
         />
         {busqueda && (
           <button
@@ -115,28 +102,48 @@ const VentaTable = () => {
       <div className="row m-0 mt-4 p-0">
         {itemsActuales.length > 0 ? (
           itemsActuales.map((producto) => (
-            <div className="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2 col-xxl-2 mb-2 px-1">
-              <div className="card bg-gray position-relative">
+            <div
+              key={producto.id}
+              className="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2 col-xxl-2 mb-3 px-1 d-flex"
+            >
+              <div
+                className="card bg-gray w-100 d-flex flex-column"
+                style={{ height: "100%" }}
+              >
                 <span
                   className="bg-success opacity-9 pb-1 col-sm-3 text-white text-center position-absolute"
                   style={{ zIndex: 3, borderRadius: "10px 0px 20px" }}
                 >
-                  {" "}
                   {producto.profit_percentage}%
                 </span>
                 <div
-                  className="card-header p-0 position-relative z-index-2"
+                  className="card-header p-0 position-relative z-index-2 flex-grow-0"
                   style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}
                 >
-                  <div className="d-block blur-shadow-image img-marco ">
-                    <img
-                      src={producto.image_url}
-                      width="100%"
-                      height="170vh"
-                      alt="producto"
-                      className="border-bottom img-size img-oferta "
-                      style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}
-                    />
+                  <div className="d-block blur-shadow-image">
+                    <div
+                      className="img-container"
+                      style={{
+                        height: "170px",
+                        overflow: "hidden",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <img
+                        src={producto.image_url || "/placeholder-product.png"}
+                        alt="producto"
+                        className="img-fluid w-100 h-100 object-fit-cover"
+                        style={{
+                          borderRadius: "0.75rem 0.75rem 0px 0px",
+                          objectFit: "cover",
+                        }}
+                        onError={(e) => {
+                          e.target.src = "/placeholder-product.png";
+                        }}
+                      />
+                    </div>
                   </div>
                   <div
                     className="blur opacity-9 col-8 col-sm-6 text-dark text-center position-absolute"
@@ -151,35 +158,36 @@ const VentaTable = () => {
                   >
                     {producto.category?.name || "Sin categoría"}
                   </div>
-                  <div
-                    className="colored-shadow"
-                    style={{ backgroundImage: `url('${producto.image_url}')` }}
-                  ></div>
                 </div>
-                <div className="px-2 py-0">
-                  <p className="text-dark text-center nombre mt-1 mb-0">
+                <div className="card-body p-2 d-flex flex-column flex-grow-1">
+                  <h6
+                    className="text-dark text-center nombre mb-1"
+                    style={{
+                      minHeight: "40px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     {producto.name}
-                  </p>
-                  <div className="row justify-space-between text-center"></div>
+                  </h6>
                   <div className="text-dark text-center border-bottom pb-1 border-gray mb-2">
                     $ {formatNumber(producto.sale_price)} / {producto.unit}
                   </div>
 
-                  <div className="col m-0 mb-2 text-center">
+                  <div className="mt-auto text-center">
                     <Link
                       to={`/productos/editar/${producto.id}`}
                       className="btn mb-0 bg-info text-sm text-white btn-sm"
                     >
-                      <BsPencilSquare />{" "}
-                
+                      <BsPencilSquare />
                     </Link>
 
                     <button
                       onClick={() => handleDelete(producto.id)}
                       className="btn mb-0 btn-dark text-sm btn-sm ms-2"
                     >
-                      <BsTrash />{" "}
-                   
+                      <BsTrash />
                     </button>
                   </div>
                 </div>
@@ -187,55 +195,77 @@ const VentaTable = () => {
             </div>
           ))
         ) : (
-          <div>
-            <div className="col text-center">No hay productos.</div>
+          <div className="col-12 text-center py-5">
+            <h5>No hay productos encontrados</h5>
           </div>
         )}
       </div>
 
-      {/* Componente de Paginación */}
-            {productosFiltrados.length > itemsPorPagina && (
-              <div className="col-12 d-flex justify-content-center mt-3">
-                <div className="table-responsive">
-                  <div className="pagination py-1">
-                    {/* Botón Anterior */}
-                    <li className={`page-item bg-white ${paginaActual === 1 ? 'disabled' : ''}`}>
-                      <button 
-                        className={`page-link ${paginaActual === 1 ? 'disabled' : 'text-info border-info'}`}
-                        onClick={() => cambiarPagina(paginaActual - 1)}
-                        disabled={paginaActual === 1}
-                      >
-                        <AiFillCaretLeft/>
-                      </button>
-                    </li>
-        
-                    {/* Números de página */}
-                    {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(numero => (
-                      <div key={numero}>
-                        <button 
-                          className={`page-link ${paginaActual === numero ? 'bg-info text-white' : 'text-dark'}`}
-                          onClick={() => cambiarPagina(numero)}
-                          style={{ cursor: 'pointer', borderRadius: '50%', minWidth: '40px', height: '40px' }}
-                        >
-                          {numero}
-                        </button>
-                      </div>
-                    ))}
-        
-                    {/* Botón Siguiente */}
-                    <li className={`page-item ms-1 ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
-                      <button 
-                        className={`page-link ${paginaActual === totalPaginas ? 'disabled' : 'text-info border-info'}`}
-                        onClick={() => cambiarPagina(paginaActual + 1)}
-                        disabled={paginaActual === totalPaginas}
-                      ><AiFillCaretRight/>
-                      </button>
-                    </li>
+      {/* Paginación */}
+      {productosFiltrados.length > itemsPorPagina && (
+        <div className="col-12 d-flex justify-content-center mt-3">
+          <div className="table-responsive">
+            <div className="pagination py-1">
+              <li
+                className={`page-item bg-white ${
+                  paginaActual === 1 ? "disabled" : ""
+                }`}
+              >
+                <button
+                  className={`page-link ${
+                    paginaActual === 1 ? "disabled" : "text-info border-info"
+                  }`}
+                  onClick={() => cambiarPagina(paginaActual - 1)}
+                  disabled={paginaActual === 1}
+                >
+                  <AiFillCaretLeft />
+                </button>
+              </li>
+
+              {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(
+                (numero) => (
+                  <div key={numero}>
+                    <button
+                      className={`page-link ${
+                        paginaActual === numero
+                          ? "bg-info text-white"
+                          : "text-dark"
+                      }`}
+                      onClick={() => cambiarPagina(numero)}
+                      style={{
+                        cursor: "pointer",
+                        borderRadius: "50%",
+                        minWidth: "40px",
+                        height: "40px",
+                      }}
+                    >
+                      {numero}
+                    </button>
                   </div>
-                </div>
-              </div>
-            )}
-      
+                )
+              )}
+
+              <li
+                className={`page-item ms-1 ${
+                  paginaActual === totalPaginas ? "disabled" : ""
+                }`}
+              >
+                <button
+                  className={`page-link ${
+                    paginaActual === totalPaginas
+                      ? "disabled"
+                      : "text-info border-info"
+                  }`}
+                  onClick={() => cambiarPagina(paginaActual + 1)}
+                  disabled={paginaActual === totalPaginas}
+                >
+                  <AiFillCaretRight />
+                </button>
+              </li>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

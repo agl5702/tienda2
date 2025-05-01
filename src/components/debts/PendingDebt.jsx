@@ -84,10 +84,10 @@ export default function PendingDebt({ customers }) {
                   <div className="alert alert-danger">{error}</div>
                 ) : (
                   <div className="table-responsive">
-                    <table className="table table-sm table-hover">
-                      <thead>
+                    <table className="table table-sm table-hover bg-black">
+                      <thead className="table bg-gradient-dark text-white">
                         <tr>
-                          <th>Cliente</th> {/* Cambiado de "Cliente ID" */}
+                          <th>Cliente</th>
                           <th>Total</th>
                           <th>Pagado</th>
                           <th>Pendiente</th>
@@ -97,8 +97,7 @@ export default function PendingDebt({ customers }) {
                       <tbody>
                         {debts.map((debt) => (
                           <tr key={debt.id}>
-                            <td>{getCustomerName(debt.customer_id)}</td>{" "}
-                            {/* Mostrar nombre */}
+                            <td>{getCustomerName(debt.customer_id)}</td>
                             <td>${debt.total_amount.toLocaleString()}</td>
                             <td>${debt.paid_amount.toLocaleString()}</td>
                             <td>
@@ -120,6 +119,45 @@ export default function PendingDebt({ customers }) {
                             </td>
                           </tr>
                         ))}
+                        {/* Fila de totales */}
+                        {debts.length > 0 && (
+                          <tr
+                            className="fw-bold"
+                            style={{ backgroundColor: "#f8f9fa" }}
+                          >
+                            <td>TOTAL</td>
+                            <td>
+                              $
+                              {debts
+                                .reduce(
+                                  (sum, debt) => sum + (debt.total_amount || 0),
+                                  0
+                                )
+                                .toLocaleString()}
+                            </td>
+                            <td>
+                              $
+                              {debts
+                                .reduce(
+                                  (sum, debt) => sum + (debt.paid_amount || 0),
+                                  0
+                                )
+                                .toLocaleString()}
+                            </td>
+                            <td>
+                              $
+                              {debts
+                                .reduce(
+                                  (sum, debt) =>
+                                    sum +
+                                    (debt.total_amount - debt.paid_amount || 0),
+                                  0
+                                )
+                                .toLocaleString()}
+                            </td>
+                            <td></td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>

@@ -138,23 +138,6 @@ const SalesDashboard = () => {
             ${totalProfit.toLocaleString()}
           </Typography>
         </Card>
-        <Card style={styles.summaryCard}>
-          <Typography variant="subtitle1">Pérdidas Totales</Typography>
-          <Typography variant="h5" style={{ color: COLOR_PALETTE.loss }}>
-            ${totalLoss.toLocaleString()}
-          </Typography>
-        </Card>
-        <Card style={styles.summaryCard}>
-          <Typography variant="subtitle1">Beneficio Neto</Typography>
-          <Typography
-            variant="h5"
-            style={{
-              color: netProfit >= 0 ? COLOR_PALETTE.profit : COLOR_PALETTE.loss,
-            }}
-          >
-            ${netProfit.toLocaleString()}
-          </Typography>
-        </Card>
       </div>
 
       {/* Gráficas principales */}
@@ -316,15 +299,12 @@ const styles = {
   summaryCard: {
     padding: "16px",
     borderRadius: "12px",
-
-    
   },
   chartsGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
     gap: "16px",
     marginBottom: "16px",
-    
   },
   chartCard: {
     padding: "16px",
