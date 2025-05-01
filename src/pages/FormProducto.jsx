@@ -19,7 +19,7 @@ const FormProducto = () => {
   const [producto, setProducto] = useState({
     name: "",
     state: false,
-    image_url: "", // Imagen ahora es opcional
+    image_url: "",
     category_id: "",
     unit: "und",
     purchase_price: 0,
@@ -27,33 +27,36 @@ const FormProducto = () => {
     sale_price: 0,
   });
 
+  const [displayProfit, setDisplayProfit] = useState("0");
   const [categorias, setCategorias] = useState([]);
-  const unidades = ["und", "g", "kg", "ml", "l"]; // Corregido "kl" a "kg"
+  const unidades = ["und", "g", "kg", "ml", "l"];
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        // Cargar categorías
         const categoriasData = await getAllCategories();
         const filtradas = categoriasData.filter(
           (cat) => typeof cat.name === "string" && cat.name.trim() !== ""
         );
         setCategorias(filtradas);
 
-        // Si es edición, cargar producto
         if (esEdicion) {
           setLoading(true);
           const productoData = await getProductById(id);
+          const profit = parseFloat(productoData.profit_percentage || 0);
           setProducto({
             name: productoData.name,
             state: productoData.state,
             category_id: productoData.category_id || productoData.category?.id,
             unit: productoData.unit,
-            image_url: productoData.image_url || "", // Imagen opcional
+            image_url: productoData.image_url || "",
             purchase_price: parseFloat(productoData.purchase_price) || 0,
-            profit_percentage: parseFloat(productoData.profit_percentage) || 0,
+            profit_percentage: profit,
             sale_price: parseFloat(productoData.sale_price) || 0,
           });
+          setDisplayProfit(
+            profit % 1 === 0 ? profit.toString() : profit.toFixed(3)
+          );
         }
       } catch (error) {
         console.error("Error al cargar datos", error);
@@ -70,8 +73,34 @@ const FormProducto = () => {
     cargarDatos();
   }, [id, esEdicion]);
 
+  const handleProfitChange = (e) => {
+    const value = e.target.value;
+    setDisplayProfit(value);
+
+    if (value === "" || isNaN(parseFloat(value))) {
+      setProducto((prev) => ({
+        ...prev,
+        profit_percentage: 0,
+        sale_price: prev.purchase_price,
+      }));
+      return;
+    }
+
+    const profit = parseFloat(value);
+    setProducto((prev) => ({
+      ...prev,
+      profit_percentage: profit,
+      sale_price: prev.purchase_price * (1 + profit / 100),
+    }));
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "profit_percentage") {
+      handleProfitChange(e);
+      return;
+    }
 
     setProducto((prev) => {
       const newState = { ...prev };
@@ -85,15 +114,14 @@ const FormProducto = () => {
         const sale_price = parseFloat(value);
         const purchase_price = parseFloat(prev.purchase_price);
         newState.sale_price = sale_price;
-        newState.profit_percentage =
+        const profit =
           purchase_price > 0
             ? ((sale_price - purchase_price) / purchase_price) * 100
             : 0;
-      } else if (name === "profit_percentage") {
-        const profit_percentage = parseFloat(value);
-        const purchase_price = parseFloat(prev.purchase_price);
-        newState.profit_percentage = profit_percentage;
-        newState.sale_price = purchase_price * (1 + profit_percentage / 100);
+        newState.profit_percentage = profit;
+        setDisplayProfit(
+          profit % 1 === 0 ? profit.toString() : profit.toFixed(3)
+        );
       } else {
         newState[name] = name === "state" ? !prev.state : value;
       }
@@ -105,7 +133,6 @@ const FormProducto = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones básicas
     if (!producto.name || !producto.category_id || !producto.unit) {
       Swal.fire(
         "Error",
@@ -121,7 +148,6 @@ const FormProducto = () => {
     }
 
     try {
-      // Preparar datos para enviar (image_url es opcional)
       const productoParaEnviar = {
         name: producto.name,
         state: producto.state,
@@ -130,7 +156,7 @@ const FormProducto = () => {
         purchase_price: parseFloat(producto.purchase_price),
         profit_percentage: parseFloat(producto.profit_percentage),
         sale_price: parseFloat(producto.sale_price),
-        image_url: producto.image_url || null, // Envía null si está vacío
+        image_url: producto.image_url || null,
       };
 
       setLoading(true);
@@ -258,7 +284,7 @@ const FormProducto = () => {
                     disabled={loading}
                   >
                     {unidades.map((u, i) => (
-                      <option key={i} value={u}>
+                      <option key={`unit-${i}`} value={u}>
                         {u}
                       </option>
                     ))}
@@ -285,11 +311,19 @@ const FormProducto = () => {
                 <label>% Ganancia</label>
                 <input
                   type="number"
-                  step="0.1"
+                  step="any"
                   min="0"
                   name="profit_percentage"
-                  value={producto.profit_percentage}
-                  onChange={handleChange}
+                  value={displayProfit}
+                  onChange={handleProfitChange}
+                  onBlur={() => {
+                    if (displayProfit && !isNaN(parseFloat(displayProfit))) {
+                      const num = parseFloat(displayProfit);
+                      setDisplayProfit(
+                        num % 1 === 0 ? num.toString() : num.toFixed(3)
+                      );
+                    }
+                  }}
                   className="form-control border ps-2"
                   required
                   disabled={loading}
