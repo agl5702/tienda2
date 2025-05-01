@@ -9,8 +9,9 @@ import { RiShutDownLine } from 'react-icons/ri';
 import { BiSolidCategoryAlt } from "react-icons/bi";
 import { FiSettings } from 'react-icons/fi';
 import { MdFullscreen } from "react-icons/md";
-import Visor from "./Visor.jsx";
 import { useState } from "react";
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 import ModalLateral from "./ModalLateral.jsx";
 
@@ -39,13 +40,39 @@ const Sidebar = () => {
   const isVentasActive = location.pathname.startsWith('/ventas') || location.pathname.startsWith('/form_ventas');
   const isReportesActive = location.pathname.startsWith('/reportes') || location.pathname.startsWith('/reporte/');
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: '¿Estás seguro de que deseas salir?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Vacía el token (sin eliminar el atributo)
+        localStorage.setItem('token', ''); // Opción 1: Cadena vacía
+        // localStorage.setItem('token', null); // Opción 2: Null
+        navigate('/login');
+        Swal.fire(
+          'Sesión cerrada',
+          'Has cerrado sesión correctamente.',
+          'success'
+        );
+      }
+    });
+  };
+
   return (
     <>
     <ModalLateral/>
     <div id="sidebar" className=" flex-column" style={{ backgroundColor: "#1b1b1b" }}>
-      <NavLink to="/" className="border-bottom text-center mt-2 mb-1 pb-1">
-        <img src="/logo3.png" alt="imglogo" style={{ width: "30px" }} />
-        <span className="text-white">OCloud</span>
+      <NavLink to="/" className="border-bottom text-center mt-2 mb-1 pb-2">
+        <img src="/logo_empresa.png" alt="imglogo" style={{ width: "50px" }} />
       </NavLink>
 
       <NavLink to="/" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 ${isActive ? 'active-link' : ''}`}>
@@ -131,35 +158,20 @@ const Sidebar = () => {
         </>
       </NavLink>
 
-     
-      <div className="mx-auto d-none">
-        <Visor />
-      </div>
 
        {/* Botón de pantalla completa */}
-       <div className="my-1 p-1 text-center card-menu mx-2">
+       <div className="my-1 p-1 text-center mt-auto card-menu mx-2">
         <button onClick={toggleFullscreen} className="btn btn-sm border m-0 px-2 ms-n1">
           <MdFullscreen size={20} color="white" className="simbolo-icon" />
         </button>
       </div>
 
-
-      <NavLink to="/ajustes" className={({ isActive }) => `my-1 p-1 text-center card-menu mx-2 mt-auto ${isActive ? 'active-link' : ''}`}>
-        {({ isActive }) => (
-          <>
-            <FiSettings color={isActive ? '#00bfff' : ''} className="simbolo-icon" />
-            <p className="pt-2 text-white text-menu">Ajustes</p>
-            <span className={isActive ? 'selector' : 'no-selector'}></span>
-          </>
-        )}
-      </NavLink>
-
       <hr className="text-white bg-white mx-2 my-0" />
 
-      <NavLink to="/cierre" className={({ isActive }) => `my-1 p-1 text-center py-1 card-menu mx-2 ${isActive ? 'active-link' : 'bg-info'}`}>
+      <button className="my-1 p-1 text-center py-1 bg-info card-menu mx-2 " onClick={handleLogout}>
         <RiShutDownLine className="simbolo-icon" />
         <p className="pt-2 text-white text-menu">Cierre</p>
-      </NavLink>
+      </button>
     </div>
     </>
     
