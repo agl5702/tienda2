@@ -12,7 +12,7 @@ const CategoriaTable = () => {
   
   // Estados para la paginación
   const [paginaActual, setPaginaActual] = useState(1);
-  const [itemsPorPagina] = useState(2); // Cantidad de items por página
+  const [itemsPorPagina] = useState(10); // Cantidad de items por página
 
   const fetchCategorias = async () => {
     try {

@@ -4,16 +4,23 @@ import { getAllProducts, deleteProduct } from "../services/requests/products";
 import { BsPencilSquare, BsTrash } from "react-icons/bs";
 import Swal from "sweetalert2";
 import { formatNumber } from "../services/utils/format.js";
+import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 
 const VentaTable = () => {
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+
+  // Estados para la paginación
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [itemsPorPagina] = useState(12); // Cantidad de items por página
 
   const fetchProductos = async () => {
     try {
       const data = await getAllProducts();
       const filtrados = data.filter((c) => c.name && c.name.trim() !== "");
       setProductos(filtrados);
+      // Resetear a página 1 cuando cambian los datos
+      setPaginaActual(1);
     } catch (error) {
       console.error("Error al obtener productos:", error);
     }
@@ -68,6 +75,19 @@ const VentaTable = () => {
     producto.name.toLowerCase().includes(busqueda.toLowerCase())
   );
 
+  // Cálculos para la paginación
+  const indiceUltimoItem = paginaActual * itemsPorPagina;
+  const indicePrimerItem = indiceUltimoItem - itemsPorPagina;
+  const itemsActuales = productosFiltrados.slice(indicePrimerItem, indiceUltimoItem);
+  const totalPaginas = Math.ceil(productosFiltrados.length / itemsPorPagina);
+
+  // Función para cambiar de página
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+    // Opcional: Scroll hacia arriba de la tabla
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="">
       <div className="d-flex my-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
@@ -76,7 +96,11 @@ const VentaTable = () => {
           className="form-control border border-2 ps-3"
           placeholder="🔍 Buscar producto por nombre..."
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={(e) => {setBusqueda(e.target.value);
+            // Resetear a página 1 cuando se busca
+            setPaginaActual(1);
+          }}
+          
         />
         {busqueda && (
           <button
@@ -89,8 +113,8 @@ const VentaTable = () => {
       </div>
 
       <div className="row m-0 mt-4 p-0">
-        {productosFiltrados.length > 0 ? (
-          productosFiltrados.map((producto) => (
+        {itemsActuales.length > 0 ? (
+          itemsActuales.map((producto) => (
             <div className="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2 col-xxl-2 mb-2 px-1">
               <div className="card bg-gray position-relative">
                 <span
@@ -169,60 +193,49 @@ const VentaTable = () => {
         )}
       </div>
 
-      {/* <div className="table-responsive">
-        <table className="table table-bordered table-striped  align-items-center ">
-          <thead className="table bg-gradient-dark text-white">
-            <tr>
-              <th>Producto</th>
-              <th>Categoría</th>
-              <th>Unidad</th>
-              <th>Compra</th>
-              <th>% Ganancia</th>
-              <th>Venta</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productosFiltrados.length > 0 ? (
-              productosFiltrados.map((producto) => (
-                <tr key={producto.id}>
-                  <td>
-                    <div className="row m-0">
-                      <div className="col-auto">
-                        <img
-                          src={producto.image_url || 'https://i.postimg.cc/pdtpX3ZN/Captura-de-pantalla-2024-09-13-010502.png'}
-                          className="img-fluid rounded-circle"
-                          style={{ width: '30px', height: '30px' }}
-                        />
+      {/* Componente de Paginación */}
+            {productosFiltrados.length > itemsPorPagina && (
+              <div className="col-12 d-flex justify-content-center mt-3">
+                <div className="table-responsive">
+                  <div className="pagination py-1">
+                    {/* Botón Anterior */}
+                    <li className={`page-item bg-white ${paginaActual === 1 ? 'disabled' : ''}`}>
+                      <button 
+                        className={`page-link ${paginaActual === 1 ? 'disabled' : 'text-info border-info'}`}
+                        onClick={() => cambiarPagina(paginaActual - 1)}
+                        disabled={paginaActual === 1}
+                      >
+                        <AiFillCaretLeft/>
+                      </button>
+                    </li>
+        
+                    {/* Números de página */}
+                    {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(numero => (
+                      <div key={numero}>
+                        <button 
+                          className={`page-link ${paginaActual === numero ? 'bg-info text-white' : 'text-dark'}`}
+                          onClick={() => cambiarPagina(numero)}
+                          style={{ cursor: 'pointer', borderRadius: '50%', minWidth: '40px', height: '40px' }}
+                        >
+                          {numero}
+                        </button>
                       </div>
-                      <div className="col-auto">
-                        {producto.name}
-                      </div>
-                    </div>
-                  </td>
-                  <td>{producto.category?.name || 'Sin categoría'}</td>
-                  <td>{producto.unit || '---'}</td>
-                  <td>${producto.purchase_price?.toFixed(2)}</td>
-                  <td>{producto.profit_percentage}%</td>
-                  <td>${calcularPrecioVenta(producto)}</td>
-                  <td>
-                    <Link to={`/productos/editar/${producto.id}`} className="btn mb-0 bg-info text-sm text-white btn-sm">
-                    <BsPencilSquare/> Editar
-                    </Link>
-                    <button onClick={() => handleDelete(producto.id)} className="btn mb-0 btn-dark text-sm btn-sm ms-2">
-                    <BsTrash /> Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="text-center">No hay productos.</td>
-              </tr>
+                    ))}
+        
+                    {/* Botón Siguiente */}
+                    <li className={`page-item ms-1 ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                      <button 
+                        className={`page-link ${paginaActual === totalPaginas ? 'disabled' : 'text-info border-info'}`}
+                        onClick={() => cambiarPagina(paginaActual + 1)}
+                        disabled={paginaActual === totalPaginas}
+                      ><AiFillCaretRight/>
+                      </button>
+                    </li>
+                  </div>
+                </div>
+              </div>
             )}
-          </tbody>
-        </table>
-      </div> */}
+      
     </div>
   );
 };

@@ -227,7 +227,7 @@ const FormProducto = () => {
 
               <div className="col-md-6 d-flex mb-3">
                 <div className="col-auto border border-radius-2xl mb-3 p-2">
-                  <label className="form-label d-block">¿Declara?</label>
+                  <label className="form-label d-block">¿Declara IVA?</label>
                   <div className="form-check form-switch">
                     <input
                       type="checkbox"

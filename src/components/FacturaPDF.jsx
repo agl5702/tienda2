@@ -156,7 +156,7 @@ const FacturaPDF = ({ order }) => {
         {/* Encabezado */}
         <View style={styles.header}>
           <Text style={styles.title}>JHS.CRISTO EN MI</Text>
-          <Text style={styles.subtitle}>Nit: 01-77159558</Text>
+          <Text style={styles.subtitle}>Nit: 77159558-1</Text>
           <Text style={styles.businessInfo}>
             Perecederos #1 local 13 Mercabastos - valledupar
           </Text>
