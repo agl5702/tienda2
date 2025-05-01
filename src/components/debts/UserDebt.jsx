@@ -226,7 +226,7 @@ const UserDebt = ({ customers = [], onUserSelected }) => {
                               {/* Fila de totales */}
                               {debts.length > 0 && (
                                 <tr
-                                  className="fw-bold"
+                                  className="fw-bold bg-gradient-dark text-white"
                                   style={{ backgroundColor: "#f8f9fa" }}
                                 >
                                   <td>

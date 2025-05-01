@@ -120,7 +120,7 @@ export default function PaidDebt({ customers = [] }) {
                             ))}
                             {/* Fila de totales */}
                             <tr
-                              className="fw-bold"
+                              className="fw-bold bg-gradient-dark text-white"
                               style={{ backgroundColor: "#f8f9fa" }}
                             >
                               <td>TOTAL</td>
