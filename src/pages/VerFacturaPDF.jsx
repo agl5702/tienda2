@@ -36,38 +36,56 @@ class PDFViewerWrapper extends React.Component {
 const VerFacturaPDF = () => {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
-  const [debt, setDebt] = useState([]); // Inicializado como array vacío
+  const [debt, setDebt] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+
+  // Función para cargar la deuda
+  const loadDebt = async (customerId) => {
+    try {
+      const debtData = await getDebtsById(customerId);
+      console.log("Datos de deuda actualizados:", debtData);
+      setDebt(Array.isArray(debtData) ? debtData : []);
+      setLastUpdated(new Date());
+    } catch (debtError) {
+      console.warn("No se pudo obtener la deuda:", debtError);
+      setDebt([]);
+    }
+  };
+
+  // Función para recargar los datos
+  const reloadData = async () => {
+    setLoading(true);
+    try {
+      const orderData = await getOrderById(id);
+      setOrder(orderData);
+
+      if (orderData?.customer?.id) {
+        await loadDebt(orderData.customer.id);
+      }
+
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Obtener la orden
-        const orderData = await getOrderById(id);
-        setOrder(orderData);
-
-        // Obtener la deuda del cliente si existe
-        if (orderData?.customer?.id) {
-          try {
-            const debtData = await getDebtsById(orderData.customer.id);
-            console.log("Datos de deuda:", debtData); // Para verificar los datos
-            setDebt(Array.isArray(debtData) ? debtData : []);
-          } catch (debtError) {
-            console.warn("No se pudo obtener la deuda:", debtError);
-            setDebt([]);
-          }
-        }
-
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    reloadData();
   }, [id]);
+
+  // Actualización periódica cada 30 segundos
+  useEffect(() => {
+    if (order?.customer?.id) {
+      const interval = setInterval(() => {
+        loadDebt(order.customer.id);
+      }, 30000); // Actualiza cada 30 segundos
+
+      return () => clearInterval(interval);
+    }
+  }, [order?.customer?.id]);
 
   if (loading) {
     return (
@@ -84,6 +102,9 @@ const VerFacturaPDF = () => {
     return (
       <div className="alert alert-danger mx-3 mt-3">
         <strong>Error:</strong> {error}
+        <button className="btn btn-sm btn-primary ms-2" onClick={reloadData}>
+          Reintentar
+        </button>
       </div>
     );
   }
@@ -112,8 +133,23 @@ const VerFacturaPDF = () => {
             >
               <BsArrowLeft /> Volver
             </NavLink>
-            <h4 className="mb-0 text-white">Factura #{order.id}</h4>
             <div>
+              <h4 className="mb-0 text-white">Factura #{order.id}</h4>
+              {lastUpdated && (
+                <small className="text-muted">
+                  Actualizado: {lastUpdated.toLocaleTimeString()}
+                </small>
+              )}
+            </div>
+            <div className="d-flex align-items-center">
+              <button
+                className="btn btn-sm btn-warning me-2"
+                onClick={() =>
+                  order?.customer?.id && loadDebt(order.customer.id)
+                }
+              >
+                Actualizar Deuda
+              </button>
               <PDFDownloadLink
                 document={<FacturaPDF order={order} debt={debt} />}
                 fileName={`factura_${order.id}.pdf`}

@@ -9,7 +9,7 @@ import {
 } from "@react-pdf/renderer";
 import { formatQuantity } from "../services/utils/formatQuantity";
 
-// Estilos para el PDF (EXACTAMENTE IGUAL)
+// Estilos para el PDF
 const styles = StyleSheet.create({
   page: {
     paddingHorizontal: 20,
@@ -152,6 +152,12 @@ const styles = StyleSheet.create({
     width: 70,
     height: 65,
   },
+  debtNote: {
+    marginTop: 5,
+    fontSize: 8,
+    color: "#ff0000",
+    textAlign: "right",
+  },
 });
 
 const FacturaPDF = ({ order, debt = [] }) => {
@@ -170,8 +176,8 @@ const FacturaPDF = ({ order, debt = [] }) => {
   );
   const total = subtotal;
 
-  // Obtener el saldo de la deuda (usamos el primer elemento del array)
-  const saldo = debt[0]?.total_debt || 0;
+  // Calcular el saldo total sumando todas las deudas
+  const saldo = debt.reduce((total, item) => total + (item.total_debt || 0), 0);
 
   return (
     <Document>
@@ -283,6 +289,12 @@ const FacturaPDF = ({ order, debt = [] }) => {
               ${formatNumber(total + saldo)}
             </Text>
           </View>
+
+          {saldo > 0 && (
+            <Text style={styles.debtNote}>
+              * El saldo incluye deudas anteriores del cliente
+            </Text>
+          )}
         </View>
 
         {/* Observaciones */}
