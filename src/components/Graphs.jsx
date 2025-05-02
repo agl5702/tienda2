@@ -125,7 +125,7 @@ const SalesDashboard = () => {
       {/* Encabezado */}
       <div style={styles.header}>
         <Typography variant="h5" component="h1" style={{ fontWeight: "bold" }}>
-          Dashboard de Ventas
+          Resumen del Día
         </Typography>
         <Typography style={styles.dateBadge}>{dashboardData.date}</Typography>
       </div>

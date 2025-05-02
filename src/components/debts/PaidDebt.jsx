@@ -37,13 +37,13 @@ export default function PaidDebt({ customers = [] }) {
 
   return (
     <div
-      className="card mb-4 shadow-sm"
+      className="card shadow-sm"
       style={{ minWidth: "250px", maxWidth: "100%", flex: "1 1 auto" }}
     >
       {" "}
       <div className="card-body">
         <button
-          className="btn btn-success w-100 d-flex align-items-center justify-content-center"
+          className="btn bg-info text-white w-100 d-flex align-items-center justify-content-center"
           onClick={fetchPaidDebts}
           disabled={loading}
           style={{ minHeight: "40px" }}

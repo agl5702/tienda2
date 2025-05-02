@@ -207,7 +207,7 @@ const DebtCard = ({
   };
 
   return (
-    <div className="col-md-6 col-lg-4 mb-4">
+    <div className="col-md-6 col-lg-4 mb-3">
       <div className="card h-100 shadow-sm border-start border-4 border-dark">
         <div className="card-body position-relative">
           {/* Encabezado de la tarjeta */}

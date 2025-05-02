@@ -49,7 +49,7 @@ function App() {
 
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/cliente/nuevo" element={<FormCliente />} />
-          <Route path="/cliente/agregar/:id" element={<FormCliente />} />
+          <Route path="/cliente/editar/:id" element={<FormCliente />} />
 
           <Route path="/devoluciones" element={<Devoluciones />} />
           <Route path="/devolucion/nueva" element={<FormDevolucion />} />

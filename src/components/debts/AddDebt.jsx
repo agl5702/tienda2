@@ -54,7 +54,7 @@ const AddDebt = ({ customers, onDebtAdded }) => {
   };
 
   return (
-    <div className="card mb-4 shadow-sm" style={{ minWidth: '250px', maxWidth: '100%', flex: '1 1 auto' }}>
+    <div className="card  shadow-sm" style={{ minWidth: '250px', maxWidth: '100%', flex: '1 1 auto' }}>
       <div className="card-body">
         {!showForm ? (
           <button
@@ -152,7 +152,7 @@ const AddDebt = ({ customers, onDebtAdded }) => {
               </button>
               <button
                 type="submit"
-                className="btn btn-info"
+                className="btn bg-info text-white"
                 disabled={loading || !selectedCustomer || !amount}
               >
                 {loading ? "Guardando..." : "Guardar Deuda"}

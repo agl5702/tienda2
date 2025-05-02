@@ -100,16 +100,16 @@ export default function About() {
         <MenuMovil />
         <div className="col" style={{ minHeight: "100vh" }}>
           <div className="container-fluid">
-            <h3 className="text-dark text-center my-3">Panel de Inicio</h3>
+            <h3 className="text-dark text-center my-2">Panel de Inicio</h3>
 
-            <div className="row">
+            <div className="row mt-n2">
               {/* Ventas Totales */}
-              <div className="col-sm-6 col-lg-3 mb-4">
+              <div className="col-6 col-sm-6 col-lg-3 p-2">
                 <div
                   style={{ minHeight: "140px", maxHeight: "140px" }}
-                  className="card shadow-sm border-0 bg-gradient-primary text-white equal-card"
+                  className="card shadow-sm border-0 p-0 bg-gradient-primary text-white equal-card"
                 >
-                  <div className="card-body d-flex align-items-center justify-content-between w-100">
+                  <div className="card-body d-flex align-items-center p-2 justify-content-between w-100">
                     <div>
                       <h6 className="mb-0 text-white">Ventas Totales</h6>
                       <h4 className="text-white">{salesCount}</h4>
@@ -121,12 +121,12 @@ export default function About() {
               </div>
 
               {/* Productos */}
-              <div className="col-sm-6 col-lg-3 mb-4">
+              <div className="col-6 col-sm-6 col-lg-3 p-2">
                 <div
                   style={{ minHeight: "140px", maxHeight: "140px" }}
-                  className="card shadow-sm border-0 bg-gradient-info text-white equal-card"
+                  className="card shadow-sm border-0 p-0 bg-gradient-info text-white equal-card"
                 >
-                  <div className="card-body d-flex align-items-center justify-content-between w-100">
+                  <div className="card-body d-flex align-items-center p-2 justify-content-between w-100">
                     <div>
                       <h6 className="mb-0 text-white">Productos</h6>
                       <h4 className="text-white">{productsCount}</h4>
@@ -137,12 +137,12 @@ export default function About() {
               </div>
 
               {/* Pedidos del día */}
-              <div className="col-sm-6 col-lg-3 mb-4">
+              <div className="col-6 col-sm-6 col-lg-3 p-2">
                 <div
                   style={{ minHeight: "140px", maxHeight: "140px" }}
-                  className="card shadow-sm border-0 bg-gradient-warning text-white equal-card"
+                  className="card shadow-sm border-0 p-0 bg-gradient-warning text-white equal-card"
                 >
-                  <div className="card-body d-flex align-items-center justify-content-between w-100">
+                  <div className="card-body d-flex align-items-center p-2 justify-content-between w-100">
                     <div>
                       <h6 className="mb-0 text-white">Pedidos hoy</h6>
                       <h4 className="text-white">{todayOrdersCount}</h4>
@@ -153,12 +153,12 @@ export default function About() {
               </div>
 
               {/* Clientes */}
-              <div className="col-sm-6 col-lg-3 mb-4">
+              <div className="col-6 col-sm-6 col-lg-3 p-2">
                 <div
                   style={{ minHeight: "140px", maxHeight: "140px" }}
-                  className="card shadow-sm border-0 bg-gradient-success text-white equal-card"
+                  className="card shadow-sm border-0 p-0 bg-gradient-success text-white equal-card"
                 >
-                  <div className="card-body d-flex align-items-center justify-content-between w-100">
+                  <div className="card-body d-flex align-items-center p-2 justify-content-between w-100">
                     <div>
                       <h6 className="mb-0 text-white">Clientes</h6>
                       <h4 className="text-white">{customersCount}</h4>
@@ -169,7 +169,7 @@ export default function About() {
               </div>
             </div>
 
-            <div className="col">
+            <div className="col mt-2">
               <SalesDashboard />
             </div>
           </div>

@@ -57,14 +57,14 @@ const DebtList = ({
 
   if (debtors.length === 0) {
     return (
-      <div className="col-12">
-        <div className="alert alert-info">No hay deudas registradas</div>
+      <div className="col-12 px-2 mt-3">
+        <div className="alert bg-dark text-white">No hay deudas registradas</div>
       </div>
     );
   }
 
   return (
-    <div className="row">
+    <div className="row mt-3">
       {consolidatedDebts.map((debtor) => (
         <DebtCard
           key={debtor.id}

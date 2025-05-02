@@ -1,13 +1,15 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 import { formatQuantity } from "../services/utils/formatQuantity";
+import { auto } from '@popperjs/core';
 
 
 
 // Estilos para el PDF
 const styles = StyleSheet.create({
   page: {
-    padding: 20,
+    // padding: 20,
+    paddingHorizontal: 20,
     fontSize: 10,
     fontFamily: 'Helvetica',
   },
@@ -22,6 +24,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 5,
+    marginTop: -20,
     textTransform: 'uppercase',
   },
   subtitle: {
@@ -135,7 +138,20 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 10,
     color: '#00bfff',
-  }
+  },
+  logoContainer: {
+    alignItems: 'center', // centra horizontalmente
+    marginVertical: 20,   // opcional, para separar del contenido
+    marginTop: 5,
+  },
+  logo: {
+    margin:0,
+    padding:0,
+    width: 70,
+    height: 70, // asegúrate de definir altura
+  },
+
+  
 });
 const FacturaPDF = ({ order }) => {
   // Formatear números con separadores de miles
@@ -154,8 +170,12 @@ const FacturaPDF = ({ order }) => {
     <Document>
       <Page size="A5" style={styles.page}>
         {/* Encabezado */}
+        <View style={styles.logoContainer}>
+          <Image src="/logo4.png" style={styles.logo} />
+        </View>
         <View style={styles.header}>
-          <Text style={styles.title}>JHS.CRISTO EN MI</Text>
+        
+          <Text style={styles.title}>JHS. Camino, Verdad y Vida</Text>
           <Text style={styles.subtitle}>Nit: 77159558-1</Text>
           <Text style={styles.businessInfo}>
             Perecederos #1 local 13 Mercabastos - valledupar
@@ -237,9 +257,19 @@ const FacturaPDF = ({ order }) => {
             <Text style={styles.totalLabel}>SUB-TOTAL:</Text>
             <Text>${formatNumber(subtotal)}</Text>
           </View>
+          
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>SALDO:</Text>
+            <Text>$100.000</Text>
+          </View>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>ABONO:</Text>
+            <Text>- $50.000</Text>
+          </View>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>TOTAL A PAGAR:</Text>
-            <Text style={styles.totalValue}>${formatNumber(total)}</Text>
+            {/* <Text style={styles.totalValue}>${formatNumber(total)}</Text> */}
+            <Text style={styles.totalValue}>${formatNumber(total+50000)}</Text>
           </View>
         </View>
 

@@ -121,7 +121,7 @@ const Sidebar = () => {
       >
         <NavLink to="/" className="border-bottom text-center mt-2 mb-1 pb-2">
           <img
-            src="/logo_empresa.png"
+            src="/logo_empresa.svg"
             alt="imglogo"
             style={{ width: "50px" }}
           />
@@ -195,7 +195,7 @@ const Sidebar = () => {
               className="simbolo-icon"
             />
             <p className="pt-2 text-white text-menu">Ventas</p>
-            <span className="globo-pedidos">2</span>
+            <span className="globo-pedidos">+</span>
             <span
               className={isVentasActive ? "selector" : "no-selector"}
             ></span>

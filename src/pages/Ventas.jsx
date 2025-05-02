@@ -733,13 +733,13 @@ export default function Ventas() {
           <div className="container-fluid zp-2">
             {/*  */}
             <div className="col-12">
-              <div className="d-flex justify-content-between align-items-center">
+              <div className="d-flex justify-content-between align-items-center mt-1">
                 <h3 className="my-auto">Gestión de Ventas</h3>
                 <button
                   className="btn bg-info btn-sm text-white mt-1 pt-2"
                   onClick={crearVenta}
                 >
-                  + Nueva Venta
+                  + Nuevo pedido
                 </button>
               </div>
 
@@ -820,7 +820,7 @@ export default function Ventas() {
                       key={id}
                     >
                       <div className="py-2" onClick={() => setActiveTab(id)}>
-                        {id.replace("venta-", "Venta #")}
+                        {id.replace("venta-", "Pedido #")}
                         <button
                           type="button"
                           className={`ms-4 me-n2 btn-close border border-radius-2xl p-1 bg-danger ${
@@ -844,6 +844,8 @@ export default function Ventas() {
                 {/* Pedidos Pendientes */}
                 {activeTab === "pedidos" && (
                   <div className="tab-pane fade show active">
+
+                    
                     <h4>Pedidos Pendientes</h4>
                     {ordenesPendientes.length === 0 ? (
                       <div className="alert">No hay órdenes pendientes.</div>
@@ -917,8 +919,18 @@ export default function Ventas() {
                                     </td>
                                     <td>
                                       <div className="">
+                                      <PDFDownloadLink
+                                        document={<FacturaPDF order={orden} />}
+                                        fileName={`factura_${orden.id}.pdf`}
+                                      >
+                                        {({ blob, url, loading, error }) => (
+                                          <button className="btn ms-2 btn-sm btn-info">
+                                            <FaFileDownload />
+                                          </button>
+                                        )}
+                                      </PDFDownloadLink>
                                         <button
-                                          className="btn btn-success btn-sm"
+                                          className="btn btn-success btn-sm ms-2"
                                           onClick={() =>
                                             completarOrden(orden.id)
                                           }
@@ -951,143 +963,7 @@ export default function Ventas() {
                       </div>
                     )}
 
-                    <h4 className="mt-5">Pedidos Completados</h4>
-                    <div className="d-flex my-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
-                      <input
-                        type="text"
-                        className="form-control border border-2 ps-3"
-                        placeholder="🔍 Buscar Venta por # o por cliente..."
-                        value={busqueda}
-                        onChange={(e) => {
-                          setBusqueda(e.target.value);
-                          // Resetear a página 1 cuando se busca
-                          setPaginaActual(1);
-                        }}
-                      />
-                      {busqueda && (
-                        <button
-                          onClick={limpiarInput}
-                          className="bg-danger btn btn-sm text-white ms-1"
-                        >
-                          X
-                        </button>
-                      )}
-                    </div>
-                    {itemsActuales.length === 0 ? (
-                      <div className="alert">No hay órdenes completadas.</div>
-                    ) : (
-                      <>
-                        <div className="table-responsive">
-                          <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
-                            <thead className="bg-gradient-dark text-white ">
-                              <tr>
-                                <th>#</th>
-                                <th>Cliente</th>
-                                <th>Alias</th>
-                                {/* <th>Productos</th> */}
-                                <th>Total</th>
-                                <th>Estado</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {itemsActuales.map((orden) => {
-                                // Verificar que orden.items existe
-                                const items = orden.items || [];
-                                const itemsFiltrados = items.filter(
-                                  (item) => item.product_id !== PRODUCTO_A_FILTRAR
-                                );
-                                const total = itemsFiltrados.reduce(
-                                  (sum, item) =>
-                                    sum + item.price_unit * item.quantity,
-                                  0
-                                );
-
-                                return (
-                                  <tr key={orden.id}>
-                                    <td>{orden.id}</td>
-                                    <td>
-                                      {orden.customer?.name ||
-                                        "Cliente no especificado"}
-                                    </td>
-                                    <td>{orden.customer?.alias || "-"}</td>
-
-                                    <td>$ {formatNumber(total)}</td>
-                                    <td>
-                                      <span className="badge border border-success text-success">
-                                        Completado
-                                      </span>
-                                      <PDFDownloadLink
-                                        document={<FacturaPDF order={orden} />}
-                                        fileName={`factura_${orden.id}.pdf`}
-                                      >
-                                        {({ blob, url, loading, error }) => (
-                                          <button className="btn ms-2 btn-sm btn-info">
-                                            <FaFileDownload />
-                                          </button>
-                                        )}
-                                      </PDFDownloadLink>
-
-                                      <Link
-                                        to={`/factura/${orden.id}`}
-                                        className="badge d-none d-md-inline border ms-2 border-info text-info"
-                                      >
-                                        <FaEye /> ver
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
-
-                        {/* Componente de Paginación */}
-                        {ordenesCompletadasFiltradas.length > itemsPorPagina && (
-                          <div className="col-12 d-flex justify-content-center mt-3">
-                            <div className="table-responsive">
-                              <div className="pagination py-1">
-                                {/* Botón Anterior */}
-                                <li className={`page-item bg-white ${paginaActual === 1 ? 'disabled' : ''}`}>
-                                  <button 
-                                    className={`page-link ${paginaActual === 1 ? 'disabled' : 'text-info border-info'}`}
-                                    onClick={() => cambiarPagina(paginaActual - 1)}
-                                    disabled={paginaActual === 1}
-                                  >
-                                    <AiFillCaretLeft/>
-                                  </button>
-                                </li>
-                    
-                                {/* Números de página */}
-                                {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(numero => (
-                                  <div key={numero}>
-                                    <button 
-                                      className={`page-link ${paginaActual === numero ? 'bg-info text-white' : 'text-dark'}`}
-                                      onClick={() => cambiarPagina(numero)}
-                                      style={{ cursor: 'pointer', borderRadius: '50%', minWidth: '40px', height: '40px' }}
-                                    >
-                                      {numero}
-                                    </button>
-                                  </div>
-                                ))}
-                    
-                                {/* Botón Siguiente */}
-                                <li className={`page-item ms-1 ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
-                                  <button 
-                                    className={`page-link ${paginaActual === totalPaginas ? 'disabled' : 'text-info border-info'}`}
-                                    onClick={() => cambiarPagina(paginaActual + 1)}
-                                    disabled={paginaActual === totalPaginas}
-                                  ><AiFillCaretRight/>
-                                  </button>
-                                </li>
-                              </div>
-                            </div>
-                          </div>
-                          
-                        )}
-                      </>
-                      
-                    )}
-                  </div>
+                  </div> 
                 )}
 
                 {/* Renderizar las pestañas de ventas individuales */}
@@ -1375,7 +1251,7 @@ export default function Ventas() {
                         </div>
 
                         <div className="">
-                          <h5 className="">Detalles de la Venta</h5>
+                          <h5 className="">Detalles del Pedido</h5>
 
                           {/* Seleccionar cliente */}
                           <div className="col-12 d-flex">
@@ -1611,6 +1487,150 @@ export default function Ventas() {
                     )
                 )}
               </div>
+
+              {/* Pedidos completadas*/}
+
+              {activeTab === "pedidos" && (
+                <div className="card mt-3 border border-1 border-dark p-2">
+
+                  <h4 className="">Pedidos Completados ✓</h4>
+                  <div className="d-flex my-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                    <input
+                      type="text"
+                      className="form-control border border-2 ps-3"
+                      placeholder="🔍 Buscar Venta por # o por cliente..."
+                      value={busqueda}
+                      onChange={(e) => {
+                        setBusqueda(e.target.value);
+                        // Resetear a página 1 cuando se busca
+                        setPaginaActual(1);
+                      }}
+                    />
+                    {busqueda && (
+                      <button
+                        onClick={limpiarInput}
+                        className="bg-danger btn btn-sm text-white ms-1"
+                      >
+                        X
+                      </button>
+                    )}
+                  </div>
+                  {itemsActuales.length === 0 ? (
+                    <div className="alert">No hay órdenes completadas.</div>
+                  ) : (
+                  <>
+                    <div className="table-responsive">
+                      <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
+                        <thead className="bg-gradient-dark text-white ">
+                          <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th>Alias</th>
+                            {/* <th>Productos</th> */}
+                            <th>Total</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {itemsActuales.map((orden) => {
+                            // Verificar que orden.items existe
+                            const items = orden.items || [];
+                            const itemsFiltrados = items.filter(
+                              (item) => item.product_id !== PRODUCTO_A_FILTRAR
+                            );
+                            const total = itemsFiltrados.reduce(
+                              (sum, item) =>
+                                sum + item.price_unit * item.quantity,
+                              0
+                            );
+
+                            return (
+                              <tr key={orden.id}>
+                                <td>{orden.id}</td>
+                                <td>
+                                  {orden.customer?.name ||
+                                    "Cliente no especificado"}
+                                </td>
+                                <td>{orden.customer?.alias || "-"}</td>
+
+                                <td>$ {formatNumber(total)}</td>
+                                <td>
+                                  <span className="badge border border-success text-success">
+                                    Completado
+                                  </span>
+                                  <PDFDownloadLink
+                                    document={<FacturaPDF order={orden} />}
+                                    fileName={`factura_${orden.id}.pdf`}
+                                  >
+                                    {({ blob, url, loading, error }) => (
+                                      <button className="btn ms-2 btn-sm btn-info">
+                                        <FaFileDownload />
+                                      </button>
+                                    )}
+                                  </PDFDownloadLink>
+
+                                  <Link
+                                    to={`/factura/${orden.id}`}
+                                    className="badge d-none d-md-inline border ms-2 border-info text-info"
+                                  >
+                                    <FaEye /> ver
+                                  </Link>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Componente de Paginación */}
+                    {ordenesCompletadasFiltradas.length > itemsPorPagina && (
+                      <div className="col-12 d-flex justify-content-center mt-3">
+                        <div className="table-responsive">
+                          <div className="pagination py-1">
+                            {/* Botón Anterior */}
+                            <li className={`page-item bg-white ${paginaActual === 1 ? 'disabled' : ''}`}>
+                              <button 
+                                className={`page-link ${paginaActual === 1 ? 'disabled' : 'text-info border-info'}`}
+                                onClick={() => cambiarPagina(paginaActual - 1)}
+                                disabled={paginaActual === 1}
+                              >
+                                <AiFillCaretLeft/>
+                              </button>
+                            </li>
+                
+                            {/* Números de página */}
+                            {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(numero => (
+                              <div key={numero}>
+                                <button 
+                                  className={`page-link ${paginaActual === numero ? 'bg-info text-white' : 'text-dark'}`}
+                                  onClick={() => cambiarPagina(numero)}
+                                  style={{ cursor: 'pointer', borderRadius: '50%', minWidth: '40px', height: '40px' }}
+                                >
+                                  {numero}
+                                </button>
+                              </div>
+                            ))}
+                
+                            {/* Botón Siguiente */}
+                            <li className={`page-item ms-1 ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                              <button 
+                                className={`page-link ${paginaActual === totalPaginas ? 'disabled' : 'text-info border-info'}`}
+                                onClick={() => cambiarPagina(paginaActual + 1)}
+                                disabled={paginaActual === totalPaginas}
+                              ><AiFillCaretRight/>
+                              </button>
+                            </li>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    )}
+                  </>
+                  )}
+
+                </div>
+              )}
             </div>
             {/*  */}
           </div>

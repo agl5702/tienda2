@@ -158,7 +158,7 @@ const SideMenu = () => {
               style={{ backgroundColor: "#1b1b1b", zIndex: 1000, top: "0px" }}
             >
               <img
-                src="/logo_empresa.png"
+                src="/logo_empresa.svg"
                 alt="imglogo"
                 style={{ width: "50px" }}
               />
@@ -234,7 +234,7 @@ const SideMenu = () => {
                   className="simbolo-icon"
                 />
                 <p className="pt-2 text-white text-menu">Ventas</p>
-                <span className="globo-pedidos">2</span>
+                <span className="globo-pedidos">+</span>
                 <span
                   className={isVentasActive ? "selector" : "no-selector"}
                 ></span>

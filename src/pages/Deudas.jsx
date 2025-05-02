@@ -84,9 +84,9 @@ function Deudas() {
     <div className="m-0 padding-menu">
       <Sidebar />
       <MenuMovil />
-      <div className="col p-2" style={{ minHeight: "100vh" }}>
+      <div className="col p-2 mb-6 mb-md-0" style={{ minHeight: "100vh" }}>
         <DebtHeader stats={stats} />
-        <div className="d-flex flex-wrap justify-content-center gap-1">
+        <div className="d-flex flex-wrap mt-n1 justify-content-center px-2 gap-3">
           <AddDebt customers={customers} onDebtAdded={handleDataUpdate} />
           <UserDebt customers={customers} onUserSelected={handleUserSelected} />
           <PendingDebt customers={customers} />
