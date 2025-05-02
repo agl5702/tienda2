@@ -21,6 +21,7 @@ import Reportes from "./pages/Reportes";
 import VerReporte from "./pages/VerReporte";
 import DetalleDia from "./pages/DetalleDia";
 import ModalLateral from "./components/ModalLateral";
+import Movimientos from "./pages/Movimientos";
 
 function App() {
   return (
@@ -61,7 +62,7 @@ function App() {
         </Route>
 
         {/* Ruta de Not Found */}
-        <Route path="*" element={<ModalLateral />} />
+        <Route path="*" element={<Movimientos />} />
       </Routes>
     </BrowserRouter>
   );

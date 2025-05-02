@@ -77,7 +77,7 @@ const ResumenDias = () => {
   if (loading) {
     return (
       <div className="text-center py-5">
-        <div className="spinner-border text-primary" role="status">
+        <div className="spinner-border text-info" role="status">
           <span className="visually-hidden">Cargando...</span>
         </div>
         <p className="mt-2">Generando reporte...</p>
