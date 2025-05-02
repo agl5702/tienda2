@@ -28,6 +28,11 @@ const SideMenu = () => {
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
+  function obtenerTotalPedidos() {
+    const pedidos = JSON.parse(localStorage.getItem("ventas")) || [];
+    return pedidos.length;
+  }
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -234,7 +239,7 @@ const SideMenu = () => {
                   className="simbolo-icon"
                 />
                 <p className="pt-2 text-white text-menu">Ventas</p>
-                <span className="globo-pedidos">+</span>
+                <span className="globo-pedidos">{obtenerTotalPedidos()}</span>
                 <span
                   className={isVentasActive ? "selector" : "no-selector"}
                 ></span>

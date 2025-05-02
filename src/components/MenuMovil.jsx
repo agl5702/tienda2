@@ -21,6 +21,12 @@ export default function BottomNav() {
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  function obtenerTotalPedidos() {
+    const pedidos = JSON.parse(localStorage.getItem("ventas")) || [];
+    return pedidos.length;
+  }
+
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement
@@ -315,6 +321,7 @@ export default function BottomNav() {
                       className="simbolo-icon "
                     />
                     <p className="text-white texto-menu mb-0 ">Ventas</p>
+                    <span className="globo-pedidos" style={{top:"-5px", right:"-5px"}}>{obtenerTotalPedidos()}</span>
                     <span className={isActive ? "selector2" : "d-none"}></span>
                   </div>
                 )}

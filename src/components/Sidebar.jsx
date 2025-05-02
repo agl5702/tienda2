@@ -26,6 +26,11 @@ const Sidebar = () => {
   const location = useLocation();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  function obtenerTotalPedidos() {
+    const pedidos = JSON.parse(localStorage.getItem("ventas")) || [];
+    return pedidos.length;
+  }
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement
@@ -195,7 +200,7 @@ const Sidebar = () => {
               className="simbolo-icon"
             />
             <p className="pt-2 text-white text-menu">Ventas</p>
-            <span className="globo-pedidos">+</span>
+            <span className="globo-pedidos">{obtenerTotalPedidos()}</span>
             <span
               className={isVentasActive ? "selector" : "no-selector"}
             ></span>

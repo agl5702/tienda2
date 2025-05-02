@@ -266,7 +266,6 @@ const SalesDashboard = () => {
 const styles = {
   container: {
     padding: "0px",
-    maxWidth: "1200px",
     margin: "0 auto",
   },
   loadingContainer: {
