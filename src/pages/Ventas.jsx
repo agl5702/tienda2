@@ -928,11 +928,11 @@ export default function Ventas() {
                                     </td>
                                     <td>
                                       <div className="">
-                                        <AddDebButton
+                                        {/* <AddDebButton
                                           order={ordenConCustomerId}
                                           createDebt={createDebt}
                                           paymentDebts={paymentDebts} // Asegúrate de incluir esto siempre
-                                        />
+                                        /> */}
                                         <PDFDownloadLink
                                           document={
                                             <FacturaPDF order={orden} />
