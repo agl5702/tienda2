@@ -6,13 +6,14 @@ import {
   putOrder,
   deleteOrder,
 } from "../services/requests/orders";
+import { createDebt, paymentDebts } from "../services/requests/debts.js";
 import { getAllProducts } from "../services/requests/products";
 import { createSale } from "../services/requests/sales";
 import { getAllCustomers } from "../services/requests/customers";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import MenuMovil from "../components/MenuMovil.jsx";
-
+import AddDebButton from "../components/AddDebButton.jsx";
 import "../components/css/MenuInferior.css";
 import { LuChevronDown } from "react-icons/lu";
 import { FaFileInvoiceDollar } from "react-icons/fa";
@@ -32,7 +33,6 @@ import { formatQuantity } from "../services/utils/formatQuantity";
 import { formatNumber } from "../services/utils/format.js";
 
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
-
 
 // Helpers de localStorage
 const saveToStorage = (key, value) => {
@@ -78,9 +78,9 @@ export default function Ventas() {
   });
   const [busqueda, setBusqueda] = useState("");
 
-    // Estados para la paginación
-    const [paginaActual, setPaginaActual] = useState(1);
-    const [itemsPorPagina] = useState(15); // Cantidad de items por página
+  // Estados para la paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [itemsPorPagina] = useState(15); // Cantidad de items por página
 
   const navigate = useNavigate();
 
@@ -106,14 +106,19 @@ export default function Ventas() {
   // Cálculos para la paginación
   const indiceUltimoItem = paginaActual * itemsPorPagina;
   const indicePrimerItem = indiceUltimoItem - itemsPorPagina;
-  const itemsActuales = ordenesCompletadasFiltradas.slice(indicePrimerItem, indiceUltimoItem);
-  const totalPaginas = Math.ceil(ordenesCompletadasFiltradas.length / itemsPorPagina);
+  const itemsActuales = ordenesCompletadasFiltradas.slice(
+    indicePrimerItem,
+    indiceUltimoItem
+  );
+  const totalPaginas = Math.ceil(
+    ordenesCompletadasFiltradas.length / itemsPorPagina
+  );
 
   // Función para cambiar de página
   const cambiarPagina = (numeroPagina) => {
     setPaginaActual(numeroPagina);
     // Opcional: Scroll hacia arriba de la tabla
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Constante para el ID del producto a filtrar (precio 0)
@@ -293,12 +298,14 @@ export default function Ventas() {
       );
 
       // Filtrar órdenes completadas
-      const nuevasCompletadas = ordenesActualizadas.filter(
-        (orden) =>
-          orden.status === "completed" &&
-          orden.customer?.name &&
-          orden.customer.name.trim() !== ""
-      ).sort((a, b) => b.id - a.id); // Orden descendente (ID más alto primero)
+      const nuevasCompletadas = ordenesActualizadas
+        .filter(
+          (orden) =>
+            orden.status === "completed" &&
+            orden.customer?.name &&
+            orden.customer.name.trim() !== ""
+        )
+        .sort((a, b) => b.id - a.id); // Orden descendente (ID más alto primero)
 
       setOrdenesPendientes(nuevasPendientes);
       setOrdenesCompletadas(nuevasCompletadas);
@@ -553,13 +560,14 @@ export default function Ventas() {
       );
 
       // Filtrar órdenes completadas
-      const nuevasCompletadas = ordenesActualizadas.filter(
-        (orden) =>
-          orden.status === "completed" &&
-          orden.customer?.name &&
-          orden.customer.name.trim() !== ""
-      )
-      .sort((a, b) => b.id - a.id); // Orden descendente (ID más alto primero)
+      const nuevasCompletadas = ordenesActualizadas
+        .filter(
+          (orden) =>
+            orden.status === "completed" &&
+            orden.customer?.name &&
+            orden.customer.name.trim() !== ""
+        )
+        .sort((a, b) => b.id - a.id); // Orden descendente (ID más alto primero)
 
       setOrdenesPendientes(nuevasPendientes);
       setOrdenesCompletadas(nuevasCompletadas);
@@ -571,7 +579,6 @@ export default function Ventas() {
       }
 
       showSuccessAlert("Orden actualizada correctamente");
-
     } catch (error) {
       console.error("Error al actualizar la orden:", error);
       showErrorAlert("Error al actualizar la orden");
@@ -844,8 +851,6 @@ export default function Ventas() {
                 {/* Pedidos Pendientes */}
                 {activeTab === "pedidos" && (
                   <div className="tab-pane fade show active">
-
-                    
                     <h4>Pedidos Pendientes</h4>
                     {ordenesPendientes.length === 0 ? (
                       <div className="alert">No hay órdenes pendientes.</div>
@@ -866,6 +871,15 @@ export default function Ventas() {
                           <tbody>
                             {ordenesPendientes
                               .filter((orden) => {
+                                const customerId =
+                                  orden.customer?.id || orden.customer_id;
+                                if (!customerId) {
+                                  console.warn(
+                                    `Orden ${orden.id} no tiene ID de cliente`
+                                  );
+                                  return false;
+                                }
+
                                 // Filtrar órdenes con total mayor a 0
                                 const itemsFiltrados = orden.items.filter(
                                   (item) =>
@@ -880,6 +894,12 @@ export default function Ventas() {
                               })
                               .map((orden) => {
                                 // Filtrar el producto 1 para no mostrarlo
+
+                                const ordenConCustomerId = {
+                                  ...orden,
+                                  customer_id:
+                                    orden.customer?.id || orden.customer_id,
+                                };
                                 const itemsFiltrados = orden.items.filter(
                                   (item) =>
                                     item.product_id !== PRODUCTO_A_FILTRAR
@@ -919,16 +939,23 @@ export default function Ventas() {
                                     </td>
                                     <td>
                                       <div className="">
-                                      <PDFDownloadLink
-                                        document={<FacturaPDF order={orden} />}
-                                        fileName={`factura_${orden.id}.pdf`}
-                                      >
-                                        {({ blob, url, loading, error }) => (
-                                          <button className="btn ms-2 btn-sm btn-info">
-                                            <FaFileDownload />
-                                          </button>
-                                        )}
-                                      </PDFDownloadLink>
+                                        <AddDebButton
+                                          order={ordenConCustomerId}
+                                          createDebt={createDebt}
+                                          paymentDebts={paymentDebts} // Asegúrate de incluir esto siempre
+                                        />
+                                        <PDFDownloadLink
+                                          document={
+                                            <FacturaPDF order={orden} />
+                                          }
+                                          fileName={`factura_${orden.id}.pdf`}
+                                        >
+                                          {({ blob, url, loading, error }) => (
+                                            <button className="btn ms-2 btn-sm btn-info">
+                                              <FaFileDownload />
+                                            </button>
+                                          )}
+                                        </PDFDownloadLink>
                                         <button
                                           className="btn btn-success btn-sm ms-2"
                                           onClick={() =>
@@ -962,8 +989,7 @@ export default function Ventas() {
                         </table>
                       </div>
                     )}
-
-                  </div> 
+                  </div>
                 )}
 
                 {/* Renderizar las pestañas de ventas individuales */}
@@ -1331,25 +1357,23 @@ export default function Ventas() {
                                         {editandoItem?.ventaId === id &&
                                         editandoItem?.productId ===
                                           i.product_id ? (
-                                            <div className="d-flex justify-content-center  border border-warning border-2">
-                                              
-                                              <input
-                                                type="number"
-                                                className="form-control form-control-sm"
-                                                value={nuevoValores.precio}
-                                                onChange={(e) =>
-                                                  setNuevoValores({
-                                                    ...nuevoValores,
-                                                    precio: e.target.value,
-                                                  })
-                                                }
-                                                placeholder="Precio"
-                                              />
-                                              <div className="my-auto pe-2">
-                                                {i.unit}
-                                              </div>
+                                          <div className="d-flex justify-content-center  border border-warning border-2">
+                                            <input
+                                              type="number"
+                                              className="form-control form-control-sm"
+                                              value={nuevoValores.precio}
+                                              onChange={(e) =>
+                                                setNuevoValores({
+                                                  ...nuevoValores,
+                                                  precio: e.target.value,
+                                                })
+                                              }
+                                              placeholder="Precio"
+                                            />
+                                            <div className="my-auto pe-2">
+                                              {i.unit}
                                             </div>
-                                            
+                                          </div>
                                         ) : (
                                           `$ ${formatNumber(i.price_unit)} /${
                                             i.unit
@@ -1467,7 +1491,6 @@ export default function Ventas() {
                           className="bg-white col-12 border-top border-2 py-2 text-center"
                           style={{ position: "sticky", bottom: "0px" }}
                         >
-
                           {/* si no quiero que se cierre la ventana no paso el true */}
                           <button
                             className="btn btn-info me-2 mb-n2"
@@ -1492,7 +1515,6 @@ export default function Ventas() {
 
               {activeTab === "pedidos" && (
                 <div className="card mt-3 border border-1 border-dark p-2">
-
                   <h4 className="">Pedidos Completados ✓</h4>
                   <div className="d-flex my-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
                     <input
@@ -1518,117 +1540,150 @@ export default function Ventas() {
                   {itemsActuales.length === 0 ? (
                     <div className="alert">No hay órdenes completadas.</div>
                   ) : (
-                  <>
-                    <div className="table-responsive">
-                      <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
-                        <thead className="bg-gradient-dark text-white ">
-                          <tr>
-                            <th>#</th>
-                            <th>Cliente</th>
-                            <th>Alias</th>
-                            {/* <th>Productos</th> */}
-                            <th>Total</th>
-                            <th>Acciones</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {itemsActuales.map((orden) => {
-                            // Verificar que orden.items existe
-                            const items = orden.items || [];
-                            const itemsFiltrados = items.filter(
-                              (item) => item.product_id !== PRODUCTO_A_FILTRAR
-                            );
-                            const total = itemsFiltrados.reduce(
-                              (sum, item) =>
-                                sum + item.price_unit * item.quantity,
-                              0
-                            );
+                    <>
+                      <div className="table-responsive">
+                        <table className="table table-striped table-bordered table-hover table-sm align-middle text-center">
+                          <thead className="bg-gradient-dark text-white ">
+                            <tr>
+                              <th>#</th>
+                              <th>Cliente</th>
+                              <th>Alias</th>
+                              {/* <th>Productos</th> */}
+                              <th>Total</th>
+                              <th>Acciones</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {itemsActuales.map((orden) => {
+                              // Verificar que orden.items existe
+                              const items = orden.items || [];
+                              const itemsFiltrados = items.filter(
+                                (item) => item.product_id !== PRODUCTO_A_FILTRAR
+                              );
+                              const total = itemsFiltrados.reduce(
+                                (sum, item) =>
+                                  sum + item.price_unit * item.quantity,
+                                0
+                              );
 
-                            return (
-                              <tr key={orden.id}>
-                                <td>{orden.id}</td>
-                                <td>
-                                  {orden.customer?.name ||
-                                    "Cliente no especificado"}
-                                </td>
-                                <td>{orden.customer?.alias || "-"}</td>
+                              return (
+                                <tr key={orden.id}>
+                                  <td>{orden.id}</td>
+                                  <td>
+                                    {orden.customer?.name ||
+                                      "Cliente no especificado"}
+                                  </td>
+                                  <td>{orden.customer?.alias || "-"}</td>
 
-                                <td>$ {formatNumber(total)}</td>
-                                <td>
-                                  <span className="badge border border-success text-success">
-                                    Completado
-                                  </span>
-                                  <PDFDownloadLink
-                                    document={<FacturaPDF order={orden} />}
-                                    fileName={`factura_${orden.id}.pdf`}
-                                  >
-                                    {({ blob, url, loading, error }) => (
-                                      <button className="btn ms-2 btn-sm btn-info">
-                                        <FaFileDownload />
-                                      </button>
-                                    )}
-                                  </PDFDownloadLink>
+                                  <td>$ {formatNumber(total)}</td>
+                                  <td>
+                                    <span className="badge border border-success text-success">
+                                      Completado
+                                    </span>
+                                    <PDFDownloadLink
+                                      document={<FacturaPDF order={orden} />}
+                                      fileName={`factura_${orden.id}.pdf`}
+                                    >
+                                      {({ blob, url, loading, error }) => (
+                                        <button className="btn ms-2 btn-sm btn-info">
+                                          <FaFileDownload />
+                                        </button>
+                                      )}
+                                    </PDFDownloadLink>
 
-                                  <Link
-                                    to={`/factura/${orden.id}`}
-                                    className="badge d-none d-md-inline border ms-2 border-info text-info"
-                                  >
-                                    <FaEye /> ver
-                                  </Link>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
+                                    <Link
+                                      to={`/factura/${orden.id}`}
+                                      className="badge d-none d-md-inline border ms-2 border-info text-info"
+                                    >
+                                      <FaEye /> ver
+                                    </Link>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
 
-                    {/* Componente de Paginación */}
-                    {ordenesCompletadasFiltradas.length > itemsPorPagina && (
-                      <div className="col-12 d-flex justify-content-center mt-3">
-                        <div className="table-responsive">
-                          <div className="pagination py-1">
-                            {/* Botón Anterior */}
-                            <li className={`page-item bg-white ${paginaActual === 1 ? 'disabled' : ''}`}>
-                              <button 
-                                className={`page-link ${paginaActual === 1 ? 'disabled' : 'text-info border-info'}`}
-                                onClick={() => cambiarPagina(paginaActual - 1)}
-                                disabled={paginaActual === 1}
+                      {/* Componente de Paginación */}
+                      {ordenesCompletadasFiltradas.length > itemsPorPagina && (
+                        <div className="col-12 d-flex justify-content-center mt-3">
+                          <div className="table-responsive">
+                            <div className="pagination py-1">
+                              {/* Botón Anterior */}
+                              <li
+                                className={`page-item bg-white ${
+                                  paginaActual === 1 ? "disabled" : ""
+                                }`}
                               >
-                                <AiFillCaretLeft/>
-                              </button>
-                            </li>
-                
-                            {/* Números de página */}
-                            {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(numero => (
-                              <div key={numero}>
-                                <button 
-                                  className={`page-link ${paginaActual === numero ? 'bg-info text-white' : 'text-dark'}`}
-                                  onClick={() => cambiarPagina(numero)}
-                                  style={{ cursor: 'pointer', borderRadius: '50%', minWidth: '40px', height: '40px' }}
+                                <button
+                                  className={`page-link ${
+                                    paginaActual === 1
+                                      ? "disabled"
+                                      : "text-info border-info"
+                                  }`}
+                                  onClick={() =>
+                                    cambiarPagina(paginaActual - 1)
+                                  }
+                                  disabled={paginaActual === 1}
                                 >
-                                  {numero}
+                                  <AiFillCaretLeft />
                                 </button>
-                              </div>
-                            ))}
-                
-                            {/* Botón Siguiente */}
-                            <li className={`page-item ms-1 ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
-                              <button 
-                                className={`page-link ${paginaActual === totalPaginas ? 'disabled' : 'text-info border-info'}`}
-                                onClick={() => cambiarPagina(paginaActual + 1)}
-                                disabled={paginaActual === totalPaginas}
-                              ><AiFillCaretRight/>
-                              </button>
-                            </li>
+                              </li>
+
+                              {/* Números de página */}
+                              {Array.from(
+                                { length: totalPaginas },
+                                (_, i) => i + 1
+                              ).map((numero) => (
+                                <div key={numero}>
+                                  <button
+                                    className={`page-link ${
+                                      paginaActual === numero
+                                        ? "bg-info text-white"
+                                        : "text-dark"
+                                    }`}
+                                    onClick={() => cambiarPagina(numero)}
+                                    style={{
+                                      cursor: "pointer",
+                                      borderRadius: "50%",
+                                      minWidth: "40px",
+                                      height: "40px",
+                                    }}
+                                  >
+                                    {numero}
+                                  </button>
+                                </div>
+                              ))}
+
+                              {/* Botón Siguiente */}
+                              <li
+                                className={`page-item ms-1 ${
+                                  paginaActual === totalPaginas
+                                    ? "disabled"
+                                    : ""
+                                }`}
+                              >
+                                <button
+                                  className={`page-link ${
+                                    paginaActual === totalPaginas
+                                      ? "disabled"
+                                      : "text-info border-info"
+                                  }`}
+                                  onClick={() =>
+                                    cambiarPagina(paginaActual + 1)
+                                  }
+                                  disabled={paginaActual === totalPaginas}
+                                >
+                                  <AiFillCaretRight />
+                                </button>
+                              </li>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      
-                    )}
-                  </>
+                      )}
+                    </>
                   )}
-
                 </div>
               )}
             </div>
