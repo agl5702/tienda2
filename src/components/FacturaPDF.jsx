@@ -1,134 +1,136 @@
-import React from 'react';
-import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
+import React from "react";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  Image,
+} from "@react-pdf/renderer";
 import { formatQuantity } from "../services/utils/formatQuantity";
-import { auto } from '@popperjs/core';
 
-
-
-// Estilos para el PDF
+// Estilos para el PDF (EXACTAMENTE IGUAL)
 const styles = StyleSheet.create({
   page: {
-    // padding: 20,
     paddingHorizontal: 20,
     fontSize: 10,
-    fontFamily: 'Helvetica',
+    fontFamily: "Helvetica",
   },
   header: {
     marginBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#000',
+    borderBottomColor: "#000",
     paddingBottom: 10,
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 5,
     marginTop: -20,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   subtitle: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 5,
   },
   businessInfo: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 4,
   },
   infoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   infoColumn: {
-    width: '48%',
+    width: "48%",
   },
   infoLabel: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 2,
   },
   infoText: {
     marginBottom: 5,
   },
   table: {
-    width: '100%',
+    width: "100%",
     marginTop: 10,
     marginBottom: 10,
   },
   tableRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    alignItems: 'center',
+    borderBottomColor: "#ddd",
+    alignItems: "center",
     paddingVertical: 5,
   },
   tableHeader: {
-    backgroundColor: '#f2f2f2',
-    fontWeight: 'bold',
+    backgroundColor: "#f2f2f2",
+    fontWeight: "bold",
   },
   tableCol: {
     paddingHorizontal: 2,
   },
   colCant: {
-    width: '15%',
+    width: "15%",
   },
   colDesc: {
-    width: '45%',
+    width: "45%",
   },
   colVrU: {
-    width: '20%',
-    textAlign: 'right',
+    width: "20%",
+    textAlign: "right",
   },
   colVrT: {
-    width: '20%',
-    textAlign: 'right',
+    width: "20%",
+    textAlign: "right",
   },
   totals: {
     marginTop: 10,
     borderTopWidth: 1,
-    borderTopColor: '#000',
+    borderTopColor: "#000",
     paddingTop: 10,
   },
   totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 5,
   },
   totalLabel: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   totalValue: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   footer: {
     marginTop: 20,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 9,
-    color: '#666',
+    color: "#666",
   },
   signature: {
     marginTop: 30,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   signatureLine: {
-    width: '40%',
+    width: "40%",
     borderTopWidth: 1,
-    borderTopColor: '#000',
-    textAlign: 'center',
+    borderTopColor: "#000",
+    textAlign: "center",
     paddingTop: 5,
   },
-
   pageFooter: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 10,
     left: 0,
     right: 0,
     paddingHorizontal: 20,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   footerLogo: {
     width: 25,
@@ -137,34 +139,39 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 10,
-    color: '#00bfff',
+    color: "#00bfff",
   },
   logoContainer: {
-    alignItems: 'center', // centra horizontalmente
-    marginVertical: 20,   // opcional, para separar del contenido
+    alignItems: "center",
+    marginVertical: 20,
     marginTop: 5,
   },
   logo: {
-    margin:0,
-    padding:0,
+    margin: 0,
+    padding: 0,
     width: 70,
-    height: 65, // asegúrate de definir altura
+    height: 65,
   },
-
-  
 });
-const FacturaPDF = ({ order }) => {
+
+const FacturaPDF = ({ order, debt = [] }) => {
   // Formatear números con separadores de miles
   const formatNumber = (num) => {
-    return new Intl.NumberFormat('es-CO', {
+    return new Intl.NumberFormat("es-CO", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(num);
+    }).format(num || 0);
   };
 
   // Calcular totales
-  const subtotal = order.items.reduce((sum, item) => sum + (item.quantity * item.price_unit), 0);
-  const total = subtotal; // Asumiendo que no hay descuentos por ahora
+  const subtotal = order.items.reduce(
+    (sum, item) => sum + item.quantity * item.price_unit,
+    0
+  );
+  const total = subtotal;
+
+  // Obtener el saldo de la deuda (usamos el primer elemento del array)
+  const saldo = debt[0]?.total_debt || 0;
 
   return (
     <Document>
@@ -174,39 +181,44 @@ const FacturaPDF = ({ order }) => {
           <Image src="/logo4.png" style={styles.logo} />
         </View>
         <View style={styles.header}>
-        
           <Text style={styles.title}>JHS. Camino, Verdad y Vida</Text>
           <Text style={styles.subtitle}>Nit: 77159558-1</Text>
           <Text style={styles.businessInfo}>
             Perecederos #1 local 13 Mercabastos - valledupar
           </Text>
-          <Text style={styles.businessInfo}>
-            Whatsapp: 3005092939
-          </Text>
-          <Text style={styles.businessInfo}>
-          jhscristoenmi@gmail.com
-          </Text>
+          <Text style={styles.businessInfo}>Whatsapp: 3005092939</Text>
+          <Text style={styles.businessInfo}>jhscristoenmi@gmail.com</Text>
         </View>
 
         {/* Información de la factura */}
         <View style={styles.infoContainer}>
           <View style={styles.infoColumn}>
-            
-
             <Text style={styles.infoLabel}>CLIENTE</Text>
-            <Text style={styles.infoText}>{order.customer?.name || 'Cliente ocasional'}</Text>
+            <Text style={styles.infoText}>
+              {order.customer?.name || "Cliente ocasional"}
+            </Text>
             <Text style={styles.infoLabel}>DOCUMENTO</Text>
-            <Text style={styles.infoText}>{order.customer?.cc || 'No especificado'}</Text>
+            <Text style={styles.infoText}>
+              {order.customer?.cc || "No especificado"}
+            </Text>
             <Text style={styles.infoLabel}>TELÉFONO</Text>
-            <Text style={styles.infoText}>{order.customer?.phone || 'No especificado'}</Text>
+            <Text style={styles.infoText}>
+              {order.customer?.phone || "No especificado"}
+            </Text>
             <Text style={styles.infoLabel}>DIRECCIÓN</Text>
-            <Text style={styles.infoText}>{order.customer?.direction || 'No especificado'}</Text>
+            <Text style={styles.infoText}>
+              {order.customer?.direction || "No especificado"}
+            </Text>
           </View>
           <View style={styles.infoColumn}>
-          <Text style={styles.infoLabel}>FECHA</Text>
-            <Text style={styles.infoText}>{new Date(order.date).toLocaleString()}</Text>
+            <Text style={styles.infoLabel}>FECHA</Text>
+            <Text style={styles.infoText}>
+              {new Date(order.date).toLocaleString()}
+            </Text>
             <Text style={styles.infoLabel}>VENTA No.</Text>
-            <Text style={styles.infoText}>{order.id.toString().padStart(8, '0')}</Text>
+            <Text style={styles.infoText}>
+              {order.id.toString().padStart(8, "0")}
+            </Text>
           </View>
         </View>
 
@@ -232,10 +244,12 @@ const FacturaPDF = ({ order }) => {
           {order.items.map((item, index) => (
             <View key={index} style={styles.tableRow}>
               <View style={[styles.tableCol, styles.colCant]}>
-                <Text>{formatQuantity(item.quantity)} {item.product.unit}</Text>
+                <Text>
+                  {formatQuantity(item.quantity)} {item.product.unit}
+                </Text>
               </View>
               <View style={[styles.tableCol, styles.colDesc]}>
-                <Text>{item.product?.name || 'Producto sin nombre'}</Text>
+                <Text>{item.product?.name || "Producto sin nombre"}</Text>
               </View>
               <View style={[styles.tableCol, styles.colVrU]}>
                 <Text>${formatNumber(item.price_unit)}</Text>
@@ -257,42 +271,40 @@ const FacturaPDF = ({ order }) => {
             <Text style={styles.totalLabel}>SUB-TOTAL:</Text>
             <Text>${formatNumber(subtotal)}</Text>
           </View>
-          
+
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>SALDO:</Text>
-            <Text>$100.000</Text>
+            <Text>${formatNumber(saldo)}</Text>
           </View>
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>ABONO:</Text>
-            <Text>- $50.000</Text>
-          </View>
+
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>TOTAL A PAGAR:</Text>
-            {/* <Text style={styles.totalValue}>${formatNumber(total)}</Text> */}
-            <Text style={styles.totalValue}>${formatNumber(total+50000)}</Text>
+            <Text style={styles.totalValue}>
+              ${formatNumber(total + saldo)}
+            </Text>
           </View>
         </View>
 
         {/* Observaciones */}
         <View style={{ marginTop: 10 }}>
           <Text style={styles.infoLabel}>ESTADO:</Text>
-          <Text style={styles.infoText}>{order.status || 'No especificado'}</Text>
+          <Text style={styles.infoText}>
+            {order.status || "No especificado"}
+          </Text>
         </View>
 
         {/* Pie de página */}
         <View style={styles.footer}>
-          {/* <Text>ATENDIDO POR: {order.employee?.name || 'No especificado'}</Text> */}
           <Text>--- Gracias por su compra ---</Text>
-          <Text>Impreso el {new Date().toLocaleDateString()} a las {new Date().toLocaleTimeString()}</Text>
-          
+          <Text>
+            Impreso el {new Date().toLocaleDateString()} a las{" "}
+            {new Date().toLocaleTimeString()}
+          </Text>
         </View>
 
         {/* Pie de página fijo */}
         <View style={styles.pageFooter} fixed>
-          <Image 
-            src="/logo3.png" // o usa base64
-            style={styles.footerLogo}
-          />
+          <Image src="/logo3.png" style={styles.footerLogo} />
           <Text style={styles.footerText}>loud</Text>
         </View>
       </Page>

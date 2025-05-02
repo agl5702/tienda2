@@ -40,7 +40,6 @@ export const paymentDebts = async (debt_id, amount) => {
   return fetchData("POST", `/debts/${debt_id}/payments`, paymentData);
 };
 
-
 // Obtener deuda de un usuario
 export const getDebtsById = async (debt_id) =>{
   return fetchData("GET",`/debts/customers/${debt_id}/info`);
