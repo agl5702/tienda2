@@ -100,7 +100,7 @@ const VentaTable = () => {
       <div className="d-flex my-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
         <input
           type="text"
-          className="form-control border border-2 ps-3"
+          className="form-control border border-2 ps-3 bg-white"
           placeholder="🔍 Buscar producto por nombre..."
           value={busqueda}
           onChange={(e) => {
@@ -173,7 +173,7 @@ const VentaTable = () => {
                     </div>
                   </div>
                   <div
-                    className="blur opacity-9 col-8 col-sm-6 text-dark text-center position-absolute"
+                    className="blur col-8 col-sm-6 text-dark text-center position-absolute"
                     style={{
                       zIndex: 3,
                       borderRadius: "7px 0px 0px",
@@ -183,7 +183,7 @@ const VentaTable = () => {
                       fontSize: "15px",
                     }}
                   >
-                    {producto.category?.name || "Sin categoría"}
+                    Stock 1000
                   </div>
                 </div>
                 <div className="card-body p-2 d-flex flex-column flex-grow-1">
@@ -234,7 +234,7 @@ const VentaTable = () => {
           <div className="table-responsive">
             <div className="pagination py-1">
               <li
-                className={`page-item bg-white ${
+                className={`page-item ${
                   paginaActual === 1 ? "disabled" : ""
                 }`}
               >
