@@ -21,3 +21,13 @@ export const getProductById = async (id) => {
 export const deleteProduct = async (id) => {
   return fetchData("DELETE", `/products/${id}/`);
 };
+
+// Sumar al stock de un producto
+export const addStockProductById = async (id, quantity) => {
+  return fetchData("POST", `/products/${id}/add-stock?quantity=${quantity}`);
+};
+
+// Restar al stock de un producto
+export const removeStockProductById = async (id, quantity) => {
+  return fetchData("POST", `/products/${id}/remove-stock?quantity=${quantity}`);
+};

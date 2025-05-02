@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllProducts, deleteProduct } from "../services/requests/products";
+import {
+  getAllProducts,
+  deleteProduct,
+  addStockProductById,
+  removeStockProductById,
+} from "../services/requests/products";
 import { BsPencilSquare, BsTrash } from "react-icons/bs";
 import Swal from "sweetalert2";
 import { formatNumber } from "../services/utils/format.js";
@@ -13,23 +18,13 @@ const VentaTable = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [itemsPorPagina] = useState(12);
 
-  // modal
-  const [modalAbierto, setModalAbierto] = useState(false);
+  // Modales para gestión de stock
+  const [showStockOptionsModal, setShowStockOptionsModal] = useState(false);
+  const [showQuantityModal, setShowQuantityModal] = useState(false);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
-  const [stockAgregado, setStockAgregado] = useState("");
-
-  const abrirModalStock = (producto) => {
-    setProductoSeleccionado(producto);
-    setStockAgregado("");
-    setModalAbierto(true);
-  };
-  
-  const agregarStock = () => {
-    console.log(`Agregar ${stockAgregado} unidades a ${productoSeleccionado.name}`);
-    // Aquí iría tu lógica real: petición al backend o setState local
-    setModalAbierto(false);
-  };
-  
+  const [stockQuantity, setStockQuantity] = useState("");
+  const [currentOperation, setCurrentOperation] = useState(null); // 'add' o 'remove'
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const fetchProductos = async () => {
     try {
@@ -45,6 +40,96 @@ const VentaTable = () => {
   useEffect(() => {
     fetchProductos();
   }, []);
+
+  const abrirModalOpcionesStock = (producto) => {
+    setProductoSeleccionado(producto);
+    setShowStockOptionsModal(true);
+  };
+
+  const abrirModalCantidad = (operation) => {
+    setCurrentOperation(operation);
+    setStockQuantity("");
+    setShowStockOptionsModal(false);
+    setShowQuantityModal(true);
+  };
+
+  const handleStockOperation = async () => {
+    setIsProcessing(true);
+    try {
+      const productId = productoSeleccionado?.id;
+      const quantityValue = parseFloat(stockQuantity);
+
+      if (!productId) {
+        throw new Error("No se ha seleccionado un producto válido");
+      }
+
+      if (isNaN(quantityValue)) {
+        throw new Error("La cantidad debe ser un número válido");
+      }
+
+      if (quantityValue <= 0) {
+        throw new Error("La cantidad debe ser mayor que cero");
+      }
+
+      let result;
+      if (currentOperation === "add") {
+        result = await addStockProductById(productId, quantityValue);
+      } else {
+        if (
+          productoSeleccionado.stock !== null &&
+          productoSeleccionado.stock !== undefined &&
+          quantityValue > productoSeleccionado.stock
+        ) {
+          throw new Error(
+            `No puedes restar más stock (${quantityValue}) del disponible (${productoSeleccionado.stock})`
+          );
+        }
+        result = await removeStockProductById(productId, quantityValue);
+      }
+
+      if (!result || result.error) {
+        throw new Error(
+          result?.error ||
+            `No se pudo ${
+              currentOperation === "add" ? "añadir" : "restar"
+            } el stock correctamente`
+        );
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Operación exitosa",
+        html: `<div>
+                <p>Stock actualizado correctamente</p>
+                <p><strong>Producto:</strong> ${productoSeleccionado.name}</p>
+                <p><strong>Operación:</strong> ${
+                  currentOperation === "add" ? "Añadido" : "Restado"
+                } ${quantityValue} unidades</p>
+              </div>`,
+        showConfirmButton: true,
+        timer: 3000,
+      });
+
+      // Actualizar la lista de productos
+      fetchProductos();
+      setShowQuantityModal(false);
+    } catch (error) {
+      console.error("Error en la operación de stock:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error en la operación",
+        html: `<div>
+                <p>${
+                  error.message || "Ocurrió un error al procesar la operación"
+                }</p>
+                <small>Por favor verifique los datos e intente nuevamente</small>
+              </div>`,
+        showConfirmButton: true,
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -136,17 +221,24 @@ const VentaTable = () => {
                   {producto.profit_percentage}%
                 </span>
 
-                {/* agregar STOK */}
-
-                <button className="bg-info border-white border border-2 cursor-pointer text-white text-center position-absolute end-2 top-2"
-                  style={{ zIndex: 3, borderRadius: "20px", width: "35px", height: "35px" }}
-                  onClick={() => abrirModalStock(producto)}
+                {/* Botón para gestionar stock */}
+                <button
+                  className="bg-info border-white border border-2 cursor-pointer text-white text-center position-absolute end-2 top-2"
+                  style={{
+                    zIndex: 3,
+                    borderRadius: "20px",
+                    width: "35px",
+                    height: "35px",
+                  }}
+                  onClick={() => abrirModalOpcionesStock(producto)}
                 >
                   +
                 </button>
 
-
-                <div className="card-header p-0 position-relative z-index-2 flex-grow-0" style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}>
+                <div
+                  className="card-header p-0 position-relative z-index-2 flex-grow-0"
+                  style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}
+                >
                   <div className="d-block blur-shadow-image">
                     <div
                       className="img-container"
@@ -183,7 +275,7 @@ const VentaTable = () => {
                       fontSize: "15px",
                     }}
                   >
-                    Stock 1000
+                    Stock: {producto.stock || 0}
                   </div>
                 </div>
                 <div className="card-body p-2 d-flex flex-column flex-grow-1">
@@ -234,9 +326,7 @@ const VentaTable = () => {
           <div className="table-responsive">
             <div className="pagination py-1">
               <li
-                className={`page-item ${
-                  paginaActual === 1 ? "disabled" : ""
-                }`}
+                className={`page-item ${paginaActual === 1 ? "disabled" : ""}`}
               >
                 <button
                   className={`page-link ${
@@ -294,42 +384,102 @@ const VentaTable = () => {
         </div>
       )}
 
+      {/* Modal de opciones de stock */}
       <Modal
-        isOpen={modalAbierto}
-        onClose={() => setModalAbierto(false)}
-        title={`Agregar stock a ${productoSeleccionado?.name}`}
-        footer={`d-none`}
+        isOpen={showStockOptionsModal}
+        onClose={() => setShowStockOptionsModal(false)}
+        title={`Gestión de stock - ${productoSeleccionado?.name}`}
+      >
+        <div className="text-center mb-3">
+          <p>Seleccione la operación que desea realizar:</p>
+        </div>
+
+        <div className="d-flex justify-content-center gap-3">
+          <button
+            className="btn btn-info text-white"
+            onClick={() => abrirModalCantidad("add")}
+          >
+            Sumar stock
+          </button>
+          <button
+            className="btn btn-dark"
+            onClick={() => abrirModalCantidad("remove")}
+          >
+            Restar stock
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setShowStockOptionsModal(false)}
+          >
+            Cancelar
+          </button>
+        </div>
+      </Modal>
+
+      {/* Modal para ingresar cantidad */}
+      <Modal
+        isOpen={showQuantityModal}
+        onClose={() => !isProcessing && setShowQuantityModal(false)}
+        title={`${currentOperation === "add" ? "Sumar" : "Restar"} stock - ${
+          productoSeleccionado?.name
+        }`}
       >
         <div className="mb-4">
-
-          <label className="block mb-1 font-medium">Cantidad a agregar:</label>
+          <label className="form-label fw-bold">
+            Cantidad a {currentOperation === "add" ? "sumar" : "restar"}:
+          </label>
           <input
             type="number"
-            value={stockAgregado}
-            onChange={(e) => setStockAgregado(e.target.value)}
-            className="form-control border px-3"
-            min={1}
+            className="form-control border-primary"
+            value={stockQuantity}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "" || /^[0-9]*\.?[0-9]*$/.test(value)) {
+                setStockQuantity(value);
+              }
+            }}
+            placeholder={`Ingrese la cantidad a ${
+              currentOperation === "add" ? "sumar" : "restar"
+            }`}
+            min="0.01"
+            step="0.01"
+            disabled={isProcessing}
           />
-
+          {productoSeleccionado?.stock !== null &&
+            productoSeleccionado?.stock !== undefined && (
+              <small className="text-muted">
+                Stock actual: {productoSeleccionado.stock}
+              </small>
+            )}
         </div>
 
         <div className="text-center">
           <button
             className="btn btn-secondary"
-            onClick={() => setModalAbierto(false)}
+            onClick={() => setShowQuantityModal(false)}
+            disabled={isProcessing}
           >
             Cancelar
           </button>
           <button
-            className="btn ms-2 btn-success"
-            onClick={agregarStock}
-            disabled={!stockAgregado || Number(stockAgregado) <= 0}
+            className="btn ms-2 bg-info text-white"
+            onClick={handleStockOperation}
+            disabled={
+              !stockQuantity || parseFloat(stockQuantity) <= 0 || isProcessing
+            }
           >
-            Agregar
+            {isProcessing ? (
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            ) : (
+              `Confirmar ${currentOperation === "add" ? "suma" : "resta"}`
+            )}
           </button>
         </div>
       </Modal>
-
     </div>
   );
 };
