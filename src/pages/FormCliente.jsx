@@ -78,7 +78,7 @@ const FormCustomer = () => {
                   value={customer.alias}
                   onChange={handleChange}
                   className="form-control border ps-2"
-                  required
+                  
                 />
               </div>
             </div>
@@ -91,7 +91,7 @@ const FormCustomer = () => {
                   value={customer.cc}
                   onChange={handleChange}
                   className="form-control border ps-2"
-                  required
+                  
                 />
               </div>
             </div>
@@ -104,7 +104,7 @@ const FormCustomer = () => {
                   value={customer.phone}
                   onChange={handleChange}
                   className="form-control border ps-2"
-                  required
+                  
                 />
               </div>
             </div>
@@ -117,7 +117,7 @@ const FormCustomer = () => {
                   value={customer.direction}
                   onChange={handleChange}
                   className="form-control border ps-2"
-                  required
+                  
                 />
               </div>
             </div>

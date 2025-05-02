@@ -190,7 +190,7 @@ const ResumenDias = () => {
                         <td className="text-end">
                           <button
                             onClick={() => verDetalleDia(fecha)}
-                            className="btn btn-sm btn-outline-primary"
+                            className="btn btn-sm bg-info"
                           >
                             <BsEye /> Ver
                           </button>
@@ -199,10 +199,10 @@ const ResumenDias = () => {
                     )
                   )}
                 </tbody>
-                <tfoot className="table-active">
+                <tfoot className="bg-dark">
                   <tr>
-                    <th>TOTAL</th>
-                    <th className="text-end">
+                    <th className="text-white">TOTAL</th>
+                    <th className="text-end text-white">
                       {formatCurrency(resumenData.metrics.total_sales)}
                     </th>
                     <th className="text-end text-success">
@@ -211,7 +211,7 @@ const ResumenDias = () => {
                     <th className="text-end text-danger">
                       {formatCurrency(resumenData.metrics.total_returns)}
                     </th>
-                    <th className="text-end">
+                    <th className="text-end text-white">
                       {resumenData.metrics.total_products_sold.toFixed(1)}
                     </th>
                     <th></th>

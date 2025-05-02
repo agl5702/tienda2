@@ -64,7 +64,7 @@ const DebtList = ({
   }
 
   return (
-    <div className="row mt-3">
+    <div className="row m-0 mt-3">
       {consolidatedDebts.map((debtor) => (
         <DebtCard
           key={debtor.id}

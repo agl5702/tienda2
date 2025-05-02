@@ -56,16 +56,16 @@ const CategoriaTable = () => {
       <div className="my-2 col-12 col-sm-6 col-md-5 col-lg-4 col-xl-3">
         <input
           type="text"
-          className="form-control border border-2 ps-3"
+          className="form-control border border-2 ps-3 bg-white"
           placeholder="🔍 Buscar clientes por nombre..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
       </div>
-      <div className="row">
+      <div className="row px-2">
         {customersFiltrados.length > 0 ? (
           customersFiltrados.map((customer) => (
-            <div key={customer.id} className="col-xl-4 col-sm-6 mb-2">
+            <div key={customer.id} className="col-xl-4 col-sm-6 mb-2 px-1">
               <div className="card border p-2">
                 <div className="row">
                   <div className="col-lg-4 col-md-4 text-center my-auto">
@@ -78,7 +78,7 @@ const CategoriaTable = () => {
                     <h5 className="my-0">{customer.name}</h5>
                     <p className='m-0 text-xs'>{customer.alias}</p>
                     <p className='m-0 text-xs'>{customer.phone}</p>
-                    <p className='m-0 text-xs'>{customer.direction}</p>
+                    <p className='m-0 text-xs' style={{height:"30px"}}>{customer.direction}</p>
                     </div>
                     
                     

@@ -300,7 +300,7 @@ const VerReporteRango = () => {
                   )}
                 </tbody>
                 <tfoot>
-                  <tr className="table-active">
+                  <tr className="table-active bg-dark text-white">
                     <th colSpan="3">Total</th>
                     <th className="text-end">
                       {formatCurrency(reportData.metrics.total_profit)}
@@ -330,7 +330,7 @@ const VerReporteRango = () => {
                   <tbody>
                     {Object.entries(reportData.earnings.daily_earnings).map(
                       ([date, data], index) => (
-                        <tr key={index}>
+                        <tr className="" key={index}>
                           <td>{date}</td>
                           <td className="text-end">
                             {formatCurrency(
@@ -353,7 +353,7 @@ const VerReporteRango = () => {
                     )}
                   </tbody>
                   <tfoot className="table-active">
-                    <tr>
+                    <tr className="bg-dark text-white">
                       <th>TOTALES</th>
                       <th className="text-end">
                         {formatCurrency(
