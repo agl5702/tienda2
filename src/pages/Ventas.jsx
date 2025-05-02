@@ -340,12 +340,13 @@ export default function Ventas() {
             `Producto ${item.product_id}`,
           price_unit: item.price_unit,
           quantity: item.quantity,
+          unit: item.product.unit,
           image_url:
             productos.find((p) => p.id === item.product_id)?.image_url || null,
         })),
     };
 
-    const clienteId = orden.customer_id;
+    const clienteId = orden.customer.id;
 
     // Actualizamos el estado de orderUsers antes de setVentas
     setOrderUsers((ou) => ({ ...ou, [ventaId]: clienteId }));
@@ -358,6 +359,7 @@ export default function Ventas() {
     saveToStorage("orderUsers", { ...orderUsers, [ventaId]: clienteId });
     saveToStorage("detalleVentas", { ...detalleVentas, ...nuevoDetalleVentas });
   };
+  
   // Función para eliminar una orden pendiente
   const eliminarOrdenPendiente = async (ordenId) => {
     const confirmed = await confirmDelete(
@@ -918,19 +920,6 @@ export default function Ventas() {
                                         "Cliente no especificado"}
                                     </td>
                                     <td>{orden.customer?.alias || "-"}</td>
-                                    {/* <td>
-                                      <ul className="list-unstyled">
-                                        {itemsFiltrados.map((item) => (
-                                          <li key={item.product_id}>
-                                            {item.quantity} x{" "}
-                                            {productos.find(
-                                              (p) => p.id === item.product_id
-                                            )?.name || `Producto ${item.product_id}`}
-                                            (${item.price_unit})
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    </td> */}
                                     <td>$ {formatNumber(total)}</td>
                                     <td>
                                       <span className="badge border border-warning text-warning">
