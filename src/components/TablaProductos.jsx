@@ -5,12 +5,31 @@ import { BsPencilSquare, BsTrash } from "react-icons/bs";
 import Swal from "sweetalert2";
 import { formatNumber } from "../services/utils/format.js";
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
+import Modal from "./Modal.jsx";
 
 const VentaTable = () => {
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const [itemsPorPagina] = useState(12);
+
+  // modal
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+  const [stockAgregado, setStockAgregado] = useState("");
+
+  const abrirModalStock = (producto) => {
+    setProductoSeleccionado(producto);
+    setStockAgregado("");
+    setModalAbierto(true);
+  };
+  
+  const agregarStock = () => {
+    console.log(`Agregar ${stockAgregado} unidades a ${productoSeleccionado.name}`);
+    // Aquí iría tu lógica real: petición al backend o setState local
+    setModalAbierto(false);
+  };
+  
 
   const fetchProductos = async () => {
     try {
@@ -104,7 +123,7 @@ const VentaTable = () => {
           itemsActuales.map((producto) => (
             <div
               key={producto.id}
-              className="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2 col-xxl-2 mb-3 px-1 d-flex"
+              className="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2 col-xxl-2 mb-2 px-1 d-flex"
             >
               <div
                 className="card bg-gray w-100 d-flex flex-column"
@@ -116,10 +135,18 @@ const VentaTable = () => {
                 >
                   {producto.profit_percentage}%
                 </span>
-                <div
-                  className="card-header p-0 position-relative z-index-2 flex-grow-0"
-                  style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}
+
+                {/* agregar STOK */}
+
+                <button className="bg-info border-white border border-2 cursor-pointer text-white text-center position-absolute end-2 top-2"
+                  style={{ zIndex: 3, borderRadius: "20px", width: "35px", height: "35px" }}
+                  onClick={() => abrirModalStock(producto)}
                 >
+                  +
+                </button>
+
+
+                <div className="card-header p-0 position-relative z-index-2 flex-grow-0" style={{ borderRadius: "0.75rem 0.75rem 0px 0px" }}>
                   <div className="d-block blur-shadow-image">
                     <div
                       className="img-container"
@@ -266,6 +293,43 @@ const VentaTable = () => {
           </div>
         </div>
       )}
+
+      <Modal
+        isOpen={modalAbierto}
+        onClose={() => setModalAbierto(false)}
+        title={`Agregar stock a ${productoSeleccionado?.name}`}
+        footer={`d-none`}
+      >
+        <div className="mb-4">
+
+          <label className="block mb-1 font-medium">Cantidad a agregar:</label>
+          <input
+            type="number"
+            value={stockAgregado}
+            onChange={(e) => setStockAgregado(e.target.value)}
+            className="form-control border px-3"
+            min={1}
+          />
+
+        </div>
+
+        <div className="text-center">
+          <button
+            className="btn btn-secondary"
+            onClick={() => setModalAbierto(false)}
+          >
+            Cancelar
+          </button>
+          <button
+            className="btn ms-2 btn-success"
+            onClick={agregarStock}
+            disabled={!stockAgregado || Number(stockAgregado) <= 0}
+          >
+            Agregar
+          </button>
+        </div>
+      </Modal>
+
     </div>
   );
 };

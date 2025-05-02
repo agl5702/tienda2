@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     margin:0,
     padding:0,
     width: 70,
-    height: 70, // asegúrate de definir altura
+    height: 65, // asegúrate de definir altura
   },
 
   
