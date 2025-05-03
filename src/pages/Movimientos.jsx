@@ -133,7 +133,7 @@ const Movimientos = () => {
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h5 className="mb-0 col-6">Historial de movimientos</h5>
                 <div className="border p-2 card">
-                  <span className="text-muted">Saldo actual</span>
+                  <h5 className="text-dark mb-0 text-center">Saldo actual</h5>
                   <h3 className="mb-0 text-success">
                     {formatCurrency(currentBalance)}
                   </h3>
