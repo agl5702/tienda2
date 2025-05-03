@@ -13,6 +13,7 @@ import { formatQuantity } from "../services/utils/formatQuantity";
 const styles = StyleSheet.create({
   page: {
     paddingHorizontal: 20,
+    paddingVertical: 30, // Añade margen superior e inferior
     fontSize: 10,
     fontFamily: "Helvetica",
   },
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: "center",
     marginVertical: 20,
-    marginTop: 5,
+    marginTop: -20,
   },
   logo: {
     margin: 0,

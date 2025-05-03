@@ -69,7 +69,8 @@ export default function Ventas() {
   const [clientes, setClientes] = useState([]);
   const [filtroCliente, setFiltroCliente] = useState("");
   const [filtroProducto, setFiltroProducto] = useState("");
-
+  
+  const audioRef = useRef(null);
   const [editandoItem, setEditandoItem] = useState(null); // Ahora guardará {ventaId, productId}
   const [nuevoValores, setNuevoValores] = useState({
     precio: "",
@@ -101,6 +102,35 @@ export default function Ventas() {
       .includes(busqueda.toLowerCase());
     return idCoincide || nombreClienteCoincide || aliasClienteCoincide;
   });
+
+  // Precarga el sonido cuando el componente se monta
+  useEffect(() => {
+    audioRef.current = new Audio('/sonidos/delete.mp3');
+    // Opcional: precarga el sonido
+    audioRef.current.load();
+    
+    // Limpieza al desmontar el componente
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  // 3. Función para reproducir el sonido
+  const playSound = () => {
+    try {
+      // Si ya existe una instancia de audio, la reutilizamos
+      if (!audioRef.current) {
+        audioRef.current = new Audio('/sonidos/delete.mp3');
+      }
+      audioRef.current.currentTime = 0; // Reinicia el audio si ya estaba reproduciéndose
+      audioRef.current.play();
+    } catch (error) {
+      console.error("Error al reproducir sonido:", error);
+    }
+  };
 
   // Cálculos para la paginación
   const indiceUltimoItem = paginaActual * itemsPorPagina;
@@ -644,6 +674,13 @@ export default function Ventas() {
     setOrderUsers((ou) => ({ ...ou, [ventaId]: userId }));
   };
 
+  // saber si ya se agrego un producto
+
+  const productoEstaEnVenta = (ventaId, productId) => {
+    const items = detalleVentas[ventaId] || [];
+    return items.some(item => item.product_id === productId);
+  };
+
   // Agregar producto
   const agregarProductoAVenta = (ventaId, producto) => {
     setDetalleVentas((prev) => {
@@ -667,7 +704,8 @@ export default function Ventas() {
         quantity: 1,
         image_url: producto.image_url || null,
       };
-
+      // Reproduce el sonido solo cuando es un producto nuevo
+      playSound();
       return { ...prev, [ventaId]: [...items, nuevoItem] };
     });
   };
@@ -950,10 +988,10 @@ export default function Ventas() {
                                             completarOrden(orden.id)
                                           }
                                         >
-                                          Completar
+                                          Completar ✓
                                         </button>
                                         <button
-                                          className="btn btn-info btn-sm ms-2"
+                                          className="btn btn-warning btn-sm ms-2"
                                           onClick={() =>
                                             editarOrdenPendiente(orden.id)
                                           }
@@ -1040,7 +1078,7 @@ export default function Ventas() {
                                             <>
                                               <div
                                                 key={p.id}
-                                                className="col-6 col-sm-6 col-md-6 col-lg-4 col-xl-3 col-xxl-3 mb-3 px-2"
+                                                className="col-12 col-xs-6 col-sm-6 col-md-6 col-lg-4 col-xl-3 col-xxl-3 mb-3 px-2"
                                               >
                                                 <div className="card bg-gray position-relative">
                                                   <span
@@ -1107,34 +1145,22 @@ export default function Ventas() {
                                                       )}{" "}
                                                       / {p.unit}
                                                     </div>
-                                                    <div className="row m-0 mb-2 text-center">
-                                                      <div className="col-6">
+                                                    <div className="row m-0 mb-2 px-0 px-md-4 px-xl-5 text-center">
+                                                    {!productoEstaEnVenta(id, p.id) ? (
                                                         <button
                                                           className="btn btn-sm bg-info text-white"
-                                                          onClick={() =>
-                                                            agregarProductoAVenta(
-                                                              id,
-                                                              p
-                                                            )
-                                                          }
+                                                          onClick={() => agregarProductoAVenta(id, p)}
                                                         >
-                                                          {" "}
                                                           Añadir
                                                         </button>
-                                                      </div>
-                                                      <div className="col-6">
+                                                      ) : (
                                                         <button
-                                                          className="btn btn-sm btn-outline-danger"
-                                                          onClick={() =>
-                                                            quitarProductoDeVenta(
-                                                              id,
-                                                              p.id
-                                                            )
-                                                          }
+                                                          className="btn btn-sm bg-danger text-white"
+                                                          onClick={() => quitarProductoDeVenta(id, p.id)}
                                                         >
-                                                          Restar
+                                                          Eliminar
                                                         </button>
-                                                      </div>
+                                                      )}
                                                     </div>
                                                   </div>
                                                 </div>
