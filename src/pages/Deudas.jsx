@@ -3,9 +3,15 @@ import { useNavigate } from "react-router-dom";
 import DebtHeader from "../components/debts/DebtHeader";
 import MenuMovil from "../components/MenuMovil";
 import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer"
+import Footer from "../components/Footer";
 // Iconos
-import { FaPlusCircle, FaUser, FaSearch, FaHistory } from "react-icons/fa";
+import {
+  FaPlusCircle,
+  FaUser,
+  FaSearch,
+  FaHistory,
+  FaTrash,
+} from "react-icons/fa";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
 import { MdPayment } from "react-icons/md";
 
@@ -14,6 +20,7 @@ import {
   createDebt,
   getAllDebt,
   createDebtMovement,
+  deleteDebt,
 } from "../services/requests/debts";
 import Swal from "sweetalert2";
 
@@ -66,6 +73,32 @@ export default function Deudas() {
   const getCustomerName = (customerId) => {
     const customer = customers.find((c) => c.id === customerId);
     return customer ? customer.name : "Cliente no encontrado";
+  };
+
+  const handleDeleteDebt = async (customerId) => {
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará la deuda y todos sus movimientos. ¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const debt = getCustomerDebt(customerId);
+        if (debt) {
+          await deleteDebt(debt.id);
+          showSuccessAlert("Deuda eliminada correctamente");
+          fetchDebts(); // Actualizar la lista
+        }
+      } catch (error) {
+        showErrorAlert("Error al eliminar la deuda", error);
+      }
+    }
   };
 
   const filteredCustomers = customers.filter((customer) => {
@@ -212,11 +245,8 @@ export default function Deudas() {
   };
 
   return (
-
     <>
-
       <div className="m-0 padding-menu">
-
         <Sidebar />
         <MenuMovil />
         <div className="col p-1" style={{ minHeight: "100vh" }}>
@@ -246,7 +276,6 @@ export default function Deudas() {
                 />
               </div>
             </div>
-            
 
             {/* Cards de clientes con deudas */}
             <div className="row mx-0">
@@ -254,7 +283,10 @@ export default function Deudas() {
                 filteredCustomers.map((customer) => {
                   const debt = getCustomerDebt(customer.id);
                   return (
-                    <div className="col-12 col-sm-6 col-lg-4 col-xl-4 p-2" key={customer.id}>
+                    <div
+                      className="col-12 col-sm-6 col-lg-4 col-xl-4 p-2"
+                      key={customer.id}
+                    >
                       <div className="card">
                         <div className="card-body">
                           <div className="d-flex align-items-center mb-3">
@@ -262,7 +294,9 @@ export default function Deudas() {
                               <FaUser size={24} />
                             </div>
                             <div>
-                              <h5 className="card-title mb-0">{customer.name}</h5>
+                              <h5 className="card-title mb-0">
+                                {customer.name}
+                              </h5>
                             </div>
                           </div>
 
@@ -302,10 +336,19 @@ export default function Deudas() {
                                 </button>
                                 <button
                                   className="btn btn-sm btn-info d-flex align-items-center flex-grow-1"
-                                  onClick={() => handleViewMovements(customer.id)}
+                                  onClick={() =>
+                                    handleViewMovements(customer.id)
+                                  }
                                 >
                                   <FaHistory className="me-1" />
                                   Movimientos
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-danger d-flex align-items-center flex-grow-1"
+                                  onClick={() => handleDeleteDebt(customer.id)}
+                                >
+                                  <FaTrash className="me-1" />
+                                  Eliminar
                                 </button>
                               </div>
                             </>
@@ -344,7 +387,9 @@ export default function Deudas() {
 
                   <form onSubmit={handleSubmit}>
                     <div className="modal-body">
-                      {error && <div className="alert alert-danger">{error}</div>}
+                      {error && (
+                        <div className="alert alert-danger">{error}</div>
+                      )}
 
                       <div className="mb-4">
                         <label className="form-label d-flex align-items-center">
@@ -481,7 +526,9 @@ export default function Deudas() {
 
                   <form onSubmit={handleActionSubmit}>
                     <div className="modal-body">
-                      {error && <div className="alert alert-danger">{error}</div>}
+                      {error && (
+                        <div className="alert alert-danger">{error}</div>
+                      )}
 
                       {selectedCustomer && selectedDebt && (
                         <>
@@ -544,7 +591,9 @@ export default function Deudas() {
                       <button
                         type="submit"
                         className={`btn ${
-                          actionType === "payment" ? "btn-success" : "btn-warning"
+                          actionType === "payment"
+                            ? "btn-success"
+                            : "btn-warning"
                         }`}
                         disabled={loading}
                       >
@@ -571,10 +620,9 @@ export default function Deudas() {
               ></div>
             )}
           </div>
-          <Footer/>
+          <Footer />
         </div>
       </div>
-      
     </>
   );
 }
