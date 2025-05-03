@@ -33,7 +33,6 @@ const OrderForm = ({ orden: propOrden }) => {
 
   const [showModal, setShowModal] = useState(false);
 
-
   useEffect(() => {
     if (propOrden) {
       setOrder(propOrden);
@@ -187,31 +186,29 @@ const OrderForm = ({ orden: propOrden }) => {
   return (
     <div className="card mb-6 p-3">
       <div className="col d-flex">
-      <h4>Orden #{order.id ?? "(nueva)"}</h4>
-      <p className="text-muted text-end ms-auto my-auto">
-        {new Date(order.date).toLocaleString()}
-      </p>
+        <h4>Orden #{order.id ?? "(nueva)"}</h4>
+        <p className="text-muted text-end ms-auto my-auto">
+          {new Date(order.date).toLocaleString()}
+        </p>
       </div>
 
       <div className="d-flex mb-2">
-        <button className="btn bg-info btn-sm text-white" onClick={() => setShowModal(true)}>
-          {order.customer? "Cambiar Cliente" : "Seleccionar Cliente"}
+        <button
+          className="btn bg-info btn-sm text-white"
+          onClick={() => setShowModal(true)}
+        >
+          {order.customer ? "Cambiar Cliente" : "Seleccionar Cliente"}
         </button>
         <div className="ps-2 my-auto">
-        {order.customer ? (
-        <span className="text-dark">
-          <strong>Seleccionado:</strong> {order.customer.name}
-        </span>
-        ) : (
-          <p className="text-muted my-auto">Ningún cliente seleccionado</p>
-        )}
+          {order.customer ? (
+            <span className="text-dark">
+              <strong>Seleccionado:</strong> {order.customer.name}
+            </span>
+          ) : (
+            <p className="text-muted my-auto">Ningún cliente seleccionado</p>
+          )}
         </div>
-        
       </div>
-      
-      
-
-      
 
       {/* Modal */}
       {showModal && (
@@ -235,7 +232,9 @@ const OrderForm = ({ orden: propOrden }) => {
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     const filtered = customers.filter((c) =>
-                      c.name.toLowerCase().includes(e.target.value.toLowerCase())
+                      c.name
+                        .toLowerCase()
+                        .includes(e.target.value.toLowerCase())
                     );
                     setFilteredCustomers(filtered);
                   }}
@@ -251,7 +250,6 @@ const OrderForm = ({ orden: propOrden }) => {
                         handleSubmit(); // simula el evento de submit
                         setShowModal(false);
                         // Ejecutar el guardado automáticamente después de seleccionar cliente
-                        
                       }}
                       style={{ cursor: "pointer" }}
                     >
@@ -264,7 +262,6 @@ const OrderForm = ({ orden: propOrden }) => {
           </div>
         </div>
       )}
-
 
       <h5>Productos</h5>
       <ul className="list-group mb-3">

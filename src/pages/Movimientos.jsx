@@ -1,28 +1,32 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  getDebtByCustomer,
   getDebtByCustomerId,
+  deleteDebtMovement,
 } from "../services/requests/debts";
-import { FaArrowLeft, FaMoneyBillWave, FaMoneyCheckAlt } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaMoneyBillWave,
+  FaMoneyCheckAlt,
+  FaTrash,
+} from "react-icons/fa";
 import { getCustomerById } from "../services/requests/customers";
-import Footer from "../components/Footer"
+import Footer from "../components/Footer";
 import MenuMovil from "../components/MenuMovil";
 import Sidebar from "../components/Sidebar";
+import Swal from "sweetalert2";
 
 const Movimientos = () => {
   const { id_cliente } = useParams();
   const navigate = useNavigate();
-  const [movements, setMovements] = useState([]);
+  const [debtData, setDebtData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [customer, setCustomer] = useState(null);
-  const [currentBalance, setCurrentBalance] = useState(0);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Verificar que id_cliente existe y es un número válido
         if (!id_cliente || isNaN(Number(id_cliente))) {
           throw new Error("ID de cliente inválido");
         }
@@ -31,19 +35,14 @@ const Movimientos = () => {
         const customerData = await getCustomerById(Number(id_cliente));
         setCustomer(customerData);
 
-        // Obtener saldo actual del cliente
-        const balanceResponse = await getDebtByCustomerId(Number(id_cliente));
-        if (balanceResponse && balanceResponse.current_balance !== undefined) {
-          setCurrentBalance(balanceResponse.current_balance);
+        // Obtener datos completos de la deuda (que incluye movimientos con IDs)
+        const debtResponse = await getDebtByCustomerId(Number(id_cliente));
+
+        if (!debtResponse) {
+          throw new Error("No se encontró deuda para este cliente");
         }
 
-        // Obtener movimientos del cliente
-        const movementsResponse = await getDebtByCustomer(Number(id_cliente));
-        if (movementsResponse && Array.isArray(movementsResponse)) {
-          setMovements(movementsResponse);
-        } else {
-          setError("No se encontraron movimientos para este cliente");
-        }
+        setDebtData(debtResponse);
       } catch (error) {
         console.error("Error al cargar datos:", error);
         setError(error.message || "Error al cargar los datos");
@@ -61,6 +60,38 @@ const Movimientos = () => {
       currency: "COP",
       minimumFractionDigits: 2,
     }).format(amount);
+  };
+
+  const handleDeleteMovement = async (movementId) => {
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará el movimiento y ajustará el saldo. ¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteDebtMovement(movementId);
+
+        // Recargar los datos después de eliminar
+        const updatedDebt = await getDebtByCustomerId(Number(id_cliente));
+        setDebtData(updatedDebt);
+
+        Swal.fire("¡Eliminado!", "El movimiento ha sido eliminado.", "success");
+      } catch (error) {
+        Swal.fire(
+          "Error",
+          "No se pudo eliminar el movimiento: " +
+            (error.response?.data?.detail || error.message),
+          "error"
+        );
+      }
+    }
   };
 
   const formatDate = (dateString) => {
@@ -109,13 +140,11 @@ const Movimientos = () => {
   }
 
   return (
-
     <>
       <div className="m-0 padding-menu">
         <Sidebar />
         <MenuMovil />
         <div className="col p-2" style={{ minHeight: "100vh" }}>
-
           <div className="card">
             <div className="card-header p-3 bg-dark text-white">
               <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
@@ -126,7 +155,10 @@ const Movimientos = () => {
                   <FaArrowLeft className="me-2" />
                   Volver
                 </button>
-                <h4 className="mb-0 text-white">Movimientos de {customer ? customer.name : `Cliente ${id_cliente}`}</h4>
+                <h4 className="mb-0 text-white">
+                  Movimientos de{" "}
+                  {customer ? customer.name : `Cliente ${id_cliente}`}
+                </h4>
               </div>
             </div>
             <div className="card-body p-2">
@@ -135,7 +167,7 @@ const Movimientos = () => {
                 <div className="border p-2 card">
                   <h5 className="text-dark mb-0 text-center">Saldo actual</h5>
                   <h3 className="mb-0 text-success">
-                    {formatCurrency(currentBalance)}
+                    {formatCurrency(debtData?.current_balance || 0)}
                   </h3>
                 </div>
               </div>
@@ -147,18 +179,19 @@ const Movimientos = () => {
                       <th>Fecha</th>
                       <th>Tipo de movimiento</th>
                       <th className="text-end">Monto</th>
+                      <th>Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {movements.map((movement, index) => (
-                      <tr key={index}>
-                        <td>{formatDate(movement.date)}</td>
+                    {debtData?.movements?.map((movement) => (
+                      <tr key={movement.id}>
+                        <td>{formatDate(movement.movement_date)}</td>
                         <td>
                           <div className="d-flex align-items-center">
                             {movement.movement_type === "PAYMENT" ? (
-                              <FaMoneyCheckAlt className="text-danger me-2" />
+                              <FaMoneyCheckAlt className="text-success me-2" />
                             ) : (
-                              <FaMoneyBillWave className="text-success me-2" />
+                              <FaMoneyBillWave className="text-danger me-2" />
                             )}
                             {movement.movement_type === "PAYMENT"
                               ? "Pago"
@@ -169,13 +202,21 @@ const Movimientos = () => {
                           <span
                             className={`font-weight-bold ${
                               movement.movement_type === "PAYMENT"
-                                ? "text-danger"
-                                : "text-success"
+                                ? "text-success"
+                                : "text-danger"
                             }`}
                           >
                             {movement.movement_type === "PAYMENT" ? "-" : "+"}
-                            {formatCurrency(movement.movement_amount)}
+                            {formatCurrency(movement.amount)}
                           </span>
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleDeleteMovement(movement.id)}
+                          >
+                            <FaTrash />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -185,11 +226,10 @@ const Movimientos = () => {
             </div>
           </div>
 
-          <Footer/>
+          <Footer />
         </div>
       </div>
     </>
-    
   );
 };
 
