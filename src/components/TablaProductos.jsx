@@ -216,7 +216,7 @@ const VentaTable = () => {
                 style={{ height: "100%" }}
               >
                 <span
-                  className="bg-success opacity-9 pb-1 col-sm-3 text-white text-center position-absolute"
+                  className="bg-success opacity-9 pb-1 col-4 text-white text-center position-absolute"
                   style={{ zIndex: 3, borderRadius: "10px 0px 20px" }}
                 >
                   {producto.profit_percentage}%
