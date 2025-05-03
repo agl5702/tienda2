@@ -6,6 +6,9 @@ import {
 } from "../services/requests/debts";
 import { FaArrowLeft, FaMoneyBillWave, FaMoneyCheckAlt } from "react-icons/fa";
 import { getCustomerById } from "../services/requests/customers";
+import Footer from "../components/Footer"
+import MenuMovil from "../components/MenuMovil";
+import Sidebar from "../components/Sidebar";
 
 const Movimientos = () => {
   const { id_cliente } = useParams();
@@ -106,31 +109,31 @@ const Movimientos = () => {
   }
 
   return (
-    <div className="container-fluid p-0">
-      <div className="row g-0">
-        <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <button
-              className="btn btn-light d-flex align-items-center me-3"
-              onClick={() => navigate("/deudas")}
-            >
-              <FaArrowLeft className="me-2" />
-              Volver
-            </button>
-            <h1 className="h2 mb-0">Movimientos del cliente</h1>
-          </div>
 
-          <div className="card mb-4">
-            <div className="card-header bg-info text-white">
-              <h4 className="mb-0">
-                {customer ? customer.name : `Cliente ${id_cliente}`}
-              </h4>
+    <>
+      <div className="m-0 padding-menu">
+        <Sidebar />
+        <MenuMovil />
+        <div className="col p-2" style={{ minHeight: "100vh" }}>
+
+          <div className="card">
+            <div className="card-header p-3 bg-dark text-white">
+              <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                <button
+                  className="btn btn-light d-flex align-items-center btn-sm mb-2 mb-md-0"
+                  onClick={() => navigate("/deudas")}
+                >
+                  <FaArrowLeft className="me-2" />
+                  Volver
+                </button>
+                <h4 className="mb-0 text-white">Movimientos de {customer ? customer.name : `Cliente ${id_cliente}`}</h4>
+              </div>
             </div>
-            <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                <h5 className="mb-0">Historial de movimientos</h5>
-                <div className="balance-display">
-                  <span className="text-muted">Saldo actual:</span>
+            <div className="card-body p-2">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <h5 className="mb-0 col-6">Historial de movimientos</h5>
+                <div className="border p-2 card">
+                  <span className="text-muted">Saldo actual</span>
                   <h3 className="mb-0 text-success">
                     {formatCurrency(currentBalance)}
                   </h3>
@@ -153,9 +156,9 @@ const Movimientos = () => {
                         <td>
                           <div className="d-flex align-items-center">
                             {movement.movement_type === "PAYMENT" ? (
-                              <FaMoneyCheckAlt className="text-success me-2" />
+                              <FaMoneyCheckAlt className="text-danger me-2" />
                             ) : (
-                              <FaMoneyBillWave className="text-danger me-2" />
+                              <FaMoneyBillWave className="text-success me-2" />
                             )}
                             {movement.movement_type === "PAYMENT"
                               ? "Pago"
@@ -166,8 +169,8 @@ const Movimientos = () => {
                           <span
                             className={`font-weight-bold ${
                               movement.movement_type === "PAYMENT"
-                                ? "text-success"
-                                : "text-danger"
+                                ? "text-danger"
+                                : "text-success"
                             }`}
                           >
                             {movement.movement_type === "PAYMENT" ? "-" : "+"}
@@ -181,9 +184,12 @@ const Movimientos = () => {
               </div>
             </div>
           </div>
-        </main>
+
+          <Footer/>
+        </div>
       </div>
-    </div>
+    </>
+    
   );
 };
 
