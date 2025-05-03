@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import { formatNumber } from "../services/utils/format.js";
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 import Modal from "./Modal.jsx";
+import { HiClipboardDocumentList } from "react-icons/hi2";
 
 const VentaTable = () => {
   const [productos, setProductos] = useState([]);
@@ -104,7 +105,7 @@ const VentaTable = () => {
                 <p><strong>Producto:</strong> ${productoSeleccionado.name}</p>
                 <p><strong>Operación:</strong> ${
                   currentOperation === "add" ? "Añadido" : "Restado"
-                } ${quantityValue} unidades</p>
+                } ${quantityValue} ${productoSeleccionado.unit}</p>
               </div>`,
         showConfirmButton: true,
         timer: 3000,
@@ -232,7 +233,7 @@ const VentaTable = () => {
                   }}
                   onClick={() => abrirModalOpcionesStock(producto)}
                 >
-                  +
+                  <HiClipboardDocumentList/>
                 </button>
 
                 <div
@@ -388,7 +389,8 @@ const VentaTable = () => {
       <Modal
         isOpen={showStockOptionsModal}
         onClose={() => setShowStockOptionsModal(false)}
-        title={`Gestión de stock - ${productoSeleccionado?.name}`}
+        title={`Gestión de stock de ${productoSeleccionado?.name}`}
+        footer={"d-none"}
       >
         <div className="text-center mb-3">
           <p>Seleccione la operación que desea realizar:</p>
@@ -396,16 +398,16 @@ const VentaTable = () => {
 
         <div className="d-flex justify-content-center gap-3">
           <button
-            className="btn btn-info text-white"
+            className="btn btn-success text-white"
             onClick={() => abrirModalCantidad("add")}
           >
-            Sumar stock
+            Sumar a stock
           </button>
           <button
-            className="btn btn-dark"
+            className="btn btn-danger"
             onClick={() => abrirModalCantidad("remove")}
           >
-            Restar stock
+            Restar a stock
           </button>
           <button
             className="btn btn-secondary"
@@ -423,14 +425,26 @@ const VentaTable = () => {
         title={`${currentOperation === "add" ? "Sumar" : "Restar"} stock - ${
           productoSeleccionado?.name
         }`}
+        footer={"d-none"}
       >
-        <div className="mb-4">
-          <label className="form-label fw-bold">
-            Cantidad a {currentOperation === "add" ? "sumar" : "restar"}:
-          </label>
+        <div className="mb-2">
+          <div className="d-flex">
+            <label className="form-label fw-bold text-dark ">
+              Cantidad a {currentOperation === "add" ? "sumar" : "restar"}
+            </label>
+            <div className="col text-end">
+              {productoSeleccionado?.stock !== null &&
+                productoSeleccionado?.stock !== undefined && (
+                  <small className="text-dark border border-dark py-1 px-3 border-radius-2xl">
+                    Stock actual: {productoSeleccionado.stock} /{productoSeleccionado.unit}
+                  </small>
+              )}
+            </div>
+          </div>
+          
           <input
             type="number"
-            className="form-control border-primary"
+            className="form-control border-primary px-2 border border-dark"
             value={stockQuantity}
             onChange={(e) => {
               const value = e.target.value;
@@ -445,14 +459,26 @@ const VentaTable = () => {
             step="0.01"
             disabled={isProcessing}
           />
-          {productoSeleccionado?.stock !== null &&
-            productoSeleccionado?.stock !== undefined && (
-              <small className="text-muted">
-                Stock actual: {productoSeleccionado.stock}
-              </small>
-            )}
+          
         </div>
 
+        {stockQuantity > 0 && (
+          <div className="col text-center mb-3 mt-3">
+            {productoSeleccionado?.stock !== null &&
+              productoSeleccionado?.stock !== undefined && (
+                <small className="text-dark border border-dark py-1 px-3 rounded-pill">
+                  El Nuevo Stock Será: {Math.max(
+                    0,
+                    currentOperation === "add"
+                      ? Number(productoSeleccionado.stock) + Number(stockQuantity)
+                      : Number(productoSeleccionado.stock) - Number(stockQuantity)
+                  )} /{productoSeleccionado.unit}
+                </small>
+              )}
+          </div>
+        )}
+        
+        
         <div className="text-center">
           <button
             className="btn btn-secondary"
