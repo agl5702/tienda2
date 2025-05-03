@@ -121,7 +121,7 @@ export default function Ventas() {
   };
 
   // Constante para el ID del producto a filtrar (precio 0)
-  const PRODUCTO_A_FILTRAR = 20;
+  const PRODUCTO_A_FILTRAR = 2;
 
   // Función para mostrar alerta de éxito
   const showSuccessAlert = (message) => {
