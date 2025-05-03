@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOrderById } from "../services/requests/orders";
-import { getDebtsById } from "../services/requests/debts";
+// import { getDebtsById } from "../services/requests/debts";
 import { PDFViewer } from "@react-pdf/renderer";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import FacturaPDF from "../components/FacturaPDF.jsx";

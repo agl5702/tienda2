@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://tienda-online.site"; // Cambia esto por la URL de tu API
+const API_URL = "http://localhost:8000"; // Cambia esto por la URL de tu API
 
 const api = axios.create({
   baseURL: API_URL,
