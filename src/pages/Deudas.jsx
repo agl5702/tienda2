@@ -291,7 +291,7 @@ export default function Deudas() {
                         <div className="card-body">
                           <div className="d-flex align-items-center mb-3">
                             <div className="me-3 text-info">
-                              <FaUser size={24} />
+                              <FaUser size={30} />
                             </div>
                             <div>
                               <h5 className="card-title mb-0">
@@ -302,13 +302,13 @@ export default function Deudas() {
 
                           {debt && (
                             <>
-                              <div className="d-flex justify-content-between align-items-center mb-3">
-                                <span className="fw-bold">Saldo actual:</span>
+                              <div className="d-flex justify-content-between align-items- mb-3">
+                                <span className="text-dark ">Saldo actual →</span>
                                 <span
-                                  className={`badge ${
+                                  className={`badge border ${
                                     debt.current_balance > 0
-                                      ? "bg-danger"
-                                      : "bg-success"
+                                      ? "border-danger text-danger"
+                                      : "border-success text-success"
                                   }`}
                                 >
                                   ${debt.current_balance.toFixed(2)}
@@ -317,7 +317,7 @@ export default function Deudas() {
 
                               <div className="d-flex justify-content-between flex-wrap gap-2">
                                 <button
-                                  className="btn btn-sm btn-dark d-flex align-items-center flex-grow-1"
+                                  className="btn btn-sm btn-danger d-flex align-items-center flex-grow-1"
                                   onClick={() =>
                                     showActionModal(customer, "payment")
                                   }
@@ -326,7 +326,7 @@ export default function Deudas() {
                                   Abonar
                                 </button>
                                 <button
-                                  className="btn btn-sm btn-secondary d-flex align-items-center flex-grow-1"
+                                  className="btn btn-sm btn-success d-flex align-items-center flex-grow-1"
                                   onClick={() =>
                                     showActionModal(customer, "increment")
                                   }
@@ -335,7 +335,7 @@ export default function Deudas() {
                                   Incrementar
                                 </button>
                                 <button
-                                  className="btn btn-sm btn-info d-flex align-items-center flex-grow-1"
+                                  className="btn btn-sm btn-warning d-flex align-items-center flex-grow-1"
                                   onClick={() =>
                                     handleViewMovements(customer.id)
                                   }
@@ -343,13 +343,16 @@ export default function Deudas() {
                                   <FaHistory className="me-1" />
                                   Movimientos
                                 </button>
-                                <button
-                                  className="btn btn-sm btn-danger d-flex align-items-center flex-grow-1"
-                                  onClick={() => handleDeleteDebt(customer.id)}
-                                >
-                                  <FaTrash className="me-1" />
-                                  Eliminar
-                                </button>
+
+                                <div className={`${debt.current_balance > 0 ? "d-none disabled": ""}`} style={{position:"absolute", top:"5px", right:"5px"}}>
+                                  <button
+                                    className="btn btn-sm btn-info px-2 py-1"
+                                    onClick={() => handleDeleteDebt(customer.id)}
+                                  >
+                                    <FaTrash/>
+                                  </button>
+                                </div>
+                                
                               </div>
                             </>
                           )}
@@ -360,7 +363,7 @@ export default function Deudas() {
                 })
               ) : (
                 <div className="col-12 text-center py-5">
-                  <div className="alert alert-info">
+                  <div className="alert text-dark">
                     {searchTerm
                       ? "No se encontraron clientes con deudas que coincidan con la búsqueda"
                       : "No hay clientes con deudas registradas"}
@@ -377,7 +380,7 @@ export default function Deudas() {
               <div className="modal-dialog modal-lg">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h5 className="modal-title">Crear Nueva Deuda</h5>
+                    <h5 className="modal-title">Crear Nuevo Deudor</h5>
                     <button
                       type="button"
                       className="btn-close"
@@ -393,17 +396,14 @@ export default function Deudas() {
 
                       <div className="mb-4">
                         <label className="form-label d-flex align-items-center">
-                          <FaUser className="me-2" />
+                          <FaUser className="me-2 text-info" />
                           Seleccionar Cliente
                         </label>
 
                         <div className="input-group mb-3">
-                          <span className="input-group-text">
-                            <FaSearch />
-                          </span>
                           <input
                             type="text"
-                            className="form-control border border-2 ps-3"
+                            className="form-control  border border-2 px-3"
                             placeholder="Buscar cliente por nombre..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -411,15 +411,15 @@ export default function Deudas() {
                         </div>
 
                         <div
-                          className="customer-selection-container"
-                          style={{ maxHeight: "300px", overflowY: "auto" }}
+                          className="customer-selection-container bg-gray-200 p-2"
+                          style={{ maxHeight: "230px", overflowY: "auto" }}
                         >
                           {customers.filter((c) =>
                             c.name
                               .toLowerCase()
                               .includes(searchTerm.toLowerCase())
                           ).length > 0 ? (
-                            <div className="row row-cols-1 row-cols-md-2 g-3">
+                            <div className="row row-cols-1 row-cols-md-2 g-2">
                               {customers
                                 .filter((c) =>
                                   c.name
@@ -431,7 +431,7 @@ export default function Deudas() {
                                     <div
                                       className={`card h-100 cursor-pointer ${
                                         selectedCustomer?.id === customer.id
-                                          ? "border-primary bg-light"
+                                          ? "border-info border border-2 bg-light"
                                           : ""
                                       }`}
                                       onClick={() =>
@@ -439,7 +439,7 @@ export default function Deudas() {
                                       }
                                     >
                                       <div className="card-body d-flex align-items-center">
-                                        <div className="me-3 text-primary">
+                                        <div className="me-3 text-info">
                                           <FaUser size={24} />
                                         </div>
                                         <div>
@@ -460,8 +460,8 @@ export default function Deudas() {
                         </div>
 
                         {selectedCustomer && (
-                          <div className="alert alert-info mt-3">
-                            <strong>Cliente seleccionado:</strong>{" "}
+                          <div className="alert border border-info border-2 text-dark mt-3">
+                            <strong className="text-info">Cliente seleccionado:</strong>{" "}
                             {selectedCustomer.name}
                           </div>
                         )}
@@ -477,7 +477,6 @@ export default function Deudas() {
                           onChange={(e) => setInitialBalance(e.target.value)}
                           min="0"
                           step="0.01"
-                          required
                         />
                       </div>
                     </div>
@@ -496,7 +495,7 @@ export default function Deudas() {
                         className="btn btn-info"
                         disabled={loading || !selectedCustomer}
                       >
-                        {loading ? "Creando..." : "Crear Deuda"}
+                        {loading ? "Creando..." : "Crear Deudor"}
                       </button>
                     </div>
                   </form>

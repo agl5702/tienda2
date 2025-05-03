@@ -161,71 +161,73 @@ const Movimientos = () => {
                 </h4>
               </div>
             </div>
-            <div className="card-body p-2">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <h5 className="mb-0 col-6">Historial de movimientos</h5>
-                <div className="border p-2 card">
-                  <h5 className="text-dark mb-0 text-center">Saldo actual</h5>
-                  <h3 className="mb-0 text-success">
-                    {formatCurrency(debtData?.current_balance || 0)}
-                  </h3>
+            <div className="col-lg-11 col-xl-10 col-xxl-8 mx-auto">
+              <div className="card-body p-2">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <h5 className="mb-0 col-6">Historial de movimientos</h5>
+                  <div className="border p-2 card">
+                    <h5 className="text-dark mb-0 text-center text-end">Saldo actual</h5>
+                    <h5 className="mb-0 text-success text-end">
+                      {formatCurrency(debtData?.current_balance || 0)}
+                    </h5>
+                  </div>
+                </div>
+
+                <div className="table-responsive">
+                  <table className="table table-hover">
+                    <thead className="table-light">
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Tipo de movimiento</th>
+                        <th className="text-end">Monto</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {debtData?.movements?.map((movement) => (
+                        <tr key={movement.id}>
+                          <td>{formatDate(movement.movement_date)}</td>
+                          <td>
+                            <div className="d-flex align-items-center">
+                              {movement.movement_type === "PAYMENT" ? (
+                                <FaMoneyCheckAlt className="text-danger me-2" />
+                              ) : (
+                                <FaMoneyBillWave className="text-success me-2" />
+                              )}
+                              {movement.movement_type === "PAYMENT"
+                                ? "Pago"
+                                : "Incremento"}
+                            </div>
+                          </td>
+                          <td className="text-end">
+                            <span
+                              className={`font-weight-bold ${
+                                movement.movement_type === "PAYMENT"
+                                  ? "text-danger"
+                                  : "text-success"
+                              }`}
+                            >
+                              {movement.movement_type === "PAYMENT" ? "-" : "+"}
+                              {formatCurrency(movement.amount)}
+                            </span>
+                          </td>
+                          <td>
+                            <button
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleDeleteMovement(movement.id)}
+                            >
+                              <FaTrash />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-
-              <div className="table-responsive">
-                <table className="table table-hover">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Fecha</th>
-                      <th>Tipo de movimiento</th>
-                      <th className="text-end">Monto</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {debtData?.movements?.map((movement) => (
-                      <tr key={movement.id}>
-                        <td>{formatDate(movement.movement_date)}</td>
-                        <td>
-                          <div className="d-flex align-items-center">
-                            {movement.movement_type === "PAYMENT" ? (
-                              <FaMoneyCheckAlt className="text-success me-2" />
-                            ) : (
-                              <FaMoneyBillWave className="text-danger me-2" />
-                            )}
-                            {movement.movement_type === "PAYMENT"
-                              ? "Pago"
-                              : "Incremento"}
-                          </div>
-                        </td>
-                        <td className="text-end">
-                          <span
-                            className={`font-weight-bold ${
-                              movement.movement_type === "PAYMENT"
-                                ? "text-success"
-                                : "text-danger"
-                            }`}
-                          >
-                            {movement.movement_type === "PAYMENT" ? "-" : "+"}
-                            {formatCurrency(movement.amount)}
-                          </span>
-                        </td>
-                        <td>
-                          <button
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDeleteMovement(movement.id)}
-                          >
-                            <FaTrash />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
+            
           </div>
-
           <Footer />
         </div>
       </div>
