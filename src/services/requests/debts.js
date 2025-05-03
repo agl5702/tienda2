@@ -1,57 +1,36 @@
-import { fetchData } from "@/services/api.js";
+import {fetchData} from "@/services/api.js"
 
-// Obtener las ganancias por día
-export const getAllDebts = async () => {
-  // Obtener todas las deudas
+// Obtener una deuda por id
+export const getAllDebt = async (id) => {
   return fetchData("GET", `/debts/`);
-};
+}
 
-// Obtener las estadísticas de deudas
-export const getDebtStats = async () => {
-  // Obtener todas las deudas
-  return fetchData("GET", `/debts/summary/`);
-};
-
-// Crear nueva deuda
+// Crear una deuda
 export const createDebt = async (data) => {
-  return fetchData("POST", `/debts/`, {
-    customer_id: data.customer_id,
-    total_amount: parseFloat(data.total_amount)
-  });
+  return fetchData("POST", "/debts/", data);
 };
 
-// Editar una deuda 
-export const editDebts = async (debt_id,data) =>{
-  return fetchData("PUT",`/debts/${debt_id}/`,data);
-}
-
-// Eliminar una deuda
-export const deleteDebts = async (debt_id) =>{
-  return fetchData("DELETE",`/debts/${debt_id}/`);
-}
-// Abono de una deuda
-export const paymentDebts = async (debt_id, amount) => {
-  const paymentData = {
-    amount: parseFloat(amount),
-    debt_id: parseInt(debt_id),
-    notes: "Abono" // Siempre envía "Abono" como nota
-  };
-  
-  return fetchData("POST", `/debts/${debt_id}/payments`, paymentData);
+// Crear un movimiento ---> PAYMENT / NEW_BALANCE 
+export const createDebtMovement = async (id, data) => {
+  return fetchData("POST", `/debts/${id}/movements`, data);
+};
+// Actualizar una deuda
+export const updateDebt = async (id, data) => {
+  return fetchData("PATCH", `/debts/${id}`, data);
 };
 
-// Obtener deuda de un usuario
-export const getDebtsById = async (debt_id) =>{
-  return fetchData("GET",`/debts/customers/${debt_id}/info`);
-}
+// Obtener una deuda por id
+export const getDebtById = async (id) => {
+  return fetchData("GET", `/debts/${id}`);
+};
 
-// Obtener deudas pagadas
-export const getPaidDebts = async (paid) => {
-  try {
-    return await fetchData("GET", `/debts/?is_paid=${paid}`);
-  } catch (error) {
-    console.error("Error fetching paid debts:", error);
-    throw error; // Opcional: re-lanzar el error si lo manejas fuera
-  }
+// Obtener una deuda por id
+export const getDebtByCustomer = async (customer_id) => {
+  return fetchData("GET", `/debts/customer/${customer_id}/history`);
+};
+
+// Obtener una deuda por id
+export const getDebtByCustomerId = async (customer_id) => {
+  return fetchData("GET", `/debts/customer/${customer_id}`);
 };
 

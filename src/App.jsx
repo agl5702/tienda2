@@ -59,10 +59,14 @@ function App() {
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/reportes/detalle/:date" element={<VerReporte />} />
           <Route path="/reportes/dia/:date" element={<DetalleDia />} />
+
+          <Route
+            path="/deudas/movimiento/:id_cliente"
+            element={<Movimientos />}
+          />
         </Route>
 
         {/* Ruta de Not Found */}
-        <Route path="*" element={<Movimientos />} />
       </Routes>
     </BrowserRouter>
   );

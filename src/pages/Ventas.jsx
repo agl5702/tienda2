@@ -6,7 +6,6 @@ import {
   putOrder,
   deleteOrder,
 } from "../services/requests/orders";
-import { createDebt, paymentDebts } from "../services/requests/debts.js";
 import { getAllProducts } from "../services/requests/products";
 import { createSale } from "../services/requests/sales";
 import { getAllCustomers } from "../services/requests/customers";
@@ -359,7 +358,7 @@ export default function Ventas() {
     saveToStorage("orderUsers", { ...orderUsers, [ventaId]: clienteId });
     saveToStorage("detalleVentas", { ...detalleVentas, ...nuevoDetalleVentas });
   };
-  
+
   // Función para eliminar una orden pendiente
   const eliminarOrdenPendiente = async (ordenId) => {
     const confirmed = await confirmDelete(
