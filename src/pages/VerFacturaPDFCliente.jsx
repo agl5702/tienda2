@@ -6,6 +6,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import FacturaPDF from "../components/FacturaPDF.jsx";
 import { FaFileDownload } from "react-icons/fa";
 import { BsArrowLeft } from "react-icons/bs";
+import Navbar  from "../components/Footer.jsx";
 
 const VerFacturaPDFCliente = () => {
   const { id } = useParams();
@@ -83,6 +84,9 @@ const VerFacturaPDFCliente = () => {
       <div className="container d-flex justify-content-center align-items-center vh-100">
         <div className="card p-4 shadow" style={{ maxWidth: "500px", width: "100%" }}>
           <div className="card-body text-center">
+          <div className="bg-white p-2 mx-auto mt-n7" style={{width:"130px", borderRadius:"50%", height:"127px"}}>
+              <img src="/logo_empresa.png" className="icon icon-xl pt-2" alt="logo" />
+            </div>
             <h3 className="mb-4">Validar Factura</h3>
             <p className="mb-4">Por favor ingrese su número de cédula para descargar la factura</p>
             
@@ -129,6 +133,9 @@ const VerFacturaPDFCliente = () => {
               </div>
             </form>
           </div>
+          <div className="mb-n5">
+            <Navbar/>
+          </div>
         </div>
       </div>
     );
@@ -139,6 +146,9 @@ const VerFacturaPDFCliente = () => {
       <div className="container d-flex justify-content-center align-items-center vh-100">
         <div className="card p-4 shadow" style={{ maxWidth: "500px", width: "100%" }}>
           <div className="card-body text-center">
+            <div className="bg-white p-2 mx-auto mt-n7" style={{width:"130px", borderRadius:"50%", height:"127px"}}>
+              <img src="/logo_empresa.png" className="icon icon-xl pt-2" alt="logo" />
+            </div>
             <h3 className="mb-4">Factura Validada</h3>
             <p className="mb-4">¡Validación exitosa! Ahora puedes descargar tu factura.</p>
             
@@ -152,7 +162,7 @@ const VerFacturaPDFCliente = () => {
                   />
                 }
                 fileName={`factura_${order.id}.pdf`}
-                className="btn btn-info"
+                className="btn btn-success text-white"
               >
                 {({ loading }) => (
                   <>
@@ -163,7 +173,7 @@ const VerFacturaPDFCliente = () => {
                       </>
                     ) : (
                       <>
-                        <FaFileDownload className="me-2" />
+                        <FaFileDownload className="me-2 h5 my-auto text-white" />
                         Descargar Factura
                       </>
                     )}
@@ -172,6 +182,9 @@ const VerFacturaPDFCliente = () => {
               </PDFDownloadLink>
               
             </div>
+          </div>
+          <div className="mb-n5">
+            <Navbar/>
           </div>
         </div>
       </div>
