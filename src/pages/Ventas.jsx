@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import MenuMovil from "../components/MenuMovil.jsx";
 import AddDebButton from "../components/AddDebButton.jsx";
+import DownloadInvoiceButton from "../components/DownloadInvoiceButton.jsx";
 import "../components/css/MenuInferior.css";
 import { LuChevronDown } from "react-icons/lu";
 import { FaFileInvoiceDollar } from "react-icons/fa";
@@ -27,6 +28,7 @@ import { HiOutlineDocumentArrowDown } from "react-icons/hi2";
 import { PiFileArrowDownLight } from "react-icons/pi";
 import { FaFileDownload, FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import WhatsAppButton from "../components/WhatsAppButton.jsx"
 
 import { formatQuantity } from "../services/utils/formatQuantity";
 import { formatNumber } from "../services/utils/format.js";
@@ -970,18 +972,14 @@ export default function Ventas() {
                                           createDebt={createDebt}
                                           paymentDebts={paymentDebts} // Asegúrate de incluir esto siempre
                                         /> */}
-                                        <PDFDownloadLink
-                                          document={
-                                            <FacturaPDF order={orden} />
-                                          }
-                                          fileName={`factura_${orden.id}.pdf`}
-                                        >
-                                          {({ blob, url, loading, error }) => (
-                                            <button className="btn ms-2 btn-sm btn-info">
-                                              <FaFileDownload />
-                                            </button>
-                                          )}
-                                        </PDFDownloadLink>
+                                        
+                                        <WhatsAppButton
+                                          invoiceId={orden.id}          // ID de la factura
+                                          defaultMessage="Hola, Se ha generado la factura de tu pedido, Mirala desde este link:" // Mensaje opcional
+                                        />
+                                        
+                                        <DownloadInvoiceButton order={orden} />
+
                                         <button
                                           className="btn btn-success btn-sm ms-2"
                                           onClick={() =>
@@ -1564,6 +1562,7 @@ export default function Ventas() {
                               <th>Alias</th>
                               {/* <th>Productos</th> */}
                               <th>Total</th>
+                              <th>Estado</th>
                               <th>Acciones</th>
                             </tr>
                           </thead>
@@ -1591,19 +1590,18 @@ export default function Ventas() {
 
                                   <td>$ {formatNumber(total)}</td>
                                   <td>
-                                    <span className="badge border border-success text-success">
+                                  <span className="badge border border-success text-success">
                                       Completado
                                     </span>
-                                    <PDFDownloadLink
-                                      document={<FacturaPDF order={orden} />}
-                                      fileName={`factura_${orden.id}.pdf`}
-                                    >
-                                      {({ blob, url, loading, error }) => (
-                                        <button className="btn ms-2 btn-sm btn-info">
-                                          <FaFileDownload />
-                                        </button>
-                                      )}
-                                    </PDFDownloadLink>
+                                  </td>
+                                  <td>
+                                    
+                                    <DownloadInvoiceButton order={orden} />
+
+                                    <WhatsAppButton
+                                      invoiceId={orden.id}          // ID de la factura
+                                      defaultMessage="Hola, Se ha generado la factura de tu pedido, Mirala desde este link:" // Mensaje opcional
+                                    />
 
                                     <Link
                                       to={`/factura/${orden.id}`}

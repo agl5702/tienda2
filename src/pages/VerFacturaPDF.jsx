@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOrderById } from "../services/requests/orders";
-// import { getDebtsById } from "../services/requests/debts";
+import { getDebtByCustomerId } from "../services/requests/debts";
 import { PDFViewer } from "@react-pdf/renderer";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import FacturaPDF from "../components/FacturaPDF.jsx";
@@ -10,8 +10,8 @@ import Sidebar from "../components/Sidebar.jsx";
 import { BsArrowLeft } from "react-icons/bs";
 import { NavLink } from "react-router-dom";
 import MenuMovil from "../components/MenuMovil.jsx";
+import WhatsAppButton from "../components/WhatsAppButton.jsx"
 
-// Wrapper como componente de clase
 class PDFViewerWrapper extends React.Component {
   shouldComponentUpdate(nextProps) {
     return this.props.children !== nextProps.children;
@@ -36,56 +36,32 @@ class PDFViewerWrapper extends React.Component {
 const VerFacturaPDF = () => {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
-  const [debt, setDebt] = useState([]);
+  const [currentBalance, setCurrentBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [lastUpdated, setLastUpdated] = useState(null);
 
-  // Función para cargar la deuda
-  const loadDebt = async (customerId) => {
-    try {
-      const debtData = await getDebtsById(customerId);
-      console.log("Datos de deuda actualizados:", debtData);
-      setDebt(Array.isArray(debtData) ? debtData : []);
-      setLastUpdated(new Date());
-    } catch (debtError) {
-      console.warn("No se pudo obtener la deuda:", debtError);
-      setDebt([]);
-    }
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 1. Obtener la orden
+        const orderData = await getOrderById(id);
+        setOrder(orderData);
 
-  // Función para recargar los datos
-  const reloadData = async () => {
-    setLoading(true);
-    try {
-      const orderData = await getOrderById(id);
-      setOrder(orderData);
+        // 2. Si la orden tiene un cliente, obtener su saldo
+        if (orderData?.customer?.id) {
+          const debtData = await getDebtByCustomerId(orderData.customer.id);
+          setCurrentBalance(debtData?.current_balance || 0);
+        }
 
-      if (orderData?.customer?.id) {
-        await loadDebt(orderData.customer.id);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
       }
+    };
 
-      setLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    reloadData();
+    fetchData();
   }, [id]);
-
-  // Actualización periódica cada 30 segundos
-  useEffect(() => {
-    if (order?.customer?.id) {
-      const interval = setInterval(() => {
-        loadDebt(order.customer.id);
-      }, 30000); // Actualiza cada 30 segundos
-
-      return () => clearInterval(interval);
-    }
-  }, [order?.customer?.id]);
 
   if (loading) {
     return (
@@ -102,7 +78,10 @@ const VerFacturaPDF = () => {
     return (
       <div className="alert alert-danger mx-3 mt-3">
         <strong>Error:</strong> {error}
-        <button className="btn btn-sm btn-primary ms-2" onClick={reloadData}>
+        <button 
+          className="btn btn-sm btn-primary ms-2" 
+          onClick={() => window.location.reload()}
+        >
           Reintentar
         </button>
       </div>
@@ -127,31 +106,19 @@ const VerFacturaPDF = () => {
             className="d-flex justify-content-between align-items-center p-3 shadow-sm"
             style={{ backgroundColor: "#1b1b1b" }}
           >
-            <NavLink
-              to="/ventas"
-              className="btn btn-sm bg-white text-dark me-2"
-            >
+            <NavLink to="/ventas" className="btn btn-sm bg-white text-dark me-2">
               <BsArrowLeft /> Volver
             </NavLink>
             <div>
-              <h4 className="mb-0 text-white">Factura #{order.id}</h4>
-              {lastUpdated && (
-                <small className="text-muted">
-                  Actualizado: {lastUpdated.toLocaleTimeString()}
-                </small>
-              )}
+              <h4 className="mb-0 text-white">Factura No. {order.id}</h4>
             </div>
             <div className="d-flex align-items-center">
-              <button
-                className="btn btn-sm btn-warning me-2"
-                onClick={() =>
-                  order?.customer?.id && loadDebt(order.customer.id)
-                }
-              >
-                Actualizar Deuda
-              </button>
-              <PDFDownloadLink
-                document={<FacturaPDF order={order} debt={debt} />}
+            <WhatsAppButton
+              invoiceId={order.id}          // ID de la factura
+              defaultMessage="Hola, Se ha generado la factura de tu pedido, Mirala desde este link:" // Mensaje opcional
+            />
+              <PDFDownloadLink className="ms-2"
+                document={<FacturaPDF order={order} currentBalance={currentBalance} />}
                 fileName={`factura_${order.id}.pdf`}
               >
                 {({ loading }) => (
@@ -167,7 +134,7 @@ const VerFacturaPDF = () => {
 
           <div className="pdf-viewer-container">
             <PDFViewerWrapper>
-              <FacturaPDF order={order} debt={debt} />
+              <FacturaPDF order={order} currentBalance={currentBalance} />
             </PDFViewerWrapper>
           </div>
         </div>

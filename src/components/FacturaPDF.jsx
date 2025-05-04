@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
   },
   table: {
     width: "100%",
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 0,
+    marginBottom: 0,
   },
   tableRow: {
     flexDirection: "row",
@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
     marginTop: -20,
+    marginBottom: 25,
   },
   logo: {
     margin: 0,
@@ -154,14 +155,14 @@ const styles = StyleSheet.create({
     height: 65,
   },
   debtNote: {
-    marginTop: 5,
+    marginTop: 0,
     fontSize: 8,
-    color: "#ff0000",
+    color: "#000",
     textAlign: "right",
   },
 });
 
-const FacturaPDF = ({ order, debt = [] }) => {
+const FacturaPDF = ({ order, currentBalance }) => {
   // Formatear números con separadores de miles
   const formatNumber = (num) => {
     return new Intl.NumberFormat("es-CO", {
@@ -178,7 +179,8 @@ const FacturaPDF = ({ order, debt = [] }) => {
   const total = subtotal;
 
   // Calcular el saldo total sumando todas las deudas
-  const saldo = debt.reduce((total, item) => total + (item.total_debt || 0), 0);
+  // Usa directamente currentBalance
+  const saldo = currentBalance;
 
   return (
     <Document>
@@ -212,10 +214,7 @@ const FacturaPDF = ({ order, debt = [] }) => {
             <Text style={styles.infoText}>
               {order.customer?.phone || "No especificado"}
             </Text>
-            <Text style={styles.infoLabel}>DIRECCIÓN</Text>
-            <Text style={styles.infoText}>
-              {order.customer?.direction || "No especificado"}
-            </Text>
+            
           </View>
           <View style={styles.infoColumn}>
             <Text style={styles.infoLabel}>FECHA</Text>
@@ -225,6 +224,10 @@ const FacturaPDF = ({ order, debt = [] }) => {
             <Text style={styles.infoLabel}>VENTA No.</Text>
             <Text style={styles.infoText}>
               {order.id.toString().padStart(8, "0")}
+            </Text>
+            <Text style={styles.infoLabel}>DIRECCIÓN</Text>
+            <Text style={styles.infoText}>
+              {order.customer?.direction || "No especificado"}
             </Text>
           </View>
         </View>

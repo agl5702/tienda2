@@ -42,8 +42,14 @@ export const getDebtByCustomer = async (customer_id) => {
   return fetchData("GET", `/debts/customer/${customer_id}/history`);
 };
 
-// Obtener una deuda por id
+// services/requests/debts.js
 export const getDebtByCustomerId = async (customer_id) => {
-  return fetchData("GET", `/debts/customer/${customer_id}`);
+  try {
+    const response = await fetchData("GET", `/debts/customer/${customer_id}`);
+    console.log("Respuesta del servicio de deudas:", response);
+    return response;
+  } catch (error) {
+    console.error("Error en getDebtByCustomerId:", error);
+    throw error;
+  }
 };
-

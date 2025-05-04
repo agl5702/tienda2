@@ -12,6 +12,7 @@ import Productos from "./pages/Productos";
 import FormProducto from "./pages/FormProducto";
 import Ventas from "./pages/Ventas";
 import VerFacturaPDF from "./pages/VerFacturaPDF";
+import VerFacturaPDFCliente  from "./pages/VerFacturaPDFCliente";
 import Deudas from "./pages/Deudas";
 import Clientes from "./pages/Clientes";
 import FormCliente from "./pages/FormCliente";
@@ -32,6 +33,7 @@ function App() {
         <Route path="/registro" element={<Register />} />
         <Route path="/password-recovery" element={<PasswordRecovery />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/ver_factura/:id" element={<VerFacturaPDFCliente  />} />
         {/* Rutas protegidas */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Home />} />
