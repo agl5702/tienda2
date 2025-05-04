@@ -1,28 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getOrderById } from "../services/requests/orders";
 import { getDebtByCustomerId } from "../services/requests/debts";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import FacturaPDF from "../components/FacturaPDF.jsx";
 import { FaFileDownload } from "react-icons/fa";
-import { BsArrowLeft } from "react-icons/bs";
 import Navbar from "../components/Footer.jsx";
 
 const VerFacturaPDFCliente = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [currentBalance, setCurrentBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cedula, setCedula] = useState("");
-  const [showValidation, setShowValidation] = useState(true);
   const [validationError, setValidationError] = useState("");
-  const [validationSuccess, setValidationSuccess] = useState(false);
-  const [pdfReady, setPdfReady] = useState(false);
+  const [validationStep, setValidationStep] = useState("initial"); // 'initial', 'validating', 'validated', 'error'
 
   useEffect(() => {
-    const loadInitialData = async () => {
+    const fetchInitialData = async () => {
       try {
         const orderData = await getOrderById(id);
         setOrder(orderData);
@@ -30,33 +26,16 @@ const VerFacturaPDFCliente = () => {
       } catch (err) {
         setError("Error al cargar información de la factura");
         setLoading(false);
+        setValidationStep('error');
       }
     };
 
-    if (showValidation) {
-      loadInitialData();
-    }
-  }, [showValidation, id]);
-
-  const fetchOrderData = async () => {
-    try {
-      const orderData = await getOrderById(id);
-      setOrder(orderData);
-
-      if (orderData?.customer?.id) {
-        const debtData = await getDebtByCustomerId(orderData.customer.id);
-        setCurrentBalance(debtData?.current_balance || 0);
-      }
-
-      return orderData;
-    } catch (err) {
-      setError(err.message);
-      return null;
-    }
-  };
+    fetchInitialData();
+  }, [id]);
 
   const handleValidation = async (e) => {
     e.preventDefault();
+    
     if (!cedula) {
       setValidationError("Por favor ingrese su número de cédula");
       return;
@@ -64,32 +43,35 @@ const VerFacturaPDFCliente = () => {
 
     if (!order) {
       setValidationError("Error al validar la factura");
+      setValidationStep('error');
       return;
     }
 
-    const cedulaRegistrada = order.customer?.cc?.toString().trim().toLowerCase();
-    const cedulaIngresada = cedula.trim().toLowerCase();
+    setValidationStep('validating');
+    setValidationError("");
 
-    if (cedulaRegistrada === cedulaIngresada) {
-      setLoading(true);
-      setValidationError("");
-      
-      try {
-        await fetchOrderData();
-        setValidationSuccess(true);
-        setShowValidation(false);
-        setPdfReady(true); // Marcamos el PDF como listo
-      } catch (error) {
-        setValidationError("Ocurrió un error al validar la factura");
-      } finally {
-        setLoading(false);
+    try {
+      const cedulaRegistrada = order.customer?.cc?.toString().trim().toLowerCase();
+      const cedulaIngresada = cedula.trim().toLowerCase();
+
+      if (cedulaRegistrada !== cedulaIngresada) {
+        throw new Error("La cédula no coincide con la registrada en la factura");
       }
-    } else {
-      setValidationError("La cédula no coincide con la registrada en la factura");
+
+      // Obtener datos adicionales necesarios para el PDF
+      if (order?.customer?.id) {
+        const debtData = await getDebtByCustomerId(order.customer.id);
+        setCurrentBalance(debtData?.current_balance || 0);
+      }
+
+      setValidationStep('validated');
+    } catch (err) {
+      setValidationError(err.message);
+      setValidationStep('initial');
     }
   };
 
-  if (loading && !pdfReady) {
+  if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="spinner-border text-info" role="status">
@@ -99,25 +81,32 @@ const VerFacturaPDFCliente = () => {
     );
   }
 
-  if (error) {
+  if (error || validationStep === 'error') {
     return (
       <div className="container d-flex justify-content-center align-items-center vh-100">
-        <div className="alert alert-danger text-center">
-          <strong>Error:</strong> {error}
-          <div className="mt-3">
+        <div className="card p-4 shadow" style={{ maxWidth: "500px", width: "100%" }}>
+          <div className="card-body text-center">
+            <div className="bg-white p-2 mx-auto mt-n7" style={{width:"130px", borderRadius:"50%", height:"127px"}}>
+              <img src="/logo_empresa.png" className="icon icon-xl pt-2" alt="logo" />
+            </div>
+            <h3 className="mb-4">Error</h3>
+            <p className="mb-4 text-danger">{error || "Ocurrió un error al procesar su solicitud"}</p>
             <button 
-              className="btn btn-sm btn-info me-2" 
+              className="btn btn-info"
               onClick={() => window.location.reload()}
             >
               Reintentar
             </button>
+          </div>
+          <div className="mb-n5">
+            <Navbar/>
           </div>
         </div>
       </div>
     );
   }
 
-  if (showValidation) {
+  if (validationStep === 'initial' || validationStep === 'validating') {
     return (
       <div className="container d-flex justify-content-center align-items-center vh-100">
         <div className="card p-4 shadow" style={{ maxWidth: "500px", width: "100%" }}>
@@ -146,12 +135,12 @@ const VerFacturaPDFCliente = () => {
                 <button 
                   type="submit" 
                   className="btn btn-info"
-                  disabled={loading}
+                  disabled={validationStep === 'validating'}
                 >
-                  {loading ? (
+                  {validationStep === 'validating' ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Procesando...
+                      Validando...
                     </>
                   ) : (
                     "Validar"
@@ -168,7 +157,7 @@ const VerFacturaPDFCliente = () => {
     );
   }
 
-  if (validationSuccess && order && pdfReady) {
+  if (validationStep === 'validated' && order) {
     return (
       <div className="container d-flex justify-content-center align-items-center vh-100">
         <div className="card p-4 shadow" style={{ maxWidth: "500px", width: "100%" }}>
@@ -217,22 +206,14 @@ const VerFacturaPDFCliente = () => {
     );
   }
 
-  // Estado inesperado - mostramos un mensaje genérico
-  return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div className="alert alert-warning text-center">
-        <strong>Estado no reconocido</strong>
-        <div className="mt-3">
-          <button 
-            className="btn btn-sm btn-info" 
-            onClick={() => window.location.reload()}
-          >
-            Recargar página
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  // Estado inesperado - recargamos la página automáticamente
+  useEffect(() => {
+    if (!loading && !error && validationStep !== 'initial' && validationStep !== 'validating' && validationStep !== 'validated') {
+      window.location.reload();
+    }
+  }, [loading, error, validationStep]);
+
+  return null;
 };
 
 export default VerFacturaPDFCliente;
