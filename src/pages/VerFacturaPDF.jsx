@@ -113,10 +113,10 @@ const VerFacturaPDF = () => {
               <h4 className="mb-0 text-white">Factura No. {order.id}</h4>
             </div>
             <div className="d-flex align-items-center">
-            <WhatsAppButton
+            {/* <WhatsAppButton
               invoiceId={order.id}          // ID de la factura
               defaultMessage="Hola, Se ha generado la factura de tu pedido, Mirala desde este link:" // Mensaje opcional
-            />
+            /> */}
               <PDFDownloadLink className="ms-2"
                 document={<FacturaPDF order={order} currentBalance={currentBalance} />}
                 fileName={`factura_${order.id}.pdf`}

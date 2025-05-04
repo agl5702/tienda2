@@ -28,7 +28,7 @@ import { HiOutlineDocumentArrowDown } from "react-icons/hi2";
 import { PiFileArrowDownLight } from "react-icons/pi";
 import { FaFileDownload, FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import WhatsAppButton from "../components/WhatsAppButton.jsx"
+// import WhatsAppButton from "../components/WhatsAppButton.jsx"
 
 import { formatQuantity } from "../services/utils/formatQuantity";
 import { formatNumber } from "../services/utils/format.js";
@@ -973,10 +973,10 @@ export default function Ventas() {
                                           paymentDebts={paymentDebts} // Asegúrate de incluir esto siempre
                                         /> */}
                                         
-                                        <WhatsAppButton
+                                        {/* <WhatsAppButton
                                           invoiceId={orden.id}          // ID de la factura
                                           defaultMessage="Hola, Se ha generado la factura de tu pedido, Mirala desde este link:" // Mensaje opcional
-                                        />
+                                        /> */}
                                         
                                         <DownloadInvoiceButton order={orden} />
 
@@ -1598,10 +1598,10 @@ export default function Ventas() {
                                     
                                     <DownloadInvoiceButton order={orden} />
 
-                                    <WhatsAppButton
+                                    {/* <WhatsAppButton
                                       invoiceId={orden.id}          // ID de la factura
                                       defaultMessage="Hola, Se ha generado la factura de tu pedido, Mirala desde este link:" // Mensaje opcional
-                                    />
+                                    /> */}
 
                                     <Link
                                       to={`/factura/${orden.id}`}
