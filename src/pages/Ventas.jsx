@@ -953,13 +953,13 @@ export default function Ventas() {
 
                                 return (
                                   <tr key={orden.id}>
-                                    <td>{orden.id}</td>
-                                    <td>
+                                    <td className=" text-bold text-lg text-dark">{orden.id}</td>
+                                    <td className=" text-bold text-lg text-danger">
                                       {orden.customer?.name ||
                                         "Cliente no especificado"}
                                     </td>
-                                    <td>{orden.customer?.alias || "-"}</td>
-                                    <td>$ {formatNumber(total)}</td>
+                                    <td className=" text-bold text-lg text-dark">{orden.customer?.alias || "-"}</td>
+                                    <td className=" text-bold text-lg text-dark">$ {formatNumber(total)}</td>
                                     <td>
                                       <span className="badge border border-warning text-warning">
                                         Pendiente
@@ -1581,14 +1581,14 @@ export default function Ventas() {
 
                               return (
                                 <tr key={orden.id}>
-                                  <td>{orden.id}</td>
-                                  <td>
+                                  <td className=" text-bold text-lg text-dark">{orden.id}</td>
+                                  <td className=" text-bold text-lg text-danger">
                                     {orden.customer?.name ||
                                       "Cliente no especificado"}
                                   </td>
-                                  <td>{orden.customer?.alias || "-"}</td>
+                                  <td className=" text-bold text-lg text-dark">{orden.customer?.alias || "-"}</td>
 
-                                  <td>$ {formatNumber(total)}</td>
+                                  <td className=" text-bold text-lg text-dark">$ {formatNumber(total)}</td>
                                   <td>
                                   <span className="badge border border-success text-success">
                                       Completado
